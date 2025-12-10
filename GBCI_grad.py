@@ -604,61 +604,6 @@ class Gradients(rhf_grad.GradientsBase):
             logger.note(self, '----------------------------------------------')
 
 
-def debug_function_X(sfnoci_grad, ref_mo_coeff, ref_mo_energy, mo_list, moe_list,conf_info_list, dmet_core_list, ov_list, ci, atmlst = None, verbose = None):
-    mc = sfnoci_grad.base
-    time0 = logger.process_clock(), logger.perf_counter()
-    log = logger.new_logger(sfnoci_grad, verbose)
-    mol = sfnoci_grad.mol
-    ncore = mc.ncore
-    ncas = mc.ncas
-    nocc = ncore + ncas
-    nelecas = mc.nelecas
-    neleca = nelecas[0] + ncore
-    nao, nmo = ref_mo_coeff.shape
-    nao_pair = nao * (nao+1) // 2
-    bath = list(numpy.arange(0,ncore)) + list(numpy.arange(ncore+ncas, nao))
-    num_group = mo_list.shape[0]
-    # conf_info_list = mc.conf_info_list
-    s1e = mc._scf.get_ovlp(mol)
-    stringsa = cistring.make_strings(range(ncas),nelecas[0])
-    stringsb = cistring.make_strings(range(ncas),nelecas[1])
-    #na = len(stringsa)
-    nb = len(stringsb)
-    um_list = mo_to_um(ncas, ncore, ref_mo_coeff, mo_list, s1e)
- 
-    mo_cas = ref_mo_coeff[:,ncore:nocc]
-    ordm_list = make_1rdm_list(ref_mo_coeff, ci, ncas, nelecas, ncore, conf_info_list, ov_list)
-    trdm_list = make_2rdm_list(ref_mo_coeff, ci, ncas, nelecas, ncore, conf_info_list, ov_list)
-    dmet_act_list = None
-    # h1eff, ecore_list = mc.get_h1cas(dmet_act_list, mo_list, dmet_core_list)
-    h1eff = get_h1eff_for_grad(mc, ref_mo_coeff, mo_cas, dmet_core_list)
-    group_prob = numpy.zeros(num_group)
-    conf_info_list = conf_info_list.reshape(-1)
-    for i in range(num_group):
-        ci = ci.reshape(-1)
-        group_where = numpy.where(conf_info_list == i)
-        group_prob[i] = (numpy.abs(ci)**2)[group_where].sum()
-    Xa, Xx = get_X(mc, h1eff, ov_list, ordm_list, trdm_list, um_list, group_prob)
-
-    orbv = ref_mo_coeff[:,neleca:]
-    orbo = ref_mo_coeff[:,:neleca]
-    #RHF reference
-    xvo = Xa[neleca:, :neleca] - Xa[:neleca, neleca:].T
-    def fvind(x):
-        x = x.reshape(xvo.shape)
-        dm = reduce(numpy.dot, (orbv, x, orbo.T))
-        v = mc._scf.get_veff(mol, dm + dm.T)
-        v = reduce(numpy.dot, (orbv.T, v, orbo))
-        return v * 2
-    mo_occ = numpy.zeros((nao))
-    mo_occ[:neleca] = 2
-    dm1resp = cphf.solve(fvind, ref_mo_energy, mo_occ, xvo, max_cycle = 30)[0]
-
-
-    # casXa = debug_cas_X(mc._scf, ref_mo_coeff, ncas, ncore, numpy.sum(ordm_list, axis = (0,1)), numpy.sum(trdm_list, axis = (0,1)))
-    # print(casXa)
-    return Xa, Xx
-
 # (ngroup, ngroup, nbas ,ncas)
 def get_h1eff_for_grad(mc, ref_mo, mo_cas, dmet_core_list):
     hcore = mc.get_hcore()
@@ -672,30 +617,6 @@ def get_h1eff_for_grad(mc, ref_mo, mo_cas, dmet_core_list):
             h1e[i,j] = ha1e + lib.einsum('ai, bj ,ab -> ij', ref_mo, mo_cas , corevhf)
     return h1e
 
-def debug_cas_X(mf, mo_coeff, ncas, ncore, ordm, trdm):
-    nbas = mo_coeff.shape[0]
-    mol = mf.mol
-    ref_mo = mo_coeff
-    mo_cas = mo_coeff[:,ncore:ncore+ncas]
-    mo_core = mo_coeff[:,:ncore]
-    mo_occ = mo_coeff[:,:ncore + ncas]
-    Xa = numpy.zeros((nbas, nbas))
-    aapa = ao2mo.kernel(mol, (mo_cas, mo_cas, ref_mo, mo_cas), compact=False)
-    aapa = aapa.reshape(ncas,ncas,nbas,ncas)
-
-    dm_core = numpy.dot(mo_core, mo_core.T) * 2
-    dm_cas = reduce(numpy.dot, (mo_cas, ordm, mo_cas.T))
-    h1 = mf.get_hcore()
-    vj, vk = mf.get_jk(mol, (dm_core, dm_cas))
-    vhf_c = vj[0] - vk[0] * .5
-    vhf_a = vj[1] - vk[1] * .5
-
-    Xa[:,:ncore+ncas] = reduce(numpy.dot, (mo_coeff.T, h1 + vhf_c + vhf_a, mo_occ)) * 4
-    Xa[:,ncore:ncore+ncas] = reduce(numpy.dot, (mo_coeff.T, h1 + vhf_c, mo_cas, ordm)) *2
-    Xa[:,ncore:ncore+ncas] += lib.einsum('uviw,vuwt->it', aapa, trdm) *2
-
-    
-    return Xa
 from pyscf.sfnoci.sfnoci import possible_occ, StateAverage_FASSCF, grouping_by_lowdin, grouping_by_occ
 def optimize_mo(sfnoci, mo_coeff = None, ncas = None, nelecas = None, ncore = None, groupA = None, debug = False):
     if mo_coeff is None : mo_coeff = sfnoci.mo_coeff
