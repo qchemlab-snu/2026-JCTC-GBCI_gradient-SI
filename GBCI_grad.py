@@ -309,6 +309,7 @@ def get_X(sfnoci, h1eff, ov_list, ordm_list, trdm_list, um_list, H_list, group_p
 
 def grad_elec(sfnoci_grad, ref_mo_coeff, ref_mo_energy, mo_list, moe_list,conf_info_list, dmet_core_list, ov_list, ecore_list, ci, atmlst = None, verbose = None):
     mc = sfnoci_grad.base
+    mf = mc._scf
     time0 = logger.process_clock(), logger.perf_counter()
     log = logger.new_logger(sfnoci_grad, verbose)
     mol = sfnoci_grad.mol
@@ -530,7 +531,7 @@ def grad_elec(sfnoci_grad, ref_mo_coeff, ref_mo_energy, mo_list, moe_list,conf_i
         de[k] -= numpy.einsum('xij,ij->x', s1[:,p0:p1], vhf_s1occ[p0:p1]) *2 
         de[k] -= numpy.einsum('xij,ji->x', s1[:,p0:p1], vhf_s1occ[:,p0:p1]) *2
           
-    log.timer('CASGNOCI nuclear gradients', *time0)
+    log.timer('GBCI nuclear gradients', *time0)
     return de
                 
 class Gradients(rhf_grad.GradientsBase):
@@ -606,8 +607,10 @@ class Gradients(rhf_grad.GradientsBase):
 
 # (ngroup, ngroup, nbas ,ncas)
 def get_h1eff_for_grad(mc, ref_mo, mo_cas, dmet_core_list):
+    p = dmet_core_list.shape[0]
     hcore = mc.get_hcore()
     nbas = ref_mo.shape[0]
+    ncas = mo_cas.shape[1]
     h1e = numpy.zeros((p,p,nbas,ncas))
     ecore_list = numpy.zeros(p)
     ha1e = lib.einsum('ai,ab,bj->ij',ref_mo,hcore, mo_cas)
@@ -682,7 +685,7 @@ if  __name__ == '__main__':
     mol = gto.Mole()
     mol.verbose = 5
     mol.output = None
-    mol.atom = [['Li', (0,0,0)], ['H',(0,0,1.2 - delta)]]
+    mol.atom = [['Li', (0,0,0)], ['Cl',(0,0,1.2 - delta)]]
     mol.basis = 'ccpvdz'
     mol.build()
     mol.set_common_orig([0,0,0])
@@ -721,7 +724,7 @@ if  __name__ == '__main__':
     mol = gto.Mole()
     mol.verbose = 5
     mol.output = None
-    mol.atom = [['Li', (0,0,0)], ['H',(0,0,1.2 + delta)]]
+    mol.atom = [['Li', (0,0,0)], ['Cl',(0,0,1.2 + delta)]]
     mol.basis = 'ccpvdz'
     mol.build()
     mol.set_common_orig([0,0,0])
@@ -755,7 +758,7 @@ if  __name__ == '__main__':
     mol = gto.Mole()
     mol.verbose = 5
     mol.output = None
-    mol.atom = [['Li', (0,0,0)], ['H',(0,0,1.2)]]
+    mol.atom = [['Li', (0,0,0)], ['Cl',(0,0,1.2)]]
     mol.basis = 'ccpvdz'
     mol.build()
     mol.set_common_orig([0,0,0])
@@ -802,104 +805,9 @@ if  __name__ == '__main__':
     mycas_grad = CASCI_Gradients(mycas)
     mycas_grad.kernel()
     ANG2BOHR = 1.0 / lib.param.BOHR
+
+    print("GBCI numerical gradient :")
     print((e_new - e_tot)/(2*delta * ANG2BOHR))
+    print("CASCI numerical gradient :")
     print((e_cas_new - e_cas)/(2*delta * ANG2BOHR))
-    # print((e_cas_new + new_nuc - e_cas - nuc) / (2*delta))
-    # mol.set_common_orig([0,0,0])
-    # E = (5e-1, 10e-1, 0)
-    # h =(mol.intor('cint1e_kin_sph') + mol.intor('cint1e_nuc_sph')
-    #   + numpy.einsum('x,xij->ij', E, mol.intor('cint1e_r_sph', comp=3)))
-    # mf = scf.RHF(mol)
-    # mf.get_hcore = lambda *args : h
-    # mf.kernel()
-    # s1e = mol.intor('int1e_ovlp')
-    # mySFNOCI = SFNOCI.SFNOCI(mf, 2, 2)
-    # M, _ , _ = mySFNOCI.optimize_mo(mf.mo_coeff)
-    # U,S,Vt=numpy.linalg.svd(SFNOCI.MO_overlap(M[0][:,:mySFNOCI.ncore],M[1][:,:mySFNOCI.ncore],s1e))
-    # # print(U,S,Vt)
-    # W_0 = lib.einsum('ki,i,li -> kl', U, 1.0 / S , Vt.T)
-    # M0 = SFNOCI.MO_overlap(M[0][:,:mySFNOCI.ncore],M[1][:,:mySFNOCI.ncore],s1e)
-    # D0 = make_D_matrix(U, Vt.T, S, M0)
-    # uvs0 = U[:, None, :] * Vt.T[None, :, :] / S[None, None, :]
-
-    # delta = 1e-6
-    # mol.atom = [['Li', (0,0,0)], ['F',(0,0,1.2 + delta)]]
-    # mol.basis = 'ccpvdz'
-    # mol.build()
-
-    # mol.set_common_orig([0,0,0])
-    # E = (5e-1, 10e-1, 0)
-    # h =(mol.intor('cint1e_kin_sph') + mol.intor('cint1e_nuc_sph')
-    #   + numpy.einsum('x,xij->ij', E, mol.intor('cint1e_r_sph', comp=3)))
-    # mf = scf.RHF(mol)
-    # mf.get_hcore = lambda *args : h
-    # mf.kernel()
-    # s1e = mol.intor('int1e_ovlp')
-    # mySFNOCI = SFNOCI.SFNOCI(mf, 2, 2)
-    # M, _ , _ = mySFNOCI.optimize_mo(mf.mo_coeff)
-    # U,S,Vt=numpy.linalg.svd(SFNOCI.MO_overlap(M[0][:,:mySFNOCI.ncore],M[1][:,:mySFNOCI.ncore],s1e))
-    # # print(U,S,Vt)
-    # W_1 = lib.einsum('ki,i,li -> kl', U, 1.0 / S , Vt.T)
-    # M1 = SFNOCI.MO_overlap(M[0][:,:mySFNOCI.ncore],M[1][:,:mySFNOCI.ncore],s1e)
-    # D1 = make_D_matrix(U, Vt.T, S, M1)
-
-    # Wd = W_1 - W_0
-    # Md = M1 - M0
-    # Wdes = -lib.einsum('rs, klrs - > kl', Md, D0)
-    # # print(numpy.linalg.norm(uvs1-uvs0))
-    # print(numpy.linalg.norm(Wd))
-    # print(numpy.linalg.norm(Md))
-    # print(numpy.linalg.norm(Wd - Wdes))
-    # print(Wdes - Wd)
-    # print(W_0, M0)
-    # print(W_1, M1)
-    # print(Wd - Wdes)
-    
-
-    # from pyscf.tools import molden
-    # molden.from_mo(mol,'LiF_e.molden', mf.mo_coeff)
-    
-    # um_list = mo_to_um(mySFNOCI.ncas, mySFNOCI.ncore, mo, M, s1e)
-    # print(test_func(mySFNOCI, um_list))
-    # U,S,Vt=numpy.linalg.svd(SFNOCI.MO_overlap(M[0][:,:mySFNOCI.ncore],M[1][:,:mySFNOCI.ncore],s1e))
-    # print(U,S,Vt)
-    # W_0 = lib.einsum('ki,i,li -> kl', U, 1.0 / S , Vt.T)
-    # M0 = SFNOCI.MO_overlap(M[0][:,:mySFNOCI.ncore],M[1][:,:mySFNOCI.ncore],s1e)
-    # D0 = make_D_matrix(U, Vt.T, S, M0)
-
-    # mol.atom = [['Li', (0, 0, 0)],['F',(0,0,1.405)]]
-    # mol.build(0,0)
-    # rm=scf.ROHF(mol)
-    # rm=scf.addons.mom_occ(rm,mo0,setocc)
-    # rm.scf(dm_ro)
-    # mo=rm.mo_coeff
-    # mySFNOCI = SFNOCI.SFNOCI(rm,4,4,groupA = 'Li')
-    # mySFNOCI.spin = 0
-    # mySFNOCI.lowdin_thres= 0.4
-    # # from pyscf.mcscf import addons
-    # mo = addons.sort_mo(mySFNOCI,rm.mo_coeff, AS_list,1)
-    # M, _, _ = mySFNOCI.optimize_mo(mo, debug = False)
-    
-    # U,S,Vt=numpy.linalg.svd(SFNOCI.MO_overlap(M[0][:,:mySFNOCI.ncore],M[1][:,:mySFNOCI.ncore],s1e))
-    # print(U,S,Vt)
-    # W_1 = lib.einsum('ki,i,li -> kl', U, 1.0 / S , Vt.T)
-    # M1 = SFNOCI.MO_overlap(M[0][:,:mySFNOCI.ncore],M[1][:,:mySFNOCI.ncore],s1e)
-    # # D0 = make_D_matrix(U, Vt.T, S, M0)
-    # Wd = W_1 - W_0
-    # Md = M1 - M0
-    # Wdes = lib.einsum('rs, klrs - > kl', Md, D0)
-    # print(numpy.linalg.norm(Wd))
-    # print(numpy.linalg.norm(Md))
-    # print(W_0, M0)
-    # print(W_1, M1)
-    # print(Wd - Wdes)
-    # print(numpy.linalg.norm(Wd - Wdes))
-    # ncas = mySFNOCI.ncas
-    # mo_coeff = mo[:,mySFNOCI.ncore:mySFNOCI.ncore+ncas]
-    # N = mo_coeff.shape[0]
-    # Adm = numpy.zeros((ncas,ncas,N,N))
-    # for i in range(0,ncas):
-    #       for j in range(0,ncas):
-    #           Adm[i,j] = numpy.outer(mo_coeff[:,i],mo_coeff[:,j])
-    # T = test_func(mySFNOCI, um_list,Adm)
-    # print(numpy.linalg.norm(T))
+   
