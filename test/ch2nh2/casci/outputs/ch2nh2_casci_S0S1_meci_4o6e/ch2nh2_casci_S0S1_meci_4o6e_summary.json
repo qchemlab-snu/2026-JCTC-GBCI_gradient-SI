@@ -1,0 +1,67 @@
+{
+  "act_base": 1,
+  "act_list_1based_initial": [
+    5,
+    7,
+    8,
+    9
+  ],
+  "alpha": 0.0001,
+  "basis": "cc-pVDZ",
+  "charge": 1,
+  "final_act_list_1based": [
+    5,
+    7,
+    8,
+    9
+  ],
+  "final_casci_molden": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/casci/outputs/ch2nh2_casci_S0S1_meci_4o6e/ch2nh2_casci_S0S1_meci_4o6e_final_CASCI_orbitals.molden",
+  "final_energies_Eh": [
+    -94.18784677733403,
+    -94.18779705570478
+  ],
+  "final_gap_Eh": 4.972162925298562e-05,
+  "final_gap_eV": 0.0013529944583828076,
+  "final_rhf_molden": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/casci/outputs/ch2nh2_casci_S0S1_meci_4o6e/ch2nh2_casci_S0S1_meci_4o6e_final_RHF.molden",
+  "final_roots": [
+    0,
+    1
+  ],
+  "geom_params": {
+    "convergence_dmax": 0.0018,
+    "convergence_drms": 0.0012,
+    "convergence_energy": 1e-06,
+    "convergence_gmax": 0.00045,
+    "convergence_grms": 0.0003,
+    "tmax": 0.03,
+    "trust": 0.01
+  },
+  "has_imaginary_frequency": true,
+  "hessian_step_bohr": 0.001,
+  "imag_amplitude": 0.05,
+  "imag_amplitude_unit": "Angstrom",
+  "imag_frequency_cm": -4499.087176534465,
+  "imag_minus_xyz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/casci/outputs/ch2nh2_casci_S0S1_meci_4o6e/ch2nh2_casci_S0S1_meci_4o6e_imag_minus.xyz",
+  "imag_plus_xyz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/casci/outputs/ch2nh2_casci_S0S1_meci_4o6e/ch2nh2_casci_S0S1_meci_4o6e_imag_plus.xyz",
+  "imag_threshold_cm": 30.0,
+  "max_steps": 500,
+  "method": "CASCI penalty MECI",
+  "molecule": "CH2NH2+",
+  "ncas": 4,
+  "nelecas": [
+    3,
+    3
+  ],
+  "nroots": 3,
+  "optimized_xyz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/casci/outputs/ch2nh2_casci_S0S1_meci_4o6e/ch2nh2_casci_S0S1_meci_4o6e_optimized.xyz",
+  "run_penalty_hessian": true,
+  "sigma": 1.0,
+  "spin": 0,
+  "start_geometry_source": "../S1_S0_MECX_RHF.molden",
+  "states": "S0/S1",
+  "target_roots": [
+    0,
+    1
+  ],
+  "unit": "Angstrom"
+}

@@ -1,0 +1,67 @@
+{
+  "created_at": "2026-07-13T06:39:10.250461+00:00",
+  "script": "pp_s1_pes_build_images.py",
+  "segment": "casci_ground_to_planar",
+  "method": "CASCI",
+  "state": "S1",
+  "start_label": "ground_state_geometry",
+  "end_label": "planar",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "unit": "Angstrom",
+  "scanner_kwargs": {
+    "ncas": 2,
+    "nelecas": [
+      1,
+      1
+    ],
+    "act_list": [
+      38,
+      39
+    ],
+    "nroots": 3,
+    "target_root": 1,
+    "conv_tol": 1e-10,
+    "max_cycle": 200,
+    "act_base": 1
+  },
+  "neb": {
+    "n_intermediate_images": 7,
+    "total_images": 9,
+    "climb": true,
+    "spring_constant": 0.6,
+    "interpolate": "idpp",
+    "optimizer": "FIRE",
+    "fmax": null,
+    "max_steps": null
+  },
+  "barrier": null,
+  "max_force": null,
+  "scanner_steps": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "converged": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "output_files": {
+    "results_npz": "pp_s1_pes_casci_ground_to_planar_results.npz",
+    "images": "pp_s1_pes_casci_ground_to_planar_*.xyz"
+  }
+}

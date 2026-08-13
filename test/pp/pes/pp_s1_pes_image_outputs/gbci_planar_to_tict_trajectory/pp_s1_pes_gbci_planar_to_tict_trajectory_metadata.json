@@ -1,0 +1,17 @@
+{
+  "created_at": "2026-07-13T07:10:42.614075+00:00",
+  "script": "pp_s1_pes_gbci_tict_trajectory_energies.py",
+  "method": "GBCI",
+  "state": "S1",
+  "segment": "planar_to_TICT",
+  "path_type": "downhill_optimization_trajectory",
+  "selected_source_out": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/gbci/pp_gbci_S1_im1.out",
+  "selected_final_optimization_energy_hartree": -454.204783209986,
+  "n_images": 9,
+  "no_compute": false,
+  "output_files": {
+    "results_npz": "pp_s1_pes_gbci_planar_to_tict_trajectory_results.npz",
+    "summary_csv": "pp_s1_pes_gbci_planar_to_tict_trajectory_summary.csv",
+    "images": "pp_s1_pes_gbci_planar_to_tict_trajectory_*.xyz"
+  }
+}

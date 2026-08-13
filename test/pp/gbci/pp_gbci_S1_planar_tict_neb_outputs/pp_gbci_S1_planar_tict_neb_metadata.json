@@ -1,0 +1,100 @@
+{
+  "created_at": "2026-07-27T08:12:29.386226+00:00",
+  "script": "pp_gbci_S1_planar_tict_neb.py",
+  "method": "GBCI",
+  "state": "S1",
+  "path": "planar_to_TICT",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "unit": "Angstrom",
+  "hartree_to_ev": 27.211386245988,
+  "bohr_to_angstrom": 0.529177210903,
+  "scanner_kwargs": {
+    "ncas": 2,
+    "nelecas": [
+      1,
+      1
+    ],
+    "act_list": [
+      38,
+      39
+    ],
+    "nroots": 3,
+    "groupA": {
+      "mol1": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "mol2": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ]
+    },
+    "target_root": 1,
+    "conv_tol": 1e-10,
+    "max_cycle": 200,
+    "act_base": 1
+  },
+  "neb": {
+    "n_intermediate_images": 7,
+    "total_images": 9,
+    "climb": true,
+    "spring_constant": 0.6,
+    "interpolate": "idpp",
+    "optimizer": "FIRE",
+    "fmax": 0.05,
+    "max_steps": 500,
+    "interpolate_only": false
+  },
+  "barrier": [
+    0.0,
+    -0.6895270865006751
+  ],
+  "max_force": 0.0906348940857942,
+  "scanner_steps": [
+    1,
+    114,
+    114,
+    114,
+    114,
+    114,
+    114,
+    114,
+    1
+  ],
+  "converged": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "output_dir": "test/pp/gbci/pp_gbci_S1_planar_tict_neb_outputs",
+  "output_files": {
+    "trajectory": "pp_gbci_S1_planar_tict_neb.traj",
+    "ase_log": "pp_gbci_S1_planar_tict_neb_ase.log",
+    "results_npz": "pp_gbci_S1_planar_tict_neb_results.npz",
+    "summary_csv": "pp_gbci_S1_planar_tict_neb_summary.csv",
+    "image_xyz": "pp_gbci_S1_planar_tict_neb_*.xyz"
+  }
+}

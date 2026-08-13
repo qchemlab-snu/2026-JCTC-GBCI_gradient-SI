@@ -1,0 +1,10 @@
+image_index,point_label,source_out,source_cycle,source_optimization_step,source_energy_hartree,s1_energy_hartree,s1_energy_ev,source_xyz
+0,planar,/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/gbci/pp_gbci_S1.out,,,,-454.17944367659186,-12358.852266871692,pp_s1_pes_gbci_planar_to_tict_trajectory_000.xyz
+1,,/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/gbci/pp_gbci_S1_im1.out,1,0,-454.179597126622,-454.1795971441446,-12358.856442936547,pp_s1_pes_gbci_planar_to_tict_trajectory_001.xyz
+2,,/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/gbci/pp_gbci_S1_im1.out,9,8,-454.184433077844,-454.1844328694119,-12358.988029724575,pp_s1_pes_gbci_planar_to_tict_trajectory_002.xyz
+3,,/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/gbci/pp_gbci_S1_im1.out,18,17,-454.188129489336,-454.1881293926914,-12359.0886172473,pp_s1_pes_gbci_planar_to_tict_trajectory_003.xyz
+4,,/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/gbci/pp_gbci_S1_im1.out,26,25,-454.190119928269,-454.1901198477182,-12359.14278028784,pp_s1_pes_gbci_planar_to_tict_trajectory_004.xyz
+5,,/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/gbci/pp_gbci_S1_im1.out,35,34,-454.195330525165,-454.19533047497373,-12359.284568678673,pp_s1_pes_gbci_planar_to_tict_trajectory_005.xyz
+6,,/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/gbci/pp_gbci_S1_im1.out,43,42,-454.200761154561,-454.20076111067067,-12359.432343804185,pp_s1_pes_gbci_planar_to_tict_trajectory_006.xyz
+7,,/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/gbci/pp_gbci_S1_im1.out,52,51,-454.204227052034,-454.20422713268647,-12359.526659067993,pp_s1_pes_gbci_planar_to_tict_trajectory_007.xyz
+8,TICT,/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/gbci/pp_gbci_S1_im1.out,60,59,-454.204783209986,-454.20478332964075,-12359.541793958146,pp_s1_pes_gbci_planar_to_tict_trajectory_008.xyz

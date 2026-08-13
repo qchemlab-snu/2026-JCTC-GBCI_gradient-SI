@@ -1,0 +1,29 @@
+{
+  "created_at": "2026-07-20T13:39:05.456702+00:00",
+  "script": "pp_s1_pes_energies_to_excel_s0_energy_reference.py",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "unit": "Angstrom",
+  "note": "S0 reference energies are computed at each method's ground_state_geometry image with target_root=0.",
+  "references": {
+    "CASCI": {
+      "method": "CASCI",
+      "state": "S0",
+      "target_root": 0,
+      "s0_energy_hartree": -454.3849286656601,
+      "s0_energy_ev": -12364.443798276981,
+      "source_xyz": "test/pp/pes/pp_s1_pes_image_outputs/casci_ground_to_planar/pp_s1_pes_casci_ground_to_planar_000.xyz",
+      "reference_active_space": "same_as_s1_pes_target_root_0"
+    },
+    "GBCI": {
+      "method": "GBCI",
+      "state": "S0",
+      "target_root": 0,
+      "s0_energy_hartree": -454.3849674082196,
+      "s0_energy_ev": -12364.444852515731,
+      "source_xyz": "test/pp/pes/pp_s1_pes_image_outputs/gbci_ground_to_planar/pp_s1_pes_gbci_ground_to_planar_000.xyz",
+      "reference_active_space": "same_as_s1_pes_target_root_0"
+    }
+  }
+}
