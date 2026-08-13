@@ -38,9 +38,9 @@ GBCI-grad/
 │   │   ├── casci/                     # CH2NH2 CASCI MECI workflow and saved results
 │   │   └── gbci/                      # CH2NH2 GBCI optimization workflow and saved results
 │   └── pp/
-│       ├── casci/                     # PP CASCI optimizations and NEB calculations
-│       ├── gbci/                      # PP GBCI optimizations and NEB calculations
-│       └── pes/                       # PP potential-energy-path construction and export
+│       ├── casci/                     # 4-(1-pyrrolyl)-pyridine CASCI optimizations and NEB calculations
+│       ├── gbci/                      # 4-(1-pyrrolyl)-pyridine GBCI optimizations and NEB calculations
+│       └── pes/                       # 4-(1-pyrrolyl)-pyridine potential-energy-path construction and export
 ├── .gitignore
 └── README.md
 ```
