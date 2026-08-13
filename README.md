@@ -51,8 +51,8 @@ loaded as the GBCI gradient module in a PySCF/pyscf-forge environment. The
 
 The `test/` tree contains reproducible research calculations and their archived
 outputs rather than only lightweight unit tests. Output directories may include
-optimized XYZ geometries, NumPy archives (`.npz`), JSON/CSV metadata, Excel
-summaries, Molden orbital files, plots, trajectories, and calculation logs.
+optimized XYZ geometries, JSON/CSV metadata, Excel
+summaries, plots, trajectories, and calculation logs.
 
 Calculation scripts whose names end in `_im1.py` or `_im2.py` are follow-up
 optimizations for an imaginary-frequency mode. They start from geometries
