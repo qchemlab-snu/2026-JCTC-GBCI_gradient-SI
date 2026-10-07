@@ -1,0 +1,101 @@
+Running the SO2 GBCI gradient sweep at the published settings:
+  Lowdin threshold (S)        0.2
+  reference orbital E / grad  1e-12 / 1e-06
+  bath orbital      E / grad  1e-14 / 1e-12
+  GBCI Davidson               1e-12
+  steps (bohr)                [0.001, 0.0005, 0.00025, 0.0001, 5e-05]
+Reference calculation
+  E = -547.189703862923 Eh   <S^2> = 3.69e-22
+  ncore = 12, active MO 13..17, 4 bath groups
+  net force = 1.974e-14 Eh/bohr   torque = 3.549e-10 Eh
+  rotational consistency (dE/dtheta vs n.tau, no Cartesian FD)
+    analytic_n_dot_torque      -1.673723e-10
+    numerical_dE_dtheta        +5.254606e-07
+    difference                 -5.256279e-07
+    energy_drift_plus          -6.530172e-10
+    energy_drift_minus         -1.703938e-09
+
+h = 1.000e-03 bohr   (2-point stencil, 18 energies)
+    S0 x  G_num =  1.617183816852e-01
+    S0 y  G_num = -5.533404240850e-03
+    S0 z  G_num = -8.493338827975e-03
+    O1 x  G_num = -1.034080518293e-01
+    O1 y  G_num =  9.595002629794e-04
+    O1 z  G_num = -4.935386480065e-02
+    O2 x  G_num = -5.831001454499e-02
+    O2 y  G_num =  4.573253158014e-03
+    O2 z  G_num =  5.784776777728e-02
+  max |diff| = 5.679e-07   rms = 3.250e-07
+
+h = 5.000e-04 bohr   (2-point stencil, 18 energies)
+    S0 x  G_num =  1.617195630679e-01
+    S0 y  G_num = -5.533081595786e-03
+    S0 z  G_num = -8.494186797179e-03
+    O1 x  G_num = -1.034076439682e-01
+    O1 y  G_num =  9.598277974874e-04
+    O1 z  G_num = -4.935331316665e-02
+    O2 x  G_num = -5.831011664122e-02
+    O2 y  G_num =  4.572196514346e-03
+    O2 z  G_num =  5.784868984483e-02
+  max |diff| = 1.052e-06   rms = 7.593e-07
+
+h = 2.500e-04 bohr   (2-point stencil, 18 energies)
+    S0 x  G_num =  1.617169203237e-01
+    S0 y  G_num = -5.531526403502e-03
+    S0 z  G_num = -8.493449771777e-03
+    O1 x  G_num = -1.034101676196e-01
+    O1 y  G_num =  9.470821823925e-04
+    O1 z  G_num = -4.935434483923e-02
+    O2 x  G_num = -5.831015156582e-02
+    O2 y  G_num =  4.573251353577e-03
+    O2 z  G_num =  5.784779530950e-02
+  max |diff| = 1.274e-05   rms = 4.353e-06
+
+h = 1.000e-04 bohr   (2-point stencil, 18 energies)
+    S0 x  G_num =  1.617187620141e-01
+    S0 y  G_num = -5.533072631806e-03
+    S0 z  G_num = -8.501953445375e-03
+    O1 x  G_num = -1.034118677489e-01
+    O1 y  G_num =  1.000210177153e-03
+    O1 z  G_num = -4.939086595550e-02
+    O2 x  G_num = -5.831015808508e-02
+    O2 y  G_num =  4.564735107124e-03
+    O2 z  G_num =  5.785103887320e-02
+  max |diff| = 4.039e-05   rms = 1.865e-05
+
+h = 5.000e-05 bohr   (2-point stencil, 18 energies)
+    S0 x  G_num =  1.617358261719e-01
+    S0 y  G_num = -5.516017787158e-03
+    S0 z  G_num = -8.493443019688e-03
+    O1 x  G_num = -1.034179320559e-01
+    O1 y  G_num =  1.034067012370e-03
+    O1 z  G_num = -4.935434088111e-02
+    O2 x  G_num = -5.839095637202e-02
+    O2 y  G_num =  4.498993977904e-03
+    O2 z  G_num =  5.786481965333e-02
+  max |diff| = 8.081e-05   rms = 4.536e-05
+
+==============================================================
+Step-size sweep
+==============================================================
+    h (bohr)        max |diff|               rms
+   1.000e-03         5.679e-07         3.250e-07
+   5.000e-04         1.052e-06         7.593e-07
+   2.500e-04         1.274e-05         4.353e-06
+   1.000e-04         4.039e-05         1.865e-05
+   5.000e-05         8.081e-05         4.536e-05
+
+Per-component comparison at the best step, h = 1.000e-03 bohr
+--------------------------------------------------------------------------
+ atom  axis              analytic             numerical         diff
+   S0     x    1.617187647286e-01    1.617183816852e-01     3.83e-07
+   S0     y   -5.533073653761e-03   -5.533404240850e-03     3.31e-07
+   S0     z   -8.493425676789e-03   -8.493338827975e-03    -8.68e-08
+   O1     x   -1.034086197245e-01   -1.034080518293e-01    -5.68e-07
+   O1     y    9.598249950542e-04    9.595002629794e-04     3.25e-07
+   O1     z   -4.935435633836e-02   -4.935386480065e-02    -4.92e-07
+   O2     x   -5.831014500409e-02   -5.831001454499e-02    -1.30e-07
+   O2     y    4.573248658704e-03    4.573253158014e-03    -4.50e-09
+   O2     z    5.784778201516e-02    5.784776777728e-02     1.42e-08
+
+Saved /home/jiseong0626/mygit/grad/pysfnocigrad/test/so2/gbci/outputs/cas8e5o_fd_sweep_paper.json and /home/jiseong0626/mygit/grad/pysfnocigrad/test/so2/gbci/outputs/cas8e5o_fd_sweep_paper.csv

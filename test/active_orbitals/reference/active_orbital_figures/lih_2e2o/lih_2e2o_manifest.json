@@ -1,0 +1,42 @@
+{
+  "system": "lih_2e2o",
+  "note": "Li-H 1.5 A, sigma-only act_list [2, 3]; 2: sigma(Li2s/2pz-H1s), 3: sigma*(Li3s/3pz), same as the default window",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "ncas": 2,
+  "nelecas": [
+    1,
+    1
+  ],
+  "act_list": [
+    2,
+    3
+  ],
+  "window": [
+    2,
+    3
+  ],
+  "linear": true,
+  "views": [
+    "front"
+  ],
+  "grid": 100,
+  "margin": 12.0,
+  "orbitals": [
+    {
+      "mo": 2,
+      "energy": -0.3056700860534384,
+      "occ": 2.0,
+      "pi_out_of_plane": null,
+      "cube": "lih_2e2o_mo02.cube"
+    },
+    {
+      "mo": 3,
+      "energy": 0.0033038993874874053,
+      "occ": 0.0,
+      "pi_out_of_plane": null,
+      "cube": "lih_2e2o_mo03.cube"
+    }
+  ]
+}

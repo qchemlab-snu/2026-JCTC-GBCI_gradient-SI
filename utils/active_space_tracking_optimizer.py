@@ -1,5 +1,7 @@
 from pyscf import gto, scf, mcscf, lib
 from pyscf.mcscf import addons
+from pyscf.gbci.gbci import group_info_list
+
 from utils.gbci_compat import make_gbci
 import numpy as np
 import numpy
@@ -1375,8 +1377,9 @@ class GBCI_Active_Root_Tracking_Optimizer(CASCI_Active_Root_Tracking_Optimizer):
         Convert mc.ci / gbci.ci into a list of root-specific vectors.
 
         The parent CASCI version assumes PySCF CASCI layout.
-        The qchemlab-snu GBCI implementation stores multiple roots on the
-        first axis.  A column-root fallback is retained for older outputs.
+        GBCI/NOCI codes often store eigenvectors as a matrix, e.g.
+            ci[:, root]
+        so this method accepts a few common layouts.
         """
         ci = getattr(mc, "ci", None)
         if ci is None:
@@ -1389,13 +1392,13 @@ class GBCI_Active_Root_Tracking_Optimizer(CASCI_Active_Root_Tracking_Optimizer):
         e_tot = np.atleast_1d(np.asarray(getattr(mc, "e_tot", []), dtype=float))
         nroots_actual = len(e_tot) if len(e_tot) > 0 else self.nroots
 
-        # Current qchemlab-snu GBCI layout: first axis is root index.
-        if arr.ndim >= 2 and arr.shape[0] == nroots_actual:
-            return [np.array(arr[i, ...], copy=True) for i in range(nroots_actual)]
-
-        # Legacy alternative: columns are roots.
+        # Common layout: columns are roots.
         if arr.ndim >= 2 and arr.shape[-1] == nroots_actual:
             return [np.array(arr[..., i], copy=True) for i in range(nroots_actual)]
+
+        # Alternative layout: first axis is root index.
+        if arr.ndim >= 2 and arr.shape[0] == nroots_actual:
+            return [np.array(arr[i, ...], copy=True) for i in range(nroots_actual)]
 
         # Fallback: single-root vector.
         return [arr]
@@ -1563,9 +1566,53 @@ class GBCI_Active_Root_Tracking_Optimizer(CASCI_Active_Root_Tracking_Optimizer):
         """
         ci0 = self.prev_ci_target if self.prev_ci_target is not None else None
 
-        e_tot, _, _ = gbci.kernel(mo_cas, ci0=ci0)
+        mol = gbci.mol
+        ncas = gbci.ncas
+        nelecas = gbci.nelecas
+
+        mo_list, moe_list, po_list, group = gbci.optimize_mo(mo_cas)
+        p = mo_list.shape[0]
+
+        # Mirror pyscf.gbci.gbci.kernel.
+        if gbci.group_a is None:
+            conf_info_list = group_info_list(ncas, nelecas, po_list)
+            svd_basis = po_list
+        else:
+            conf_info_list = group_info_list(ncas, nelecas, po_list, group)
+            svd_basis = group
+
+        dmet_core_list, ov_list = gbci.get_svd_matrices(mo_list, svd_basis)
+        dmet_act_list = gbci.get_active_dm(mo_cas)
+        h1e, ecore_list = gbci.get_h1cas(dmet_act_list , mo_list , dmet_core_list)
+        eri = gbci.get_h2eff(mo_cas)
+
+        # pyscf.grad.gbci reads these off the GBCI object.
+        gbci._cache_gbci_intermediates(
+            mo_cas, ncas, nelecas, gbci.ncore,
+            {
+                "mo_list": mo_list,
+                "mo_energy": moe_list,
+                "po_list": po_list,
+                "group": group,
+                "svd_basis": svd_basis,
+                "conf_info_list": conf_info_list,
+                "dmet_core_list": dmet_core_list,
+                "ov_list": ov_list,
+                "ecore_list": ecore_list,
+            },
+        )
+
+        e_tot, gbci.ci = gbci.fcisolver.kernel(h1e, eri, ncas, nelecas,
+                                        conf_info_list, ov_list, ecore_list,
+                                        ci0=ci0, verbose=mol.verbose)
+        gbci.e_tot = np.atleast_1d(np.asarray(e_tot, dtype=float))
         self.attach_sorted_mo_to_method(gbci, mo_cas)
-        return e_tot
+        if getattr(gbci.fcisolver, 'converged', None) is not None:
+            gbci.converged = numpy.all(gbci.fcisolver.converged)
+        else:
+            gbci.converged = True
+
+        return e_tot, mo_list, moe_list, conf_info_list, dmet_core_list, ov_list, ecore_list
 
     def compute_gradient(self, gbci, root):
         """
@@ -1596,16 +1643,11 @@ class GBCI_Active_Root_Tracking_Optimizer(CASCI_Active_Root_Tracking_Optimizer):
         if not mf.converged:
             print("WARNING: RHF did not converge.")
 
-        # The fork may use an ROHF driver internally for FASSCF, where Fock
-        # damping is unsupported.  Keep damping for the initial RHF only.
-        mf.damp = 0.0
-        mf.level_shift = 0.0
-
         # Name kept as mc to reuse parent helper methods and diagnostics.
         mc = self.make_cas(mf)
         mo_cas, selected_act, active_diag = self.make_cas_mo(mc, mf)
 
-        e_tot = self.run_gbci(mc, mo_cas)
+        e_tot, mo_list, moe_list, conf_info_list, dmet_core_list, ov_list, ecore_list = self.run_gbci(mc, mo_cas)
 
         gbci_converged = bool(np.all(getattr(mc, "converged", True)))
         self.converged = bool(mf.converged) and gbci_converged
@@ -1619,7 +1661,17 @@ class GBCI_Active_Root_Tracking_Optimizer(CASCI_Active_Root_Tracking_Optimizer):
         e_tot = np.atleast_1d(np.asarray(mc.e_tot, dtype=float))
         e_target = float(e_tot[root])
 
-        gbci_grad = self.compute_gradient(mc, root)
+        grad_method = mc.nuc_grad_method()
+        try:
+            # Legacy signature: this repo's pyscf.grad.gbci takes the
+            # intermediates positionally.
+            gbci_grad = grad_method.kernel(
+                mo_cas, mc._scf.mo_energy, mo_list, moe_list, conf_info_list,
+                dmet_core_list, ov_list, ecore_list, mc.ci[root])
+        except TypeError:
+            # pyscf-forge's pyscf.grad.gbci reads them off the GBCI object
+            # instead; run_gbci() published them via _cache_gbci_intermediates.
+            gbci_grad = grad_method.kernel(state=root)
 
         self.print_diagnostics(
             mf=mf,

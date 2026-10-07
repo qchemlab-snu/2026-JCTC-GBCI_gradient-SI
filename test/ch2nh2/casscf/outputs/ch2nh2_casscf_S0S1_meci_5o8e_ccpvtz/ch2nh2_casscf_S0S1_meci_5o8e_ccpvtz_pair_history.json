@@ -1,0 +1,1372 @@
+{
+  "evaluations": [
+    {
+      "active_min_singular_value": null,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26983028015272,
+        -94.21115332092026
+      ],
+      "gap_ev": 1.5966814014144841,
+      "gap_hartree": 0.05867695923245719,
+      "projected_active_min_singular_value": null,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "step": 0
+    },
+    {
+      "active_min_singular_value": 0.7672949184861972,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.27208305849707,
+        -94.21908907825036
+      ],
+      "gap_ev": 1.442039665205517,
+      "gap_hartree": 0.0529939802467112,
+      "projected_active_min_singular_value": 0.9995456949761897,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        5,
+        6,
+        7,
+        8
+      ],
+      "step": 1
+    },
+    {
+      "active_min_singular_value": 0.7833205150408634,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.2742665424546,
+        -94.23004256713224
+      ],
+      "gap_ev": 1.2033956738295952,
+      "gap_hartree": 0.044223975322353226,
+      "projected_active_min_singular_value": 0.9989181234189409,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 2
+    },
+    {
+      "active_min_singular_value": 0.8180416251698878,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.27483362038481,
+        -94.24429828986551
+      ],
+      "gap_ev": 0.830908672909563,
+      "gap_hartree": 0.030535330519299464,
+      "projected_active_min_singular_value": 0.9973391016311817,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 3
+    },
+    {
+      "active_min_singular_value": 0.8815943006435925,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26853782608133,
+        -94.25850303904366
+      ],
+      "gap_ev": 0.27306046597821837,
+      "gap_hartree": 0.010034787037668025,
+      "projected_active_min_singular_value": 0.9938991821365355,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 4
+    },
+    {
+      "active_min_singular_value": 0.9013436143741581,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26122972429813,
+        -94.2539031309739
+      ],
+      "gap_ev": 0.19936676081308466,
+      "gap_hartree": 0.0073265933242367964,
+      "projected_active_min_singular_value": 0.9956601877395147,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 5
+    },
+    {
+      "active_min_singular_value": 0.8947797593386515,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26188484963254,
+        -94.25979567989629
+      ],
+      "gap_ev": 0.05684920462656861,
+      "gap_hartree": 0.002089169736251506,
+      "projected_active_min_singular_value": 0.9995483779540965,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 6
+    },
+    {
+      "active_min_singular_value": 0.9017537298821743,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26700972178827,
+        -94.26032430969856
+      ],
+      "gap_ev": 0.18191933058667142,
+      "gap_hartree": 0.006685412089709075,
+      "projected_active_min_singular_value": 0.9983727526422276,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 7
+    },
+    {
+      "active_min_singular_value": 0.8875619456262981,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.2656764057733,
+        -94.26118606444302
+      ],
+      "gap_ev": 0.12218841231462493,
+      "gap_hartree": 0.004490341330281922,
+      "projected_active_min_singular_value": 0.9997173861355675,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 8
+    },
+    {
+      "active_min_singular_value": 0.8984348196532423,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26404520291493,
+        -94.26162920106421
+      ],
+      "gap_ev": 0.06574275953093342,
+      "gap_hartree": 0.002416001850718885,
+      "projected_active_min_singular_value": 0.9999270513681149,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 9
+    },
+    {
+      "active_min_singular_value": 0.9005596300359754,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26270158759702,
+        -94.26090962226397
+      ],
+      "gap_ev": 0.04876186081718409,
+      "gap_hartree": 0.0017919653330551455,
+      "projected_active_min_singular_value": 0.9998722189518495,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 10
+    },
+    {
+      "active_min_singular_value": 0.9000118977407809,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.2623518698825,
+        -94.26121328692926
+      ],
+      "gap_ev": 0.03098242051348135,
+      "gap_hartree": 0.0011385829532315483,
+      "projected_active_min_singular_value": 0.9999878812131205,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 11
+    },
+    {
+      "active_min_singular_value": 0.8987392150482874,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.2627838777,
+        -94.26221679955735
+      ],
+      "gap_ev": 0.015430982371351988,
+      "gap_hartree": 0.0005670781426516669,
+      "projected_active_min_singular_value": 0.9999706164079635,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 12
+    },
+    {
+      "active_min_singular_value": 0.9026328125897933,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26433009779907,
+        -94.26343231195715
+      ],
+      "gap_ev": 0.024429997310897754,
+      "gap_hartree": 0.0008977858419285667,
+      "projected_active_min_singular_value": 0.9999691944746082,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 13
+    },
+    {
+      "active_min_singular_value": 0.9021799853025694,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26433422838448,
+        -94.26427259836365
+      ],
+      "gap_ev": 0.0016770383013659548,
+      "gap_hartree": 6.163002083781066e-05,
+      "projected_active_min_singular_value": 0.9999968641903363,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 14
+    },
+    {
+      "active_min_singular_value": 0.9035745311777492,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26538864396618,
+        -94.2653444676623
+      ],
+      "gap_ev": 0.0012020984676261713,
+      "gap_hartree": 4.417630387365534e-05,
+      "projected_active_min_singular_value": 0.9999896694333252,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 15
+    },
+    {
+      "active_min_singular_value": 0.9048876176905756,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26665074408768,
+        -94.26662870856751
+      ],
+      "gap_ev": 0.0005996170506068718,
+      "gap_hartree": 2.2035520174767953e-05,
+      "projected_active_min_singular_value": 0.9999834366825141,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 16
+    },
+    {
+      "active_min_singular_value": 0.9064439551797165,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.26851345452269,
+        -94.26847243357228
+      ],
+      "gap_ev": 0.0011162369256579932,
+      "gap_hartree": 4.102095040536824e-05,
+      "projected_active_min_singular_value": 0.9999602079292057,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 17
+    },
+    {
+      "active_min_singular_value": 0.9076686715313402,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.27061483697412,
+        -94.27057038708125
+      ],
+      "gap_ev": 0.0012095432034421628,
+      "gap_hartree": 4.444989286866985e-05,
+      "projected_active_min_singular_value": 0.999936500715313,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 18
+    },
+    {
+      "active_min_singular_value": 0.9087312858009973,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.27329192356146,
+        -94.27323605439294
+      ],
+      "gap_ev": 0.0015202775238388779,
+      "gap_hartree": 5.586916851996193e-05,
+      "projected_active_min_singular_value": 0.9998638638955117,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 19
+    },
+    {
+      "active_min_singular_value": 0.9091851614946638,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.27629038093082,
+        -94.27625705451338
+      ],
+      "gap_ev": 0.0009068580170800834,
+      "gap_hartree": 3.332641743725162e-05,
+      "projected_active_min_singular_value": 0.9997156061796862,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 20
+    },
+    {
+      "active_min_singular_value": 0.9083777860006604,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.28083536250112,
+        -94.28074180741976
+      ],
+      "gap_ev": 0.0025457634542614123,
+      "gap_hartree": 9.355508136366097e-05,
+      "projected_active_min_singular_value": 0.9992583667187411,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 21
+    },
+    {
+      "active_min_singular_value": 0.907997839323553,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.28437671578396,
+        -94.28341339669521
+      ],
+      "gap_ev": 0.026213247802221912,
+      "gap_hartree": 0.0009633190887541332,
+      "projected_active_min_singular_value": 0.9985827338797649,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 22
+    },
+    {
+      "active_min_singular_value": 0.9084362964573706,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.2826120465158,
+        -94.28222349787404
+      ],
+      "gap_ev": 0.010572947166057906,
+      "gap_hartree": 0.0003885486417516404,
+      "projected_active_min_singular_value": 0.9996487334078913,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 23
+    },
+    {
+      "active_min_singular_value": 0.9088667915893337,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.28343103030244,
+        -94.28311882402473
+      ],
+      "gap_ev": 0.008495565611252533,
+      "gap_hartree": 0.00031220627771233467,
+      "projected_active_min_singular_value": 0.9999378598204509,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 24
+    },
+    {
+      "active_min_singular_value": 0.9079272072568654,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.28415216636695,
+        -94.2832328340779
+      ],
+      "gap_ev": 0.02501630600596991,
+      "gap_hartree": 0.0009193322890581612,
+      "projected_active_min_singular_value": 0.9999160304660615,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 25
+    },
+    {
+      "active_min_singular_value": 0.9079824268858333,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.28380806269888,
+        -94.2832148005612
+      ],
+      "gap_ev": 0.016143485173647772,
+      "gap_hartree": 0.0005932621376842917,
+      "projected_active_min_singular_value": 0.9999742405739988,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 26
+    },
+    {
+      "active_min_singular_value": 0.9082248480721107,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.2836959062705,
+        -94.28366244851141
+      ],
+      "gap_ev": 0.0009104320054605137,
+      "gap_hartree": 3.3457759087696104e-05,
+      "projected_active_min_singular_value": 0.9999922714311699,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 27
+    },
+    {
+      "active_min_singular_value": 0.9080692848760987,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.28419806647356,
+        -94.28417529559788
+      ],
+      "gap_ev": 0.0006196270935093118,
+      "gap_hartree": 2.2770875688138403e-05,
+      "projected_active_min_singular_value": 0.9999885468924581,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 28
+    },
+    {
+      "active_min_singular_value": 0.9077902518463763,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.2847909198603,
+        -94.28477822647963
+      ],
+      "gap_ev": 0.00034540448413350943,
+      "gap_hartree": 1.269338066833825e-05,
+      "projected_active_min_singular_value": 0.9999822959181874,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 29
+    },
+    {
+      "active_min_singular_value": 0.9070171969836173,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.28583188088484,
+        -94.28580800899849
+      ],
+      "gap_ev": 0.0006495871200443087,
+      "gap_hartree": 2.3871886355664174e-05,
+      "projected_active_min_singular_value": 0.9999459875947465,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 30
+    },
+    {
+      "active_min_singular_value": 0.9062060386899562,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.28692136099141,
+        -94.28690071804131
+      ],
+      "gap_ev": 0.0005617232885595493,
+      "gap_hartree": 2.0642950104843294e-05,
+      "projected_active_min_singular_value": 0.9999326700050069,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        6,
+        5,
+        7,
+        8
+      ],
+      "step": 31
+    },
+    {
+      "active_min_singular_value": 0.904430649888677,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.28841691217282,
+        -94.28837672528128
+      ],
+      "gap_ev": 0.0010935410276920333,
+      "gap_hartree": 4.0186891538951386e-05,
+      "projected_active_min_singular_value": 0.9998478658311384,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        5,
+        6,
+        7,
+        8
+      ],
+      "step": 32
+    },
+    {
+      "active_min_singular_value": 0.8921654479498882,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.28981875144356,
+        -94.28977074313404
+      ],
+      "gap_ev": 0.0013063726533598656,
+      "gap_hartree": 4.800830951978696e-05,
+      "projected_active_min_singular_value": 0.9997166839768455,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        5,
+        6,
+        7,
+        8
+      ],
+      "step": 33
+    },
+    {
+      "active_min_singular_value": 0.8698572332565122,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29154110975925,
+        -94.29132265636618
+      ],
+      "gap_ev": 0.005944419655696021,
+      "gap_hartree": 0.0002184533930744692,
+      "projected_active_min_singular_value": 0.9993957342003372,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 34
+    },
+    {
+      "active_min_singular_value": 0.8103454631198048,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29198529338049,
+        -94.29178802097218
+      ],
+      "gap_ev": 0.005368055698324153,
+      "gap_hartree": 0.00019727240831457493,
+      "projected_active_min_singular_value": 0.9992756257879658,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 35
+    },
+    {
+      "active_min_singular_value": 0.7561461432226482,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29230675384615,
+        -94.2918398604032
+      ],
+      "gap_ev": 0.012704817811763046,
+      "gap_hartree": 0.00046689344294748025,
+      "projected_active_min_singular_value": 0.9987316514503953,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 36
+    },
+    {
+      "active_min_singular_value": 0.7964640151389284,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29223576806417,
+        -94.291936147528
+      ],
+      "gap_ev": 0.008153090136905,
+      "gap_hartree": 0.0002996205361682769,
+      "projected_active_min_singular_value": 0.9995515064539123,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 37
+    },
+    {
+      "active_min_singular_value": 0.7917906566546745,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29219848811017,
+        -94.29205108251432
+      ],
+      "gap_ev": 0.004011110603600782,
+      "gap_hartree": 0.0001474055958539111,
+      "projected_active_min_singular_value": 0.9999683467894285,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 38
+    },
+    {
+      "active_min_singular_value": 0.7883579709988858,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29215645724558,
+        -94.29208034420107
+      ],
+      "gap_ev": 0.002071141452632856,
+      "gap_hartree": 7.61130445141589e-05,
+      "projected_active_min_singular_value": 0.9999502106854181,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 39
+    },
+    {
+      "active_min_singular_value": 0.8082950313245324,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.2921978857734,
+        -94.29218209683715
+      ],
+      "gap_ev": 0.0004296388427840747,
+      "gap_hartree": 1.5788936252647545e-05,
+      "projected_active_min_singular_value": 0.9999653035116763,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 40
+    },
+    {
+      "active_min_singular_value": 0.8070820962885492,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29224515551486,
+        -94.29221994824258
+      ],
+      "gap_ev": 0.0006859248224168396,
+      "gap_hartree": 2.5207272287275373e-05,
+      "projected_active_min_singular_value": 0.9999569268324445,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 41
+    },
+    {
+      "active_min_singular_value": 0.8144165859189266,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29225234899047,
+        -94.29224092743769
+      ],
+      "gap_ev": 0.0003107962843463581,
+      "gap_hartree": 1.1421552784440792e-05,
+      "projected_active_min_singular_value": 0.9999950823081025,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 42
+    },
+    {
+      "active_min_singular_value": 0.824229959954479,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29230706115541,
+        -94.2923042370128
+      ],
+      "gap_ev": 7.684883543465966e-05,
+      "gap_hartree": 2.8241426122121993e-06,
+      "projected_active_min_singular_value": 0.9999751035536956,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 43
+    },
+    {
+      "active_min_singular_value": 0.8477700687579509,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29247193452218,
+        -94.29243725132729
+      ],
+      "gap_ev": 0.0009437778125983401,
+      "gap_hartree": 3.468319489741134e-05,
+      "projected_active_min_singular_value": 0.9999003796495018,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 44
+    },
+    {
+      "active_min_singular_value": 0.8827088611901395,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29256034344698,
+        -94.29252196973295
+      ],
+      "gap_ev": 0.0010442019542701835,
+      "gap_hartree": 3.8373714033923534e-05,
+      "projected_active_min_singular_value": 0.9999073569505614,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 45
+    },
+    {
+      "active_min_singular_value": 0.9020139238054101,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.2927231509849,
+        -94.29247579380622
+      ],
+      "gap_ev": 0.0067309317297632445,
+      "gap_hartree": 0.0002473571786794082,
+      "projected_active_min_singular_value": 0.9994422775357112,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 46
+    },
+    {
+      "active_min_singular_value": 0.8861802391966681,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29267557338092,
+        -94.29256163505272
+      ],
+      "gap_ev": 0.0031004198568195546,
+      "gap_hartree": 0.00011393832819805993,
+      "projected_active_min_singular_value": 0.9998453578865473,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 47
+    },
+    {
+      "active_min_singular_value": 0.8794121277149314,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29259433576081,
+        -94.29256831730328
+      ],
+      "gap_ev": 0.0007079982974409557,
+      "gap_hartree": 2.6018457532472894e-05,
+      "projected_active_min_singular_value": 0.9999622044599545,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 48
+    },
+    {
+      "active_min_singular_value": 0.8784320937779923,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29260014836854,
+        -94.29255166211524
+      ],
+      "gap_ev": 0.00131937816593466,
+      "gap_hartree": 4.8486253291457615e-05,
+      "projected_active_min_singular_value": 0.9999641855421244,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 49
+    },
+    {
+      "active_min_singular_value": 0.881866663211881,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29259368790837,
+        -94.2925663433684
+      ],
+      "gap_ev": 0.0007440828385312986,
+      "gap_hartree": 2.7344539958562564e-05,
+      "projected_active_min_singular_value": 0.999991230223563,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 50
+    },
+    {
+      "active_min_singular_value": 0.8823025574547483,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29259458400799,
+        -94.29257276470983
+      ],
+      "gap_ev": 0.0005937333497100013,
+      "gap_hartree": 2.1819298154923672e-05,
+      "projected_active_min_singular_value": 0.9999985817287792,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 51
+    },
+    {
+      "active_min_singular_value": 0.8853004013439137,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29259580376024,
+        -94.2925732357909
+      ],
+      "gap_ev": 0.0006141057304612997,
+      "gap_hartree": 2.256796933863825e-05,
+      "projected_active_min_singular_value": 0.9999991408420495,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 52
+    },
+    {
+      "active_min_singular_value": 0.8844007152589473,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29259606482822,
+        -94.29257316514737
+      ],
+      "gap_ev": 0.0006231320603321203,
+      "gap_hartree": 2.289968084312477e-05,
+      "projected_active_min_singular_value": 0.9999999619033425,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 53
+    },
+    {
+      "active_min_singular_value": 0.8843703529525672,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.2925951568802,
+        -94.29257334778829
+      ],
+      "gap_ev": 0.0005934556234972965,
+      "gap_hartree": 2.180909190485636e-05,
+      "projected_active_min_singular_value": 0.9999999752180508,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 54
+    },
+    {
+      "active_min_singular_value": 0.8844346940045507,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.29259483964125,
+        -94.29257342547717
+      ],
+      "gap_ev": 0.0005827090899452152,
+      "gap_hartree": 2.1414164081079434e-05,
+      "projected_active_min_singular_value": 0.9999999615495304,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 55
+    },
+    {
+      "active_min_singular_value": 0.8843373234950548,
+      "casscf_converged": true,
+      "energies_hartree": [
+        -94.2925948396414,
+        -94.29257342547707
+      ],
+      "gap_ev": 0.0005827090965190651,
+      "gap_hartree": 2.1414164322663964e-05,
+      "projected_active_min_singular_value": 0.9999999999999997,
+      "roots": [
+        0,
+        1
+      ],
+      "scf_converged": true,
+      "selected_act_0based": [
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "step": 56
+    }
+  ]
+}

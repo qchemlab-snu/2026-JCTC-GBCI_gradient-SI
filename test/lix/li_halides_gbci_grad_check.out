@@ -1,0 +1,50 @@
+
+==============================================================================
+LiH  CAS(2e,2o)  act_list=[2, 3] (1-based)  basis=ccpvdz
+  2: sigma(Li2s/2pz-H1s); 3: sigma*(Li3s/3pz). Same as the default window for this molecule.
+  E(GBCI) = -7.9818435526 Eh
+==============================================================================
+ atom       analytic z          numerical z          difference
+ Li   +1.830102797348e-02   +1.830102829281e-02   -3.193272e-10
+  H   -1.830102797348e-02   -1.830102821732e-02   +2.438318e-10
+ max |analytic z - numerical z| : 3.193272e-10 Eh/Bohr
+ max |analytic transverse|      : 8.872049e-19 Eh/Bohr
+ net force (on axis / tilted)   : 1.665335e-16 / 4.518280e-16 Eh/Bohr
+ torque    (on axis / tilted)   : 2.985103e-18 / 4.746849e-16 Eh
+ |E(tilted) - E(on axis)|       : 2.664535e-15 Eh
+ min active-orbital overlap     : 0.999998
+ Result: PASS
+
+==============================================================================
+LiF  CAS(4e,4o)  act_list=[3, 4, 7, 10] (1-based)  basis=ccpvdz
+  3: sigma(F2s); 4: sigma(F2pz-Li); 7: sigma*(Li3s); 10: sigma*(Li3pz).  Default window would be [5,6,7,8], whose MOs 5 and 6 are the F 2p pi lone pairs.
+  E(GBCI) = -106.9430017858 Eh
+==============================================================================
+ atom       analytic z          numerical z          difference
+ Li   +3.524744321527e-02   +3.524744450090e-02   -1.285626e-09
+  F   -3.524744321526e-02   -3.524744499828e-02   +1.783019e-09
+ max |analytic z - numerical z| : 1.783019e-09 Eh/Bohr
+ max |analytic transverse|      : 5.274182e-17 Eh/Bohr
+ net force (on axis / tilted)   : 1.287859e-14 / 1.831027e-15 Eh/Bohr
+ torque    (on axis / tilted)   : 2.031412e-16 / 8.405513e-15 Eh
+ |E(tilted) - E(on axis)|       : 2.415845e-13 Eh
+ min active-orbital overlap     : 0.999998
+ Result: PASS
+
+==============================================================================
+LiCl  CAS(4e,4o)  act_list=[7, 8, 11, 14] (1-based)  basis=ccpvdz
+  7: sigma(Cl3s); 8: sigma(Cl3pz-Li); 11: sigma*(Li3s); 14: sigma*(Li3pz).  Default window would be [9,10,11,12], whose MOs 9 and 10 are the Cl 3p pi lone pairs.
+  E(GBCI) = -466.9090605907 Eh
+==============================================================================
+ atom       analytic z          numerical z          difference
+ Li   +3.397175965658e-01   +3.397175987629e-01   -2.197115e-09
+ Cl   -3.397175965658e-01   -3.397175998998e-01   +3.334057e-09
+ max |analytic z - numerical z| : 3.334057e-09 Eh/Bohr
+ max |analytic transverse|      : 6.736945e-16 Eh/Bohr
+ net force (on axis / tilted)   : 7.371881e-14 / 1.787425e-14 Eh/Bohr
+ torque    (on axis / tilted)   : 2.027990e-15 / 6.407035e-15 Eh
+ |E(tilted) - E(on axis)|       : 4.547474e-13 Eh
+ min active-orbital overlap     : 0.999988
+ Result: PASS
+
+Saved results to /home/jiseong0626/mygit/grad/pysfnocigrad/test/li_halides/gbci/outputs/li_halides_gbci_grad_check.json

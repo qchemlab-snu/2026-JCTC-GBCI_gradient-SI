@@ -1,0 +1,75 @@
+{
+  "act_base": 1,
+  "act_list_1based_initial": [
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "basis": "cc-pVTZ",
+  "charge": 1,
+  "conv_tol": 1e-10,
+  "final_act_list_1based": [
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "final_energy_Eh": -94.43753637230033,
+  "final_gradient_max_Eh_per_Bohr": 0.00011335879346329684,
+  "final_gradient_rms_Eh_per_Bohr": 4.065972381219915e-05,
+  "geom_params": {
+    "convergence_dmax": 0.0018,
+    "convergence_drms": 0.0012,
+    "convergence_energy": 1e-06,
+    "convergence_gmax": 0.00045,
+    "convergence_grms": 0.0003,
+    "tmax": 0.03,
+    "trust": 0.02
+  },
+  "hessian_check": {
+    "frequencies_cm": [
+      -16.22914058089002,
+      -10.88823303321992,
+      -0.05311880800758836,
+      -0.011545484973612274,
+      0.02390480946680296,
+      9.86454044377064,
+      998.3723051539954,
+      1024.2100132833982,
+      1164.6351424245813,
+      1248.5575305432212,
+      1455.8664851794813,
+      1548.9632573381537,
+      1705.9032674165367,
+      1889.00501474535,
+      3293.6193336346396,
+      3420.1831989084867,
+      3693.2019209776167,
+      3795.505790054018
+    ],
+    "has_imaginary_frequency": false,
+    "imaginary_frequency_cm": null
+  },
+  "hessian_step_bohr": 0.001,
+  "imag_amplitude": 0.05,
+  "imag_amplitude_unit": "Angstrom",
+  "imag_threshold_cm": 30.0,
+  "max_cycle": 200,
+  "max_steps": 500,
+  "method": "CASCI",
+  "molecule": "CH2NH2+",
+  "ncas": 5,
+  "nelecas": [
+    4,
+    4
+  ],
+  "nroots": 3,
+  "spin": 0,
+  "start_geometry_source": "../../casci/S0_opt_RHF.molden",
+  "state": "S0",
+  "target_root": 0,
+  "unit": "Angstrom"
+}

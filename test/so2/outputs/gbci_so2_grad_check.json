@@ -1,0 +1,377 @@
+{
+  "script": "test/so2/gbci/gbci_so2_grad_check.py",
+  "timestamp_utc": "2026-09-28T08:40:39.567188+00:00",
+  "pyscf_version": "2.10.0",
+  "modules": {
+    "gbci": "/home/jiseong0626/labgit/pyscf-forge/pyscf/gbci/gbci.py",
+    "gbci_gradient": "/home/jiseong0626/labgit/pyscf-forge/pyscf/grad/gbci.py"
+  },
+  "molecule": {
+    "name": "SO2 (distorted, C1)",
+    "geometry_angstrom": [
+      [
+        "S",
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        "O",
+        1.1440718501259575,
+        0.0,
+        0.7716862067896305
+      ],
+      [
+        "O",
+        -1.2601371102836634,
+        0.08,
+        0.8499732132755351
+      ]
+    ],
+    "internal_coordinates": {
+      "r_S_O1_angstrom": 1.38,
+      "r_S_O2_angstrom": 1.52,
+      "angle_O_S_O_degree": 112.0,
+      "out_of_plane_offset_angstrom": 0.08
+    },
+    "charge": 0,
+    "spin": 0,
+    "basis": "ccpvdz"
+  },
+  "calculation": {
+    "method": "RHF / singlet GBCI",
+    "ncas": 4,
+    "nelecas": [
+      2,
+      2
+    ],
+    "act_list": null,
+    "act_base": 1,
+    "active_mo_indices": [
+      15,
+      16,
+      17,
+      18
+    ],
+    "act_list_is_identity_permutation": true,
+    "group_a": {
+      "atom": [
+        [
+          0
+        ]
+      ]
+    },
+    "reference_groups": [
+      [
+        0
+      ],
+      [
+        1,
+        2,
+        7,
+        13,
+        14
+      ],
+      [
+        3,
+        4,
+        9,
+        10,
+        15,
+        16
+      ],
+      [
+        5,
+        11,
+        17
+      ],
+      [
+        6
+      ],
+      [
+        8
+      ],
+      [
+        12
+      ],
+      [
+        18
+      ]
+    ],
+    "nroots": 1,
+    "target_root": 0,
+    "scf_conv_tol": 1e-14,
+    "scf_damping": false,
+    "gbci_conv_tol": 1e-14,
+    "max_cycle": 400,
+    "finite_difference": "central difference, order 4",
+    "fd_order": 4,
+    "step_bohr": 0.002,
+    "comparison_atol_hartree_per_bohr": 1e-07,
+    "torque_atol_hartree": 1e-08,
+    "analytic_only": false
+  },
+  "active_space_report": [
+    {
+      "act_list_index": 15,
+      "rhf_mo_index_zero_based": 14,
+      "rhf_mo_energy_hartree": -0.4863389579577399,
+      "rhf_mo_occupancy": 2.0,
+      "leading_ao_contributions": [
+        {
+          "ao": "0 S 4s    ",
+          "weight": 0.20417698016801325
+        },
+        {
+          "ao": "2 O 2pz   ",
+          "weight": 0.18928369648751767
+        },
+        {
+          "ao": "2 O 3pz   ",
+          "weight": 0.12068805234137675
+        }
+      ]
+    },
+    {
+      "act_list_index": 16,
+      "rhf_mo_index_zero_based": 15,
+      "rhf_mo_energy_hartree": -0.48564539222648045,
+      "rhf_mo_occupancy": 2.0,
+      "leading_ao_contributions": [
+        {
+          "ao": "2 O 2py   ",
+          "weight": 0.2300863913893091
+        },
+        {
+          "ao": "2 O 3py   ",
+          "weight": 0.15616599347194624
+        },
+        {
+          "ao": "1 O 2py   ",
+          "weight": 0.11710597752723402
+        }
+      ]
+    },
+    {
+      "act_list_index": 17,
+      "rhf_mo_index_zero_based": 16,
+      "rhf_mo_energy_hartree": 0.0137395898905912,
+      "rhf_mo_occupancy": 0.0,
+      "leading_ao_contributions": [
+        {
+          "ao": "0 S 4py   ",
+          "weight": 0.3808991214917631
+        },
+        {
+          "ao": "0 S 3py   ",
+          "weight": 0.19068270499944182
+        },
+        {
+          "ao": "1 O 3py   ",
+          "weight": 0.14329412560549035
+        }
+      ]
+    },
+    {
+      "act_list_index": 18,
+      "rhf_mo_index_zero_based": 17,
+      "rhf_mo_energy_hartree": 0.2185720797306572,
+      "rhf_mo_occupancy": 0.0,
+      "leading_ao_contributions": [
+        {
+          "ao": "0 S 4px   ",
+          "weight": 1.734587779236145
+        },
+        {
+          "ao": "2 O 3s    ",
+          "weight": 0.4884698791878732
+        },
+        {
+          "ao": "1 O 3s    ",
+          "weight": 0.3528906229307922
+        }
+      ]
+    }
+  ],
+  "reference_energy_hartree": -547.195494963756,
+  "spin_square": 3.411187025211416e-20,
+  "multiplicity": 1.0,
+  "analytic_gradient_hartree_per_bohr": [
+    [
+      0.13021534100074694,
+      -0.004444058345571822,
+      -0.0066019072706460236
+    ],
+    [
+      -0.08873424420296061,
+      0.0009490169674905985,
+      -0.039686028417715846
+    ],
+    [
+      -0.04148109679779388,
+      0.0034950413780808764,
+      0.04628793568832634
+    ]
+  ],
+  "numerical_gradient_hartree_per_bohr": [
+    [
+      0.13021533325809287,
+      -0.004444060123205418,
+      -0.006601922377740266
+    ],
+    [
+      -0.08873424635385163,
+      0.0009490493721386883,
+      -0.0396860262080736
+    ],
+    [
+      -0.04148109606830985,
+      0.003495047607430024,
+      0.046287935256259516
+    ]
+  ],
+  "analytic_minus_numerical_hartree_per_bohr": [
+    [
+      7.742654073439326e-09,
+      1.7776335958785694e-09,
+      1.5107094242239327e-08
+    ],
+    [
+      2.150891020846757e-09,
+      -3.2404648089845445e-08,
+      -2.2096422469530808e-09
+    ],
+    [
+      -7.294840287386251e-10,
+      -6.229349147623964e-09,
+      4.320668267610017e-10
+    ]
+  ],
+  "displaced_calculations": [
+    {
+      "atom_index": 0,
+      "atom_symbol": "S",
+      "axis": "x",
+      "energies_hartree": {
+        "-2h": -547.1960082530727,
+        "-1h": -547.1957534988964,
+        "+1h": -547.1952326325262,
+        "+2h": -547.1949664901101
+      },
+      "numerical_derivative_hartree_per_bohr": 0.13021533325809287,
+      "min_active_overlap": 0.9995861710999419
+    },
+    {
+      "atom_index": 0,
+      "atom_symbol": "S",
+      "axis": "y",
+      "energies_hartree": {
+        "-2h": -547.1954771654017,
+        "-1h": -547.1954860701436,
+        "+1h": -547.1955038464612,
+        "+2h": -547.1955127184993
+      },
+      "numerical_derivative_hartree_per_bohr": -0.004444060123205418,
+      "min_active_overlap": 0.99933712255591
+    },
+    {
+      "atom_index": 0,
+      "atom_symbol": "S",
+      "axis": "z",
+      "energies_hartree": {
+        "-2h": -547.1954640091246,
+        "-1h": -547.1954806225368,
+        "+1h": -547.1955070288975,
+        "+2h": -547.1955168138732
+      },
+      "numerical_derivative_hartree_per_bohr": -0.006601922377740266,
+      "min_active_overlap": 0.9988157830776299
+    },
+    {
+      "atom_index": 1,
+      "atom_symbol": "O",
+      "axis": "x",
+      "energies_hartree": {
+        "-2h": -547.1951337310078,
+        "-1h": -547.1953159237681,
+        "+1h": -547.1956708656902,
+        "+2h": -547.195843644471
+      },
+      "numerical_derivative_hartree_per_bohr": -0.08873424635385163,
+      "min_active_overlap": 0.9995936834551904
+    },
+    {
+      "atom_index": 1,
+      "atom_symbol": "O",
+      "axis": "y",
+      "energies_hartree": {
+        "-2h": -547.1954990309517,
+        "-1h": -547.1954969296642,
+        "+1h": -547.1954931334963,
+        "+2h": -547.1954914387927
+      },
+      "numerical_derivative_hartree_per_bohr": 0.0009490493721386883,
+      "min_active_overlap": 0.9997536739948443
+    },
+    {
+      "atom_index": 1,
+      "atom_symbol": "O",
+      "axis": "z",
+      "energies_hartree": {
+        "-2h": -547.1953335243762,
+        "-1h": -547.1954149182135,
+        "+1h": -547.1955736629859,
+        "+2h": -547.1956510179261
+      },
+      "numerical_derivative_hartree_per_bohr": -0.0396860262080736,
+      "min_active_overlap": 0.9993710639497806
+    },
+    {
+      "atom_index": 2,
+      "atom_symbol": "O",
+      "axis": "x",
+      "energies_hartree": {
+        "-2h": -547.1953265984807,
+        "-1h": -547.195411390187,
+        "+1h": -547.1955773122621,
+        "+2h": -547.1956584287763
+      },
+      "numerical_derivative_hartree_per_bohr": -0.04148109606830985,
+      "min_active_overlap": 0.999683687131973
+    },
+    {
+      "atom_index": 2,
+      "atom_symbol": "O",
+      "axis": "y",
+      "energies_hartree": {
+        "-2h": -547.195508751664,
+        "-1h": -547.1955019058183,
+        "+1h": -547.1954879255785,
+        "+2h": -547.1954807908876
+      },
+      "numerical_derivative_hartree_per_bohr": 0.003495047607430024,
+      "min_active_overlap": 0.99952662681811
+    },
+    {
+      "atom_index": 2,
+      "atom_symbol": "O",
+      "axis": "z",
+      "energies_hartree": {
+        "-2h": -547.195678901107,
+        "-1h": -547.1955872362312,
+        "+1h": -547.1954020848358,
+        "+2h": -547.1953086003901
+      },
+      "numerical_derivative_hartree_per_bohr": 0.046287935256259516,
+      "min_active_overlap": 0.9994105190076082
+    }
+  ],
+  "diagnostics": {
+    "max_abs_error_hartree_per_bohr": 3.2404648089845445e-08,
+    "rms_error_hartree_per_bohr": 1.242947508550105e-08,
+    "analytic_net_force_norm_hartree_per_bohr": 3.6322073445459595e-14,
+    "analytic_torque_norm_hartree": 3.5109564514536096e-11,
+    "min_active_overlap": 0.9988157830776299,
+    "passed": true
+  }
+}

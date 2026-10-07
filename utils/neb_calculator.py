@@ -259,6 +259,12 @@ class CASCIActiveSpaceNEBCalculator(PySCFGradientScannerCalculator):
     name = "CASCIActiveSpaceNEB"
 
 
+class CASSCFActiveSpaceNEBCalculator(PySCFGradientScannerCalculator):
+    """ASE NEB calculator for ``CASSCF_Active_Root_Tracking_Optimizer`` scanners."""
+
+    name = "CASSCFActiveSpaceNEB"
+
+
 def make_gradient_scanner_calculator_factory(
     scanner_factory: Callable[[], Callable[[Any], Tuple[float, np.ndarray]]],
     basis: Any,
@@ -348,6 +354,54 @@ def make_casci_active_space_calculator_factory(
         label_prefix=label_prefix,
         store_history=store_history,
         calculator_class=CASCIActiveSpaceNEBCalculator,
+        **calculator_kwargs,
+    )
+
+
+def make_casscf_active_space_calculator_factory(
+    scanner_kwargs: Mapping[str, Any],
+    basis: Any,
+    charge: int = 0,
+    spin: int = 0,
+    unit: str = "Angstrom",
+    verbose: int = 0,
+    mol_kwargs: Optional[Mapping[str, Any]] = None,
+    label_prefix: Optional[str] = "casscf_neb_image",
+    store_history: bool = True,
+    **calculator_kwargs: Any,
+) -> Callable[..., CASSCFActiveSpaceNEBCalculator]:
+    """
+    Build a factory for CASSCF active-space tracked ASE NEB calculators.
+
+    Mirrors :func:`make_casci_active_space_calculator_factory`, but builds
+    ``CASSCF_Active_Root_Tracking_Optimizer`` scanners, so ``scanner_kwargs``
+    also accepts the state-averaging options (``state_average``,
+    ``state_weights``, ``project_previous_orbitals``, ``reuse_ci_guess``).
+
+    Each NEB image gets its own scanner, so orbital and CI guesses are carried
+    along that image's own history rather than shared between images.
+    """
+
+    scanner_config = dict(scanner_kwargs)
+
+    def scanner_factory() -> Any:
+        from utils.active_space_tracking_optimizer import (
+            CASSCF_Active_Root_Tracking_Optimizer,
+        )
+
+        return CASSCF_Active_Root_Tracking_Optimizer(**scanner_config)
+
+    return make_gradient_scanner_calculator_factory(
+        scanner_factory=scanner_factory,
+        basis=basis,
+        charge=charge,
+        spin=spin,
+        unit=unit,
+        verbose=verbose,
+        mol_kwargs=mol_kwargs,
+        label_prefix=label_prefix,
+        store_history=store_history,
+        calculator_class=CASSCFActiveSpaceNEBCalculator,
         **calculator_kwargs,
     )
 

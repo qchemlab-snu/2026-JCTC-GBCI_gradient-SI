@@ -1,0 +1,4 @@
+2
+lih_2e2o: Li-H 1.5 A, sigma-only act_list [2, 3]; 2: sigma(Li2s/2pz-H1s), 3: sigma*(Li3s/3pz), same as the default window (canonical frame)
+Li        0.00000000       0.00000000       0.00000000
+H        -1.50000000       0.00000000       0.00000000

@@ -1,0 +1,60 @@
+{
+  "system": "lif_4e4o",
+  "note": "Li-F 1.5 A, sigma-only act_list [3, 4, 7, 10]; 3: sigma(F2s), 4: sigma(F2pz-Li), 7: sigma*(Li3s), 10: sigma*(Li3pz)",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "ncas": 4,
+  "nelecas": [
+    2,
+    2
+  ],
+  "act_list": [
+    3,
+    4,
+    7,
+    10
+  ],
+  "window": [
+    3,
+    4,
+    7,
+    10
+  ],
+  "linear": true,
+  "views": [
+    "front"
+  ],
+  "grid": 100,
+  "margin": 12.0,
+  "orbitals": [
+    {
+      "mo": 3,
+      "energy": -1.3819147215090521,
+      "occ": 2.0,
+      "pi_out_of_plane": null,
+      "cube": "lif_4e4o_mo03.cube"
+    },
+    {
+      "mo": 4,
+      "energy": -0.49801392920160464,
+      "occ": 2.0,
+      "pi_out_of_plane": null,
+      "cube": "lif_4e4o_mo04.cube"
+    },
+    {
+      "mo": 7,
+      "energy": -0.0006797468690411849,
+      "occ": 0.0,
+      "pi_out_of_plane": null,
+      "cube": "lif_4e4o_mo07.cube"
+    },
+    {
+      "mo": 10,
+      "energy": 0.0868520018094148,
+      "occ": 0.0,
+      "pi_out_of_plane": null,
+      "cube": "lif_4e4o_mo10.cube"
+    }
+  ]
+}

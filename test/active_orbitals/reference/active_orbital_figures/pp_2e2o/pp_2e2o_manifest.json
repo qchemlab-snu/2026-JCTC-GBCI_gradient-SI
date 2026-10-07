@@ -1,0 +1,43 @@
+{
+  "system": "pp_2e2o",
+  "note": "CAS(2e,2o) of pp_gbci_S1.py, at the CASCI S0-optimised geometry",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "ncas": 2,
+  "nelecas": [
+    1,
+    1
+  ],
+  "act_list": [
+    38,
+    39
+  ],
+  "window": [
+    38,
+    39
+  ],
+  "linear": false,
+  "views": [
+    "front",
+    "side"
+  ],
+  "grid": 80,
+  "margin": 4.0,
+  "orbitals": [
+    {
+      "mo": 38,
+      "energy": -0.31516284974270864,
+      "occ": 2.0,
+      "pi_out_of_plane": 0.9485768040488328,
+      "cube": "pp_2e2o_mo38.cube"
+    },
+    {
+      "mo": 39,
+      "energy": 0.10214440179893834,
+      "occ": 0.0,
+      "pi_out_of_plane": 0.8716822355086845,
+      "cube": "pp_2e2o_mo39.cube"
+    }
+  ]
+}

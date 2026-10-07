@@ -1,0 +1,43 @@
+# Render one active orbital as a signed isosurface.
+#
+# This is a template. make_active_orbital_images.sh substitutes __INFILE__,
+# __OUTFILE__ and __ROTATE__ and runs the result. The input is a Gaussian cube
+# written by render_active_orbitals.py, which carries both the geometry and the
+# orbital amplitude. The geometry is already in the canonical frame, so the
+# camera below is identical for every orbital and every system and the renders
+# are directly comparable. __ROTATE__ is the only thing that differs between
+# views, and it is empty for the front view.
+#
+# Note for anyone editing this file: Jmol ends a comment at a semicolon and
+# parses the rest of the line as a command, so keep semicolons out of comments.
+
+background white
+set frank off
+set antialiasDisplay true
+set zoomLarge false
+
+load "__INFILE__"
+
+select all
+spacefill 18%
+wireframe 0.12
+color atoms cpk
+
+# cutoff 0.03 a.u. is the usual compromise, low enough to show the diffuse lobes
+# of a virtual orbital, high enough that the dense core region does not swamp them.
+isosurface orb cutoff 0.03 sign "__INFILE__"
+isosurface translucent 0.4
+
+# Zoom to the isosurface, not to the molecule. A plain `zoom N` fits the camera
+# to the ball-and-stick model, and a diffuse virtual -- the Li 3s sigma* of LiF,
+# say -- is many times larger than the bond it sits on, so it runs off the frame
+# at any zoom that still shows the atoms at a useful size. Fitting each orbital
+# means the molecule is drawn at different sizes across a panel, so compare
+# orbital character between tiles, not orbital extent.
+reset
+center {all}
+__ROTATE__
+zoom $orb 88
+
+write IMAGE 1000 800 PNG "__OUTFILE__"
+exitJmol

@@ -1,0 +1,36 @@
+==============================================================================
+SO2 (distorted, C1)  CAS(8e,5o)  basis=ccpvdz  MO [13, 14, 15, 16, 17] (ncore=12)
+  E(GBCI) = -547.1897038637 Eh   net force = 2.74e-14   torque = 8.53e-11 Eh
+  order-2 central difference, fasscf 1e-14/1e-12, gbci 1e-14
+  source: gbci_so2_grad_fd_sweep.py, 2026-09-30T07:50:10.946912+00:00
+==============================================================================
+  h = 4.00e-03 skipped: grouped-bath membership changed under displacement; the finite difference would straddle a
+  h = 2.00e-03 skipped: grouped-bath membership changed under displacement; the finite difference would straddle a
+
+    h (bohr)      max |diff|             rms
+    1.00e-03       2.890e-07       1.225e-07
+    5.00e-04       6.284e-08       2.985e-08
+    2.50e-04       2.999e-08       1.851e-08
+    1.00e-04       5.399e-08       3.489e-08
+
+            h range (bohr)   log-log slope   regime (truncation would be 2)
+    1.0e-04 -> 2.5e-04             -0.64   energy noise, step too small
+    2.5e-04 -> 5.0e-04              1.07   truncation, step too large
+    5.0e-04 -> 1.0e-03              2.20   truncation, step too large
+
+  best: h = 2.50e-04 bohr, max |diff| = 2.999e-08 Eh/bohr
+
+All nine components at the best step, h = 2.50e-04 bohr
+  atom  axis                analytic               numerical          diff
+    S0     x      1.617187690461e-01      1.617187990341e-01     -3.00e-08
+    S0     y     -5.533073822288e-03     -5.533099872991e-03      2.61e-08
+    S0     z     -8.493426345670e-03     -8.493416244164e-03     -1.01e-08
+    O1     x     -1.034086207131e-01     -1.034086293075e-01      8.59e-09
+    O1     y      9.598249698292e-04      9.598091710359e-04      1.58e-08
+    O1     z     -4.935435754125e-02     -4.935434507206e-02     -1.25e-08
+    O2     x     -5.831014833294e-02     -5.831013876013e-02     -9.57e-09
+    O2     y      4.573248852458e-03      4.573227837682e-03      2.10e-08
+    O2     z      5.784778388690e-02      5.784780369140e-02     -1.98e-08
+
+Saved table to    /home/jiseong0626/mygit/grad/pysfnocigrad/test/so2/gbci/outputs/cas8e5o_fd_sweep_table.csv
+Saved workbook to /home/jiseong0626/mygit/grad/pysfnocigrad/test/so2/gbci/outputs/cas8e5o_fd_sweep_table.xlsx

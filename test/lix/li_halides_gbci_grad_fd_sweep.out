@@ -1,0 +1,85 @@
+
+========================================================================
+LiH  CAS(2e,2o)  act_list=[2, 3] (1-based)  basis=ccpvdz
+  E(GBCI) = -7.9818435526 Eh   net force = 1.67e-16   torque = 2.99e-18
+========================================================================
+    h (bohr)      max |diff|             rms   min overlap
+   1.000e-03       2.865e-08       2.865e-08      0.999980
+   5.000e-04       7.157e-09       7.157e-09      0.999990
+   1.000e-04       3.193e-10       2.841e-10      0.999998
+   5.000e-05       4.399e-11       3.652e-11      0.999999
+   1.000e-05       8.035e-11       6.802e-11      1.000000
+
+            h range (bohr)   log-log slope   regime
+    1.0e-05 -> 5.0e-05             -0.37   near the optimum
+    5.0e-05 -> 1.0e-04              2.86   truncation (h^2), step too large
+    1.0e-04 -> 5.0e-04              1.93   truncation (h^2), step too large
+    5.0e-04 -> 1.0e-03              2.00   truncation (h^2), step too large
+  best: h = 5.0e-05 bohr, max |diff| = 4.399e-11 Eh/bohr
+
+    h (bohr)          numerical z Li         diff           numerical z H         diff
+    analytic      1.830102797348e-02                  -1.830102797348e-02             
+   1.0e-03        1.830105662526e-02    -2.87e-08     -1.830105662082e-02     2.86e-08
+   5.0e-04        1.830103513090e-02    -7.16e-09     -1.830103512912e-02     7.16e-09
+   1.0e-04        1.830102829281e-02    -3.19e-10     -1.830102821732e-02     2.44e-10
+   5.0e-05 *      1.830102794642e-02     2.71e-11     -1.830102801748e-02     4.40e-11
+   1.0e-05        1.830102802636e-02    -5.29e-11     -1.830102789313e-02    -8.04e-11
+  (* best step; diff = analytic - numerical)
+
+========================================================================
+LiF  CAS(4e,4o)  act_list=[3, 4, 7, 10] (1-based)  basis=ccpvdz
+  E(GBCI) = -106.9430017858 Eh   net force = 1.29e-14   torque = 2.03e-16
+========================================================================
+    h (bohr)      max |diff|             rms   min overlap
+   1.000e-03       1.331e-07       1.331e-07      0.999978
+   5.000e-04       3.310e-08       3.308e-08      0.999989
+   1.000e-04       1.783e-09       1.554e-09      0.999998
+   5.000e-05       1.783e-09       1.269e-09      0.999999
+   1.000e-05       4.767e-09       4.119e-09      1.000000
+
+            h range (bohr)   log-log slope   regime
+    1.0e-05 -> 5.0e-05             -0.61   energy noise (1/h), step too small
+    5.0e-05 -> 1.0e-04              0.00   near the optimum
+    1.0e-04 -> 5.0e-04              1.82   truncation (h^2), step too large
+    5.0e-04 -> 1.0e-03              2.01   truncation (h^2), step too large
+  best: h = 5.0e-05 bohr, max |diff| = 1.783e-09 Eh/bohr
+
+    h (bohr)          numerical z Li         diff           numerical z F         diff
+    analytic      3.524744321527e-02                  -3.524744321526e-02             
+   1.0e-03        3.524757630657e-02    -1.33e-07     -3.524757627105e-02     1.33e-07
+   5.0e-04        3.524747631900e-02    -3.31e-08     -3.524747627637e-02     3.31e-08
+   1.0e-04        3.524744450090e-02    -1.29e-09     -3.524744499828e-02     1.78e-09
+   5.0e-05 *      3.524744499828e-02    -1.78e-09     -3.524744300876e-02    -2.07e-10
+   1.0e-05        3.524744656147e-02    -3.35e-09     -3.524744798256e-02     4.77e-09
+  (* best step; diff = analytic - numerical)
+
+========================================================================
+LiCl  CAS(4e,4o)  act_list=[7, 8, 11, 14] (1-based)  basis=ccpvdz
+  E(GBCI) = -466.9090605907 Eh   net force = 7.37e-14   torque = 2.03e-15
+========================================================================
+    h (bohr)      max |diff|             rms   min overlap
+   1.000e-03       2.337e-07       2.337e-07      0.999882
+   5.000e-04       5.830e-08       5.827e-08      0.999941
+   1.000e-04       3.334e-09       2.823e-09      0.999988
+   5.000e-05       3.902e-09       2.797e-09      0.999994
+   1.000e-05       2.778e-08       2.105e-08      0.999999
+
+            h range (bohr)   log-log slope   regime
+    1.0e-05 -> 5.0e-05             -1.22   energy noise (1/h), step too small
+    5.0e-05 -> 1.0e-04             -0.23   near the optimum
+    1.0e-04 -> 5.0e-04              1.78   truncation (h^2), step too large
+    5.0e-04 -> 1.0e-03              2.00   truncation (h^2), step too large
+  best: h = 1.0e-04 bohr, max |diff| = 3.334e-09 Eh/bohr
+
+    h (bohr)          numerical z Li         diff          numerical z Cl         diff
+    analytic      3.397175965658e-01                  -3.397175965658e-01             
+   1.0e-03        3.397178301725e-01    -2.34e-07     -3.397178302862e-01     2.34e-07
+   5.0e-04        3.397176548674e-01    -5.83e-08     -3.397176548106e-01     5.82e-08
+   1.0e-04 *      3.397175987629e-01    -2.20e-09     -3.397175998998e-01     3.33e-09
+   5.0e-05        3.397175959208e-01     6.45e-10     -3.397176004682e-01     3.90e-09
+   1.0e-05        3.397176243425e-01    -2.78e-08     -3.397176072895e-01     1.07e-08
+  (* best step; diff = analytic - numerical)
+
+Saved results to /home/jiseong0626/mygit/grad/pysfnocigrad/test/li_halides/gbci/outputs/li_halides_gbci_grad_fd_sweep.json
+Saved table to    /home/jiseong0626/mygit/grad/pysfnocigrad/test/li_halides/gbci/outputs/li_halides_gbci_grad_fd_sweep.csv
+Saved workbook to /home/jiseong0626/mygit/grad/pysfnocigrad/test/li_halides/gbci/outputs/li_halides_gbci_grad_fd_sweep.xlsx

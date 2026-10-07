@@ -1,0 +1,1801 @@
+{
+  "created_at": "2026-10-01T12:52:22.499644+00:00",
+  "script": "pp_casscf_S1_neb_images.py",
+  "molecule": "pp",
+  "method": "SA-CASSCF",
+  "state": "S1",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "unit": "Angstrom",
+  "hartree_to_ev": 27.21138602,
+  "input_dir": "test/pp/pes/pp_s1_pes_image_outputs/casci_ground_to_planar",
+  "input_pattern": "pp_s1_pes_casci_ground_to_planar_*.xyz",
+  "output_dir": "test/pp/casscf/pp_casscf_S1_pes_ground_to_planar_outputs",
+  "active_space": {
+    "ncas": 2,
+    "nelecas": [
+      1,
+      1
+    ],
+    "active_orbitals_1based": [
+      38,
+      39
+    ]
+  },
+  "state_average": {
+    "nroots": 2,
+    "state_labels": [
+      "S0",
+      "S1"
+    ],
+    "weights": [
+      0.5,
+      0.5
+    ],
+    "target_root": 1,
+    "target_state": "S1"
+  },
+  "settings": {
+    "scf_conv_tol": 1e-06,
+    "scf_max_cycle": 200,
+    "scf_damp": 0.4,
+    "casscf_conv_tol": 1e-06,
+    "casscf_max_cycle": 200,
+    "fix_spin_ss": 0
+  },
+  "n_images": 9,
+  "output_files": {
+    "results_npz": "pp_casscf_S1_pes_ground_to_planar_results.npz",
+    "summary_csv": "pp_casscf_S1_pes_ground_to_planar_summary.csv",
+    "metadata_json": "pp_casscf_S1_pes_ground_to_planar_metadata.json"
+  },
+  "records": [
+    {
+      "image_index": 0,
+      "input_xyz": "test/pp/pes/pp_s1_pes_image_outputs/casci_ground_to_planar/pp_s1_pes_casci_ground_to_planar_000.xyz",
+      "source_casci_energy_ev": null,
+      "rhf_energy_hartree": -454.3845412968227,
+      "sa_casscf_energy_hartree": -454.2641613713183,
+      "sa_casscf_energy_ev": -12361.157450126515,
+      "s0_energy_hartree": -454.3722119642728,
+      "s0_energy_ev": -12364.09765652109,
+      "s1_energy_hartree": -454.15611077836377,
+      "s1_energy_ev": -12358.217243731939,
+      "s1_relative_to_image0_ev": 0.0,
+      "s1_minus_s0_ev": 5.880412789151041,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.3722119642728,
+          "energy_ev": -12364.09765652109,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.15611077836377,
+          "energy_ev": -12358.217243731939,
+          "excitation_from_s0_ev": 5.880412789151041,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.73143993,
+            0.65188355,
+            -0.21325648
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.51817307,
+            1.24685434,
+            -0.32807972
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.50289652,
+            -0.69490677,
+            0.21335648
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.16127315,
+            -0.85635017,
+            0.32814287
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.68168724,
+            1.11637761,
+            -0.41896743
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.24671897,
+            -1.44686974,
+            0.41907899
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.54245055,
+            0.3305223,
+            -2.689e-05
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.59175012,
+            -1.70747153,
+            0.65557748
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.26130062,
+            2.23819524,
+            -0.65554408
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.16244599,
+            0.56467722,
+            -3.783e-05
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.74312415,
+            -0.46184653,
+            -0.25010711
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.09644794,
+            -0.16766994,
+            -0.23075471
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.41102441,
+            -1.46229433,
+            -0.48010942
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.59760033,
+            1.0330853,
+            -2.661e-05
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.81355702,
+            -0.95592807,
+            -0.42551776
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.72840944,
+            2.00130767,
+            0.23070888
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.35380603,
+            1.83246734,
+            0.25004055
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.14530813,
+            2.98201506,
+            0.42549135
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.28975431,
+            2.6673324,
+            0.48006407
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 1,
+      "input_xyz": "test/pp/pes/pp_s1_pes_image_outputs/casci_ground_to_planar/pp_s1_pes_casci_ground_to_planar_001.xyz",
+      "source_casci_energy_ev": null,
+      "rhf_energy_hartree": -454.3838420518953,
+      "sa_casscf_energy_hartree": -454.2660622828168,
+      "sa_casscf_energy_ev": -12361.20917656309,
+      "s0_energy_hartree": -454.3721553772289,
+      "s0_energy_ev": -12364.096116709194,
+      "s1_energy_hartree": -454.15996918840466,
+      "s1_energy_ev": -12358.322236416985,
+      "s1_relative_to_image0_ev": -0.10499268504645443,
+      "s1_minus_s0_ev": 5.773880292209602,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.3721553772289,
+          "energy_ev": -12364.096116709194,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.15996918840466,
+          "energy_ev": -12358.322236416985,
+          "excitation_from_s0_ev": 5.773880292209602,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.7390402,
+            0.64677,
+            -0.18634972
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.5167856,
+            1.25102044,
+            -0.28668511
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.5075201,
+            -0.70051705,
+            0.18650096
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.1602794,
+            -0.86126869,
+            0.28680489
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.68933434,
+            1.11630287,
+            -0.36615401
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.24735701,
+            -1.45933421,
+            0.36629323
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.54082077,
+            0.33872331,
+            1.781e-05
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.58825626,
+            -1.71758598,
+            0.57298494
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.26908013,
+            2.25063309,
+            -0.57287197
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.1645857,
+            0.56932965,
+            -6.17e-06
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.74262699,
+            -0.46611458,
+            -0.21916594
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.09547887,
+            -0.17231584,
+            -0.2020781
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.41339454,
+            -1.47040142,
+            -0.42084941
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.60113797,
+            1.02942375,
+            0.00025532
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.81070922,
+            -0.96548246,
+            -0.37276107
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.73089616,
+            2.00463191,
+            0.20243966
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.35836314,
+            1.84254779,
+            0.21925755
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.15084757,
+            2.9864955,
+            0.37321025
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.28037064,
+            2.68476183,
+            0.4207617
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 2,
+      "input_xyz": "test/pp/pes/pp_s1_pes_image_outputs/casci_ground_to_planar/pp_s1_pes_casci_ground_to_planar_002.xyz",
+      "source_casci_energy_ev": null,
+      "rhf_energy_hartree": -454.3821422435973,
+      "sa_casscf_energy_hartree": -454.26700770462,
+      "sa_casscf_energy_ev": -12361.234902800728,
+      "s0_energy_hartree": -454.37117113851747,
+      "s0_energy_ev": -12364.069334209682,
+      "s1_energy_hartree": -454.16284427072264,
+      "s1_energy_ev": -12358.400471391778,
+      "s1_relative_to_image0_ev": -0.18322765983975842,
+      "s1_minus_s0_ev": 5.668862817902462,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.37117113851747,
+          "energy_ev": -12364.069334209682,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.16284427072264,
+          "energy_ev": -12358.400471391778,
+          "excitation_from_s0_ev": 5.668862817902462,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.74664048,
+            0.64165646,
+            -0.15944296
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.51539813,
+            1.25518654,
+            -0.24529049
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.51214367,
+            -0.70612733,
+            0.15964545
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.15928565,
+            -0.86618721,
+            0.2454669
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.69698145,
+            1.11622813,
+            -0.31334059
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.24799505,
+            -1.47179868,
+            0.31350746
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.53919098,
+            0.34692432,
+            6.251e-05
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.58476241,
+            -1.72770043,
+            0.49039241
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.27685963,
+            2.26307094,
+            -0.49019987
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.16672541,
+            0.57398208,
+            2.548e-05
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.74212983,
+            -0.47038263,
+            -0.18822477
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.09450981,
+            -0.17696173,
+            -0.17340148
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.41576468,
+            -1.47850851,
+            -0.36158939
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.6046756,
+            1.0257622,
+            0.00053724
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.80786142,
+            -0.97503685,
+            -0.32000437
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.73338287,
+            2.00795616,
+            0.17417045
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.36292025,
+            1.85262825,
+            0.18847454
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.15638701,
+            2.99097595,
+            0.32092914
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.27098697,
+            2.70219125,
+            0.36145933
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 3,
+      "input_xyz": "test/pp/pes/pp_s1_pes_image_outputs/casci_ground_to_planar/pp_s1_pes_casci_ground_to_planar_003.xyz",
+      "source_casci_energy_ev": null,
+      "rhf_energy_hartree": -454.3797308679948,
+      "sa_casscf_energy_hartree": -454.26722269177463,
+      "sa_casscf_energy_ev": -12361.240752899183,
+      "s0_energy_hartree": -454.36948295537564,
+      "s0_energy_ev": -12364.023396406537,
+      "s1_energy_hartree": -454.1649624281736,
+      "s1_energy_ev": -12358.458109391828,
+      "s1_relative_to_image0_ev": -0.2408656598890957,
+      "s1_minus_s0_ev": 5.565287014708109,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.36948295537564,
+          "energy_ev": -12364.023396406537,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.1649624281736,
+          "energy_ev": -12358.458109391828,
+          "excitation_from_s0_ev": 5.565287014708109,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.75424075,
+            0.63654291,
+            -0.13253621
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.51401066,
+            1.25935265,
+            -0.20389588
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.51676725,
+            -0.71173762,
+            0.13278993
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.1582919,
+            -0.87110573,
+            0.20412892
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.70462855,
+            1.11615339,
+            -0.26052716
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.24863309,
+            -1.48426315,
+            0.2607217
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.5375612,
+            0.35512533,
+            0.00010722
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.58126856,
+            -1.73781488,
+            0.40779987
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.28463914,
+            2.27550879,
+            -0.40752776
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.16886512,
+            0.57863452,
+            5.714e-05
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.74163266,
+            -0.47465068,
+            -0.1572836
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.09354075,
+            -0.18160763,
+            -0.14472487
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.41813481,
+            -1.4866156,
+            -0.30232938
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.60821324,
+            1.02210065,
+            0.00081917
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.80501361,
+            -0.98459125,
+            -0.26724768
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.73586959,
+            2.0112804,
+            0.14590123
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.36747735,
+            1.86270871,
+            0.15769154
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.16192646,
+            2.99545639,
+            0.26864804
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.26160329,
+            2.71962068,
+            0.30215696
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 4,
+      "input_xyz": "test/pp/pes/pp_s1_pes_image_outputs/casci_ground_to_planar/pp_s1_pes_casci_ground_to_planar_004.xyz",
+      "source_casci_energy_ev": null,
+      "rhf_energy_hartree": -454.3768298020501,
+      "sa_casscf_energy_hartree": -454.266895354982,
+      "sa_casscf_energy_ev": -12361.23184561136,
+      "s0_energy_hartree": -454.3672873582183,
+      "s0_energy_ev": -12363.963651164742,
+      "s1_energy_hartree": -454.16650335174575,
+      "s1_energy_ev": -12358.500040057977,
+      "s1_relative_to_image0_ev": -0.282796326038806,
+      "s1_minus_s0_ev": 5.4636111067662325,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.3672873582183,
+          "energy_ev": -12363.963651164742,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.16650335174575,
+          "energy_ev": -12358.500040057977,
+          "excitation_from_s0_ev": 5.4636111067662325,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.76184102,
+            0.63142937,
+            -0.10562945
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.51262319,
+            1.26351875,
+            -0.16250126
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.52139083,
+            -0.7173479,
+            0.10593442
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.15729814,
+            -0.87602424,
+            0.16279093
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.71227566,
+            1.11607864,
+            -0.20771374
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.24927113,
+            -1.49672762,
+            0.20793594
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.53593142,
+            0.36332634,
+            0.00015192
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.5777747,
+            -1.74792934,
+            0.32520734
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.29241865,
+            2.28794663,
+            -0.32485565
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.17100483,
+            0.58328695,
+            8.88e-05
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.7411355,
+            -0.47891873,
+            -0.12634243
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.09257168,
+            -0.18625352,
+            -0.11604826
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.42050494,
+            -1.4947227,
+            -0.24306937
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.61175088,
+            1.01843911,
+            0.0011011
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.80216581,
+            -0.99414564,
+            -0.21449099
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.73835631,
+            2.01460464,
+            0.11763202
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.37203446,
+            1.87278916,
+            0.12690853
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.1674659,
+            2.99993684,
+            0.21636693
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.25221962,
+            2.7370501,
+            0.24285459
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 5,
+      "input_xyz": "test/pp/pes/pp_s1_pes_image_outputs/casci_ground_to_planar/pp_s1_pes_casci_ground_to_planar_005.xyz",
+      "source_casci_energy_ev": null,
+      "rhf_energy_hartree": -454.373579106202,
+      "sa_casscf_energy_hartree": -454.26614373751903,
+      "sa_casscf_energy_ev": -12361.211393058435,
+      "s0_energy_hartree": -454.3647281628168,
+      "s0_energy_ev": -12363.894011910772,
+      "s1_energy_hartree": -454.1675593122213,
+      "s1_energy_ev": -12358.5287742061,
+      "s1_relative_to_image0_ev": -0.3115304741604632,
+      "s1_minus_s0_ev": 5.365237704674324,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.3647281628168,
+          "energy_ev": -12363.894011910772,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.1675593122213,
+          "energy_ev": -12358.5287742061,
+          "excitation_from_s0_ev": 5.365237704674324,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.7694413,
+            0.62631582,
+            -0.07872269
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.51123573,
+            1.26768485,
+            -0.12110664
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.52601441,
+            -0.72295818,
+            0.07907891
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.15630439,
+            -0.88094276,
+            0.12145295
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.71992276,
+            1.1160039,
+            -0.15490032
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.24990918,
+            -1.50919209,
+            0.15515018
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.53430163,
+            0.37152736,
+            0.00019662
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.57428084,
+            -1.75804379,
+            0.2426148
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.30019815,
+            2.30038448,
+            -0.24218355
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.17314454,
+            0.58793938,
+            0.00012046
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.74063834,
+            -0.48318679,
+            -0.09540126
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.09160262,
+            -0.19089942,
+            -0.08737165
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.42287507,
+            -1.50282979,
+            -0.18380935
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.61528851,
+            1.01477756,
+            0.00138303
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.79931801,
+            -1.00370003,
+            -0.16173429
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.74084303,
+            2.01792888,
+            0.0893628
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.37659157,
+            1.88286961,
+            0.09612553
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.17300534,
+            3.00441728,
+            0.16408583
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.24283595,
+            2.75447953,
+            0.18355221
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 6,
+      "input_xyz": "test/pp/pes/pp_s1_pes_image_outputs/casci_ground_to_planar/pp_s1_pes_casci_ground_to_planar_006.xyz",
+      "source_casci_energy_ev": null,
+      "rhf_energy_hartree": -454.37002523579565,
+      "sa_casscf_energy_hartree": -454.2649984793826,
+      "sa_casscf_energy_ev": -12361.180228997193,
+      "s0_energy_hartree": -454.36184784784103,
+      "s0_energy_ev": -12363.815634548107,
+      "s1_energy_hartree": -454.1681491109242,
+      "s1_energy_ev": -12358.544823446278,
+      "s1_relative_to_image0_ev": -0.32757971433966304,
+      "s1_minus_s0_ev": 5.270811101829879,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.36184784784103,
+          "energy_ev": -12363.815634548107,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.1681491109242,
+          "energy_ev": -12358.544823446278,
+          "excitation_from_s0_ev": 5.270811101829879,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.77704157,
+            0.62120227,
+            -0.05181594
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.50984826,
+            1.27185096,
+            -0.07971203
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.53063799,
+            -0.72856846,
+            0.05222339
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.15531064,
+            -0.88586128,
+            0.08011497
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.72756987,
+            1.11592916,
+            -0.10208689
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.25054722,
+            -1.52165656,
+            0.10236442
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.53267185,
+            0.37972837,
+            0.00024132
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.57078699,
+            -1.76815824,
+            0.16002226
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.30797766,
+            2.31282233,
+            -0.15951144
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.17528425,
+            0.59259182,
+            0.00015212
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.74014117,
+            -0.48745484,
+            -0.06446009
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.09063355,
+            -0.19554532,
+            -0.05869503
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.4252452,
+            -1.51093688,
+            -0.12454934
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.61882615,
+            1.01111601,
+            0.00166496
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.79647021,
+            -1.01325442,
+            -0.1089776
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.74332975,
+            2.02125312,
+            0.06109358
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.38114867,
+            1.89295007,
+            0.06534253
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.17854479,
+            3.00889772,
+            0.11180473
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.23345227,
+            2.77190896,
+            0.12424984
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 7,
+      "input_xyz": "test/pp/pes/pp_s1_pes_image_outputs/casci_ground_to_planar/pp_s1_pes_casci_ground_to_planar_007.xyz",
+      "source_casci_energy_ev": null,
+      "rhf_energy_hartree": -454.3661134161332,
+      "sa_casscf_energy_hartree": -454.2633928356752,
+      "sa_casscf_energy_ev": -12361.13653720646,
+      "s0_energy_hartree": -454.3585781110903,
+      "s0_energy_ev": -12363.7266604792,
+      "s1_energy_hartree": -454.1682075602601,
+      "s1_energy_ev": -12358.54641393372,
+      "s1_relative_to_image0_ev": -0.32917020178138046,
+      "s1_minus_s0_ev": 5.180246545480864,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.3585781110903,
+          "energy_ev": -12363.7266604792,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.1682075602601,
+          "energy_ev": -12358.54641393372,
+          "excitation_from_s0_ev": 5.180246545480864,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.78464185,
+            0.61608873,
+            -0.02490918
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.50846079,
+            1.27601706,
+            -0.03831742
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.53526156,
+            -0.73417875,
+            0.02536787
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.15431689,
+            -0.8907798,
+            0.03877698
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.73521698,
+            1.11585442,
+            -0.04927347
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.25118526,
+            -1.53412103,
+            0.04957865
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.53104206,
+            0.38792938,
+            0.00028603
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.56729314,
+            -1.77827269,
+            0.07742973
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.31575716,
+            2.32526018,
+            -0.07683934
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.17742396,
+            0.59724425,
+            0.00018377
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.73964401,
+            -0.49172289,
+            -0.03351892
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.08966449,
+            -0.20019121,
+            -0.03001842
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.42761534,
+            -1.51904397,
+            -0.06528932
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.62236378,
+            1.00745446,
+            0.00194688
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.7936224,
+            -1.02280882,
+            -0.0562209
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.74581646,
+            2.02457737,
+            0.03282437
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.38570578,
+            1.90303053,
+            0.03455952
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.18408423,
+            3.01337817,
+            0.05952362
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.2240686,
+            2.78933838,
+            0.06494747
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 8,
+      "input_xyz": "test/pp/pes/pp_s1_pes_image_outputs/casci_ground_to_planar/pp_s1_pes_casci_ground_to_planar_008.xyz",
+      "source_casci_energy_ev": null,
+      "rhf_energy_hartree": -454.36168550586206,
+      "sa_casscf_energy_hartree": -454.26115927365686,
+      "sa_casscf_energy_ev": -12361.075758888179,
+      "s0_energy_hartree": -454.35475395703435,
+      "s0_energy_ev": -12363.622599946984,
+      "s1_energy_hartree": -454.16756459027937,
+      "s1_energy_ev": -12358.528917829375,
+      "s1_relative_to_image0_ev": -0.3116740974364802,
+      "s1_minus_s0_ev": 5.093682117609073,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.35475395703435,
+          "energy_ev": -12363.622599946984,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.16756459027937,
+          "energy_ev": -12358.528917829375,
+          "excitation_from_s0_ev": 5.093682117609073,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.79224212,
+            0.61097518,
+            0.00199758
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.50707332,
+            1.28018316,
+            0.0030772
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.53988514,
+            -0.73978903,
+            -0.00148764
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.15332314,
+            -0.89569832,
+            -0.002561
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.74286408,
+            1.11577968,
+            0.00353995
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.2518233,
+            -1.5465855,
+            -0.00320711
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.52941228,
+            0.39613039,
+            0.00033073
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.56379928,
+            -1.78838714,
+            -0.00516281
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.32353667,
+            2.33769803,
+            0.00583277
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.17956367,
+            0.60189668,
+            0.00021543
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.73914685,
+            -0.49599094,
+            -0.00257775
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.08869542,
+            -0.20483711,
+            -0.00134181
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.42998547,
+            -1.52715106,
+            -0.00602931
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.62590142,
+            1.00379291,
+            0.00222881
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.7907746,
+            -1.03236321,
+            -0.00346421
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.74830318,
+            2.02790161,
+            0.00455515
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.39026289,
+            1.91311098,
+            0.00377652
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.18962367,
+            3.01785861,
+            0.00724252
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.21468493,
+            2.80676781,
+            0.0056451
+          ]
+        }
+      ]
+    }
+  ]
+}

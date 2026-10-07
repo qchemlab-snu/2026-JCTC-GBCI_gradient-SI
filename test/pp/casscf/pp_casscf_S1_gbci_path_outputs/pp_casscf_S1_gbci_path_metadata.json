@@ -1,0 +1,1801 @@
+{
+  "created_at": "2026-09-30T12:20:50.868786+00:00",
+  "script": "pp_casscf_S1_neb_images.py",
+  "molecule": "pp",
+  "method": "SA-CASSCF",
+  "state": "S1",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "unit": "Angstrom",
+  "hartree_to_ev": 27.21138602,
+  "input_dir": "test/pp/gbci/pp_gbci_S1_planar_tict_neb_outputs",
+  "input_pattern": "pp_gbci_S1_planar_tict_neb_*.xyz",
+  "output_dir": "test/pp/casscf/pp_casscf_S1_gbci_path_outputs",
+  "active_space": {
+    "ncas": 2,
+    "nelecas": [
+      1,
+      1
+    ],
+    "active_orbitals_1based": [
+      38,
+      39
+    ]
+  },
+  "state_average": {
+    "nroots": 2,
+    "state_labels": [
+      "S0",
+      "S1"
+    ],
+    "weights": [
+      0.5,
+      0.5
+    ],
+    "target_root": 1,
+    "target_state": "S1"
+  },
+  "settings": {
+    "scf_conv_tol": 1e-06,
+    "scf_max_cycle": 200,
+    "scf_damp": 0.4,
+    "casscf_conv_tol": 1e-06,
+    "casscf_max_cycle": 200,
+    "fix_spin_ss": 0
+  },
+  "n_images": 9,
+  "output_files": {
+    "results_npz": "pp_casscf_S1_gbci_path_results.npz",
+    "summary_csv": "pp_casscf_S1_gbci_path_summary.csv",
+    "metadata_json": "pp_casscf_S1_gbci_path_metadata.json"
+  },
+  "records": [
+    {
+      "image_index": 0,
+      "input_xyz": "test/pp/gbci/pp_gbci_S1_planar_tict_neb_outputs/pp_gbci_S1_planar_tict_neb_000.xyz",
+      "source_casci_energy_ev": -12358.852266871658,
+      "rhf_energy_hartree": -454.357470412902,
+      "sa_casscf_energy_hartree": -454.2599684913452,
+      "sa_casscf_energy_ev": -12361.043356051032,
+      "s0_energy_hartree": -454.34329535720997,
+      "s0_energy_ev": -12363.310795563913,
+      "s1_energy_hartree": -454.17664162548044,
+      "s1_energy_ev": -12358.775916538149,
+      "s1_relative_to_image0_ev": 0.0,
+      "s1_minus_s0_ev": 4.534879025765631,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.34329535720997,
+          "energy_ev": -12363.310795563913,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.17664162548044,
+          "energy_ev": -12358.775916538149,
+          "excitation_from_s0_ev": 4.534879025765631,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.82982877,
+            0.63275106,
+            -0.0
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.53920964,
+            1.24425728,
+            -0.0
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.60199675,
+            -0.70944046,
+            0.0
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.18188051,
+            -0.86081364,
+            0.0
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.76594101,
+            1.16420457,
+            -0.0
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.31029725,
+            -1.52002832,
+            0.0
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.57921306,
+            0.32434146,
+            -0.0
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.6137885,
+            -1.77431135,
+            0.0
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.30438178,
+            2.29404036,
+            -0.0
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.1270775,
+            0.57082026,
+            -0.0
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.80402415,
+            -0.51138841,
+            -0.0
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.13410385,
+            -0.20053361,
+            -0.0
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.51117904,
+            -1.55279152,
+            -0.0
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.66314252,
+            1.04412675,
+            0.0
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.85312721,
+            -1.013403,
+            -0.0
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.75323787,
+            2.0446195,
+            0.0
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.39502111,
+            1.8995972,
+            0.0
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.16398591,
+            3.04913117,
+            0.0
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.22481973,
+            2.78620063,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 1,
+      "input_xyz": "test/pp/gbci/pp_gbci_S1_planar_tict_neb_outputs/pp_gbci_S1_planar_tict_neb_001.xyz",
+      "source_casci_energy_ev": -12358.8525955279,
+      "rhf_energy_hartree": -454.3572980818949,
+      "sa_casscf_energy_hartree": -454.25987342873793,
+      "sa_casscf_energy_ev": -12361.040769265728,
+      "s0_energy_hartree": -454.343104728954,
+      "s0_energy_ev": -12363.305608304854,
+      "s1_energy_hartree": -454.17664212852185,
+      "s1_energy_ev": -12358.775930226602,
+      "s1_relative_to_image0_ev": -1.3688453691429459e-05,
+      "s1_minus_s0_ev": 4.529678078252769,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.343104728954,
+          "energy_ev": -12363.305608304854,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.17664212852185,
+          "energy_ev": -12358.775930226602,
+          "excitation_from_s0_ev": 4.529678078252769,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.8299304,
+            0.63268136,
+            0.00032112
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.53935518,
+            1.24421473,
+            0.0032612
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.60205074,
+            -0.70945846,
+            -0.00026727
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.18197001,
+            -0.86074282,
+            0.00221922
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.76624596,
+            1.16386362,
+            -0.00181793
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.31053079,
+            -1.51995134,
+            -0.00291745
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.57937308,
+            0.32438414,
+            0.00370543
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.6137229,
+            -1.774228,
+            0.00081109
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.30446606,
+            2.29407474,
+            0.00291342
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.12700155,
+            0.57086683,
+            -0.01701321
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.80410342,
+            -0.51133949,
+            0.00159167
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.13414903,
+            -0.20047192,
+            0.00124761
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.51120657,
+            -1.55275167,
+            0.0035456
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.66330029,
+            1.04409785,
+            -0.00322021
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.85317426,
+            -1.01338609,
+            0.0013964
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.75336965,
+            2.04459909,
+            0.00070796
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.39518673,
+            1.89958668,
+            0.00090186
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.16420262,
+            3.04910767,
+            0.00051557
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.22465873,
+            2.78623301,
+            0.00214123
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 2,
+      "input_xyz": "test/pp/gbci/pp_gbci_S1_planar_tict_neb_outputs/pp_gbci_S1_planar_tict_neb_002.xyz",
+      "source_casci_energy_ev": -12359.036239988218,
+      "rhf_energy_hartree": -454.32802026470756,
+      "sa_casscf_energy_hartree": -454.24680227257153,
+      "sa_casscf_energy_ev": -12360.685084989556,
+      "s0_energy_hartree": -454.3118743475292,
+      "s0_energy_ev": -12362.455786340353,
+      "s1_energy_hartree": -454.18173019761383,
+      "s1_energy_ev": -12358.914383638761,
+      "s1_relative_to_image0_ev": -0.13846710061261547,
+      "s1_minus_s0_ev": 3.5414027015925704,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.3118743475292,
+          "energy_ev": -12362.455786340353,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.18173019761383,
+          "energy_ev": -12358.914383638761,
+          "excitation_from_s0_ev": 3.5414027015925704,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.80308,
+            0.63859688,
+            -0.17760251
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.50367017,
+            1.23114231,
+            -0.13148602
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.6072045,
+            -0.69589934,
+            -0.00634984
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.19375958,
+            -0.86525952,
+            0.15666269
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.72716642,
+            1.17533213,
+            -0.30987063
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.33337453,
+            -1.49081011,
+            0.02082941
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.57225854,
+            0.30250021,
+            0.08338122
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.6487819,
+            -1.77675836,
+            0.33238617
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.24081538,
+            2.26983254,
+            -0.23205634
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.10585563,
+            0.53524153,
+            0.39758086
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.80772183,
+            -0.50601447,
+            0.00479178
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.11902907,
+            -0.17693806,
+            -0.18296639
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.52656559,
+            -1.55197651,
+            -0.0155202
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.63246898,
+            1.0673244,
+            -0.17165254
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.83669037,
+            -0.97601586,
+            -0.34227068
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.72646534,
+            2.04583958,
+            -0.00098269
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.38806971,
+            1.87549187,
+            0.21516266
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.12291992,
+            3.05657634,
+            -0.02342895
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.22457703,
+            2.75317437,
+            0.38041292
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 3,
+      "input_xyz": "test/pp/gbci/pp_gbci_S1_planar_tict_neb_outputs/pp_gbci_S1_planar_tict_neb_003.xyz",
+      "source_casci_energy_ev": -12359.18053775088,
+      "rhf_energy_hartree": -454.32526757396306,
+      "sa_casscf_energy_hartree": -454.2472689467206,
+      "sa_casscf_energy_ev": -12360.697783839973,
+      "s0_energy_hartree": -454.3088436421804,
+      "s0_energy_ev": -12362.373316647194,
+      "s1_energy_hartree": -454.18569425126077,
+      "s1_energy_ev": -12359.022251032751,
+      "s1_relative_to_image0_ev": -0.2463344946027064,
+      "s1_minus_s0_ev": 3.3510656144424833,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.3088436421804,
+          "energy_ev": -12362.373316647194,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.18569425126077,
+          "energy_ev": -12359.022251032751,
+          "excitation_from_s0_ev": 3.3510656144424833,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.75255892,
+            0.62547492,
+            -0.32944857
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.44001452,
+            1.18864981,
+            -0.28002496
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.61590699,
+            -0.67054064,
+            0.05820484
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.22523896,
+            -0.84479176,
+            0.36423855
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.64928447,
+            1.15404632,
+            -0.60612261
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.37032599,
+            -1.43448126,
+            0.14527853
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.56195303,
+            0.28205232,
+            0.15757062
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.71894665,
+            -1.72555699,
+            0.72245158
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.12479189,
+            2.18923692,
+            -0.52402385
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.093096,
+            0.48377129,
+            0.47158734
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.80411269,
+            -0.50223402,
+            -0.07661014
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.09393404,
+            -0.13869224,
+            -0.33298414
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.52273725,
+            -1.54535758,
+            -0.1667667
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.59173443,
+            1.10949547,
+            -0.25851467
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.8064326,
+            -0.90864244,
+            -0.61392746
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.69635267,
+            2.05301879,
+            0.07567509
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.38242211,
+            1.84195329,
+            0.38985939
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.08141279,
+            3.06810944,
+            0.10496867
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.22763399,
+            2.6858683,
+            0.69106411
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 4,
+      "input_xyz": "test/pp/gbci/pp_gbci_S1_planar_tict_neb_outputs/pp_gbci_S1_planar_tict_neb_004.xyz",
+      "source_casci_energy_ev": -12359.313949274805,
+      "rhf_energy_hartree": -454.32630163510146,
+      "sa_casscf_energy_hartree": -454.24946758192743,
+      "sa_casscf_energy_ev": -12360.757611751304,
+      "s0_energy_hartree": -454.3097801713496,
+      "s0_energy_ev": -12362.398800903935,
+      "s1_energy_hartree": -454.18915499250534,
+      "s1_energy_ev": -12359.116422598672,
+      "s1_relative_to_image0_ev": -0.34050606052369403,
+      "s1_minus_s0_ev": 3.2823783052624256,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.3097801713496,
+          "energy_ev": -12362.398800903935,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.18915499250534,
+          "energy_ev": -12359.116422598672,
+          "excitation_from_s0_ev": 3.2823783052624256,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.70478419,
+            0.59422994,
+            -0.44392574
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.37649224,
+            1.12466388,
+            -0.41398535
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.63071954,
+            -0.63414296,
+            0.13484893
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.26355564,
+            -0.80070793,
+            0.53509111
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.57151962,
+            1.09919134,
+            -0.83687582
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.41592058,
+            -1.35451313,
+            0.29271106
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.55289639,
+            0.26646665,
+            0.19562417
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.79662418,
+            -1.62809411,
+            1.04385538
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.01009203,
+            2.07002806,
+            -0.77992095
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.08597997,
+            0.43744345,
+            0.49041869
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.79790269,
+            -0.4915433,
+            -0.16952924
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.07302829,
+            -0.09435464,
+            -0.44703922
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.51293241,
+            -1.52527925,
+            -0.33214636
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.56256836,
+            1.14988834,
+            -0.29176789
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.77999452,
+            -0.82970384,
+            -0.82009009
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.67730776,
+            2.05271116,
+            0.16002292
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.38031135,
+            1.80166072,
+            0.51306647
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.05595892,
+            3.06644597,
+            0.25324487
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.23203278,
+            2.60698957,
+            0.90392957
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 5,
+      "input_xyz": "test/pp/gbci/pp_gbci_S1_planar_tict_neb_outputs/pp_gbci_S1_planar_tict_neb_005.xyz",
+      "source_casci_energy_ev": -12359.417776963239,
+      "rhf_energy_hartree": -454.32718898599035,
+      "sa_casscf_energy_hartree": -454.25118557458825,
+      "sa_casscf_energy_ev": -12360.804360712777,
+      "s0_energy_hartree": -454.3106508053495,
+      "s0_energy_ev": -12362.422492061789,
+      "s1_energy_hartree": -454.191720343827,
+      "s1_energy_ev": -12359.186229363762,
+      "s1_relative_to_image0_ev": -0.41031282561380067,
+      "s1_minus_s0_ev": 3.236262698025383,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.3106508053495,
+          "energy_ev": -12362.422492061789,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.191720343827,
+          "energy_ev": -12359.186229363762,
+          "excitation_from_s0_ev": 3.236262698025383,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.6637292,
+            0.55230442,
+            -0.53439286
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.31888126,
+            1.04441148,
+            -0.53230575
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.64992234,
+            -0.58551916,
+            0.21054003
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.30214686,
+            -0.74028582,
+            0.67427917
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.50065804,
+            1.02091196,
+            -1.02519266
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.46574953,
+            -1.25090033,
+            0.43873771
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.54373514,
+            0.24940955,
+            0.21264081
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.87371091,
+            -1.50108436,
+            1.30623744
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.90620366,
+            1.92130347,
+            -1.00515778
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.08073972,
+            0.39710445,
+            0.49355635
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.79332161,
+            -0.47667413,
+            -0.25092834
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.05590377,
+            -0.04753241,
+            -0.53797841
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.50581959,
+            -1.49708505,
+            -0.47966059
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.54104719,
+            1.18626815,
+            -0.30667632
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.75546869,
+            -0.74518683,
+            -0.98939583
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.66537781,
+            2.04569928,
+            0.23879271
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.38107797,
+            1.75849766,
+            0.60854346
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.04006084,
+            3.05334527,
+            0.39414759
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.23321364,
+            2.52639231,
+            1.06635487
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 6,
+      "input_xyz": "test/pp/gbci/pp_gbci_S1_planar_tict_neb_outputs/pp_gbci_S1_planar_tict_neb_006.xyz",
+      "source_casci_energy_ev": -12359.488536988854,
+      "rhf_energy_hartree": -454.32755207328455,
+      "sa_casscf_energy_hartree": -454.2522247556276,
+      "sa_casscf_energy_ev": -12360.832638269183,
+      "s0_energy_hartree": -454.3110440507997,
+      "s0_energy_ev": -12362.433192815535,
+      "s1_energy_hartree": -454.19340546045544,
+      "s1_energy_ev": -12359.232083722829,
+      "s1_relative_to_image0_ev": -0.4561671846804529,
+      "s1_minus_s0_ev": 3.2011090927062082,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.3110440507997,
+          "energy_ev": -12362.433192815535,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.19340546045544,
+          "energy_ev": -12359.232083722829,
+          "excitation_from_s0_ev": 3.2011090927062082,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.62886473,
+            0.50251024,
+            -0.60953858
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.2676536,
+            0.94824368,
+            -0.63951726
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.67142838,
+            -0.5237393,
+            0.28204721
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.33871075,
+            -0.66553941,
+            0.79119089
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.43746669,
+            0.92364587,
+            -1.18383902
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.51662789,
+            -1.12277621,
+            0.57732427
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.53475061,
+            0.22853203,
+            0.21816718
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.94696305,
+            -1.35020731,
+            1.52571521
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.81260268,
+            1.74140139,
+            -1.21134897
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.07551747,
+            0.36041204,
+            0.49069842
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.79052224,
+            -0.45849363,
+            -0.32314778
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.04064202,
+            0.00241632,
+            -0.61639909
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.50175769,
+            -1.46291432,
+            -0.61231808
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.52302381,
+            1.22137979,
+            -0.31507703
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.7307456,
+            -0.6542036,
+            -1.13851243
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.65748021,
+            2.03385766,
+            0.31287049
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.38435526,
+            1.71281687,
+            0.69088081
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.03007024,
+            3.03111508,
+            0.52877565
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.22862406,
+            2.44292274,
+            1.2081868
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 7,
+      "input_xyz": "test/pp/gbci/pp_gbci_S1_planar_tict_neb_outputs/pp_gbci_S1_planar_tict_neb_007.xyz",
+      "source_casci_energy_ev": -12359.528833074082,
+      "rhf_energy_hartree": -454.32720049217573,
+      "sa_casscf_energy_hartree": -454.2525459034764,
+      "sa_casscf_energy_ev": -12360.841377147266,
+      "s0_energy_hartree": -454.3107335862274,
+      "s0_energy_ev": -12362.424744644213,
+      "s1_energy_hartree": -454.19435822072535,
+      "s1_energy_ev": -12359.258009650317,
+      "s1_relative_to_image0_ev": -0.48209311216851347,
+      "s1_minus_s0_ev": 3.166734993894912,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.3107335862274,
+          "energy_ev": -12362.424744644213,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.19435822072535,
+          "energy_ev": -12359.258009650317,
+          "excitation_from_s0_ev": 3.166734993894912,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.59809833,
+            0.44699601,
+            -0.67305322
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.22127084,
+            0.83739215,
+            -0.73441139
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.69255703,
+            -0.45013874,
+            0.34495452
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.37189879,
+            -0.57913799,
+            0.88914411
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.38059789,
+            0.81301066,
+            -1.31701666
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.56512681,
+            -0.97244301,
+            0.70025385
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.52605456,
+            0.20323562,
+            0.21886182
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.01470748,
+            -1.18095732,
+            1.70889549
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.72680481,
+            1.53098602,
+            -1.39595299
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.06886466,
+            0.32357824,
+            0.48682662
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.78842469,
+            -0.43630627,
+            -0.39123455
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.02467292,
+            0.05846876,
+            -0.68993492
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.49983839,
+            -1.42248349,
+            -0.73737629
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.50431005,
+            1.2592914,
+            -0.32228667
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.7034122,
+            -0.55230815,
+            -1.27840282
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.65061434,
+            2.01839087,
+            0.38440961
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.38964747,
+            1.66210394,
+            0.76924571
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.02214571,
+            3.00118031,
+            0.66025441
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.21769741,
+            2.3505209,
+            1.34651106
+          ]
+        }
+      ]
+    },
+    {
+      "image_index": 8,
+      "input_xyz": "test/pp/gbci/pp_gbci_S1_planar_tict_neb_outputs/pp_gbci_S1_planar_tict_neb_008.xyz",
+      "source_casci_energy_ev": -12359.541793958158,
+      "rhf_energy_hartree": -454.32583557070086,
+      "sa_casscf_energy_hartree": -454.2520516170347,
+      "sa_casscf_energy_ev": -12360.827926928096,
+      "s0_energy_hartree": -454.30938814058146,
+      "s0_energy_ev": -12362.388133203372,
+      "s1_energy_hartree": -454.19471509348796,
+      "s1_energy_ev": -12359.26772065282,
+      "s1_relative_to_image0_ev": -0.49180411467204976,
+      "s1_minus_s0_ev": 3.1204125505509768,
+      "rhf_converged": true,
+      "casscf_converged": true,
+      "state_weights": [
+        0.5,
+        0.5
+      ],
+      "states": [
+        {
+          "root": 0,
+          "label": "S0",
+          "energy_hartree": -454.30938814058146,
+          "energy_ev": -12362.388133203372,
+          "excitation_from_s0_ev": 0.0,
+          "spin_square": null,
+          "multiplicity": null
+        },
+        {
+          "root": 1,
+          "label": "S1",
+          "energy_hartree": -454.19471509348796,
+          "energy_ev": -12359.26772065282,
+          "excitation_from_s0_ev": 3.1204125505509768,
+          "spin_square": null,
+          "multiplicity": null
+        }
+      ],
+      "geometry": [
+        {
+          "element": "C",
+          "xyz": [
+            -3.56908686,
+            0.38850017,
+            -0.72618231
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.17759969,
+            0.71497823,
+            -0.81369582
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -3.71087983,
+            -0.36762545,
+            0.39568644
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -2.40073116,
+            -0.4857476,
+            0.96857388
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.327783,
+            0.69630776,
+            -1.42649481
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -4.60838875,
+            -0.80455689,
+            0.80057895
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            -1.51714476,
+            0.17268826,
+            0.21848606
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -2.07622655,
+            -1.00061387,
+            1.85823017
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -1.6464887,
+            1.29643628,
+            -1.55061414
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            -0.05923924,
+            0.28201197,
+            0.48515887
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.78637909,
+            -0.40952208,
+            -0.45824355
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            2.00533781,
+            0.12432041,
+            -0.7633316
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.49993679,
+            -1.37505496,
+            -0.86003379
+          ]
+        },
+        {
+          "element": "N",
+          "xyz": [
+            2.48078204,
+            1.30420741,
+            -0.33110595
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.67052448,
+            -0.43338105,
+            -1.41639672
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            1.64196652,
+            1.99984282,
+            0.45468508
+          ]
+        },
+        {
+          "element": "C",
+          "xyz": [
+            0.39655898,
+            1.6024612,
+            0.84837223
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            2.01223642,
+            2.96437426,
+            0.79020897
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            -0.20076643,
+            2.24175305,
+            1.4888795
+          ]
+        }
+      ]
+    }
+  ]
+}

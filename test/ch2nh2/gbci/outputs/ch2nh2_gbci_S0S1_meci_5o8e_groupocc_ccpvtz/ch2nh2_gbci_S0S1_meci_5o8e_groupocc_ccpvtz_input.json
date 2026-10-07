@@ -1,0 +1,56 @@
+{
+  "act_base": 1,
+  "act_list_1based_initial": [
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "alpha": 0.0001,
+  "basis": "cc-pVTZ",
+  "charge": 1,
+  "geom_params": {
+    "convergence_dmax": 0.0018,
+    "convergence_drms": 0.0012,
+    "convergence_energy": 1e-06,
+    "convergence_gmax": 0.00045,
+    "convergence_grms": 0.0003,
+    "tmax": 0.03,
+    "trust": 0.01
+  },
+  "groupA": [
+    [
+      0,
+      1,
+      2,
+      3
+    ],
+    [
+      4
+    ]
+  ],
+  "hessian_step_bohr": 0.001,
+  "imag_amplitude": 0.05,
+  "imag_amplitude_unit": "Angstrom",
+  "imag_threshold_cm": 30.0,
+  "max_steps": 1000,
+  "method": "GBCI penalty MECI",
+  "molecule": "CH2NH2+",
+  "ncas": 5,
+  "nelecas": [
+    4,
+    4
+  ],
+  "nroots": 3,
+  "run_penalty_hessian": true,
+  "sigma": 0.5,
+  "spin": 0,
+  "start_geometry_source": "../../casci/outputs/ch2nh2_casci_S0S1_meci_4o6e/ch2nh2_casci_S0S1_meci_4o6e_optimized.xyz",
+  "states": "S0/S1",
+  "target_roots": [
+    0,
+    1
+  ],
+  "unit": "Angstrom"
+}

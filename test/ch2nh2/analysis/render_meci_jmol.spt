@@ -1,0 +1,28 @@
+# Render one CH2NH2 MECI geometry.
+#
+# This is a template: make_meci_jmol_images.sh substitutes __INFILE__ and __OUTFILE__ and
+# runs the result.  The input is an *_aligned.xyz written by
+# ch2nh2_meci_geometry_descriptors.py, which puts every geometry into a common frame
+# (C-N along +x, planar NH2 in the xy plane), so the camera below is identical for all
+# structures and the renders are directly comparable.
+
+background white
+set frank off
+set antialiasDisplay true
+set zoomLarge false
+
+load "__INFILE__"
+
+select all
+spacefill 23%
+wireframe 0.14
+color atoms cpk
+
+# Head-on camera: the rendering geometries are already turned about their own C-N axis
+# by ch2nh2_meci_geometry_descriptors.py --spin-about-cn-deg, so nothing is rotated here.
+reset
+center {all}
+zoom 190
+
+write IMAGE 900 640 PNG "__OUTFILE__"
+exitJmol

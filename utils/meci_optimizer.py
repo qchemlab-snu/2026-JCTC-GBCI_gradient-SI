@@ -24,6 +24,8 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tupl
 import numpy as np
 from pyscf import gto, scf, mcscf, lib
 from pyscf.mcscf import addons as mcscf_addons
+from pyscf.gbci.gbci import group_info_list
+
 from utils.gbci_compat import make_gbci
 HARTREE2EV = 27.211386245988
 BOHR2ANG = 0.529177210903
@@ -1168,7 +1170,7 @@ class GBCIActiveRootTrackedPairScanner(CASCIActiveRootTrackedPairScanner):
         - two-root CI-overlap assignment,
         - diagnostics and PairResult construction logic,
     and overrides only the GBCI-specific pieces:
-        - make_cas(): construct SFNOCI/GBCI,
+        - make_cas(): construct GBCI,
         - _as_ci_list(): accept GBCI CI-vector layouts,
         - get_ncore()/make_cas_mo(): avoid assuming a PySCF CASCI object,
         - run_gbci(): explicit GBCI Hamiltonian/overlap construction,
@@ -1177,8 +1179,8 @@ class GBCIActiveRootTrackedPairScanner(CASCIActiveRootTrackedPairScanner):
     Notes
     -----
     If groupA is None, this follows your existing convention and constructs
-    SFNOCI(mf, ncas, nelecas, **gbci_kwargs).  If groupA is not None, it constructs
-    GBCI(mf, ncas, nelecas, groupA=groupA, **gbci_kwargs).
+    GBCI(mf, ncas, nelecas, **gbci_kwargs).  If groupA is not None, it constructs
+    GBCI(mf, ncas, nelecas, group_a=groupA, **gbci_kwargs).
     """
 
     def __init__(
@@ -1384,32 +1386,146 @@ class GBCIActiveRootTrackedPairScanner(CASCIActiveRootTrackedPairScanner):
         return None
 
     def run_gbci(self, gbci, mo_cas):
+        mol = gbci.mol
+
+        ncas = gbci.ncas
+        nelecas = gbci.nelecas
+
+        mo_list, moe_list, po_list, group = gbci.optimize_mo(mo_cas)
+
+        # Mirror pyscf.gbci.gbci.kernel: the ungrouped path keys the CI
+        # configurations off po_list, the grouped path off group.
+        if gbci.group_a is None:
+            conf_info_list = group_info_list(ncas, nelecas, po_list)
+            svd_basis = po_list
+        else:
+            conf_info_list = group_info_list(ncas, nelecas, po_list, group)
+            svd_basis = group
+
+        dmet_core_list, ov_list = gbci.get_svd_matrices(mo_list, svd_basis)
+        dmet_act_list = gbci.get_active_dm(mo_cas)
+        h1e, ecore_list = gbci.get_h1cas(dmet_act_list, mo_list, dmet_core_list)
+        eri = gbci.get_h2eff(mo_cas)
+
+        # pyscf.grad.gbci reads these off the GBCI object.  We drive the
+        # fcisolver directly (to inject a tracked ci0), so publish them here the
+        # same way pyscf.gbci.gbci.kernel does.
+        gbci._cache_gbci_intermediates(
+            mo_cas,
+            ncas,
+            nelecas,
+            gbci.ncore,
+            {
+                "mo_list": mo_list,
+                "mo_energy": moe_list,
+                "po_list": po_list,
+                "group": group,
+                "svd_basis": svd_basis,
+                "conf_info_list": conf_info_list,
+                "dmet_core_list": dmet_core_list,
+                "ov_list": ov_list,
+                "ecore_list": ecore_list,
+            },
+        )
+
         ci0 = self._get_ci0_for_gbci()
         try:
-            e_tot, _, _ = gbci.kernel(mo_cas, ci0=ci0)
+            if ci0 is None:
+                e_tot, gbci.ci = gbci.fcisolver.kernel(
+                    h1e,
+                    eri,
+                    ncas,
+                    nelecas,
+                    conf_info_list,
+                    ov_list,
+                    ecore_list,
+                    verbose=mol.verbose,
+                )
+            else:
+                e_tot, gbci.ci = gbci.fcisolver.kernel(
+                    h1e,
+                    eri,
+                    ncas,
+                    nelecas,
+                    conf_info_list,
+                    ov_list,
+                    ecore_list,
+                    ci0=ci0,
+                    verbose=mol.verbose,
+                )
         except TypeError:
-            e_tot, _, _ = gbci.kernel(mo_cas)
-        self.attach_sorted_mo_to_method(gbci, mo_cas)
-        intermediates = gbci._get_cached_gbci_intermediates(
-            mo_cas,
-            gbci.ncas,
-            gbci.nelecas,
-            gbci.ncore,
-        )
-        if intermediates is None:
-            raise RuntimeError(
-                "GBCI kernel completed without a matching intermediates cache"
+            # Some solver versions do not accept ci0.
+            e_tot, gbci.ci = gbci.fcisolver.kernel(
+                h1e,
+                eri,
+                ncas,
+                nelecas,
+                conf_info_list,
+                ov_list,
+                ecore_list,
+                verbose=mol.verbose,
             )
+
+        gbci.e_tot = np.atleast_1d(np.asarray(e_tot, dtype=float))
+        self.attach_sorted_mo_to_method(gbci, mo_cas)
+
+        if getattr(gbci.fcisolver, "converged", None) is not None:
+            gbci.converged = bool(np.all(gbci.fcisolver.converged))
+        else:
+            gbci.converged = True
+
+        intermediates = {
+            "mo_list": mo_list,
+            "moe_list": moe_list,
+            "po_list": po_list,
+            "group": group,
+            "conf_info_list": conf_info_list,
+            "dmet_core_list": dmet_core_list,
+            "ov_list": ov_list,
+            "ecore_list": ecore_list,
+        }
         self.last_gbci_intermediates = intermediates
 
         return e_tot, intermediates
 
-    def compute_gbci_gradients(self, gbci, roots):
+    def compute_gbci_gradients(self, gbci, mo_cas, roots, intermediates):
         grad_method = gbci.nuc_grad_method()
+        ci_list = self._as_ci_list(gbci)
+
+        mo_list = intermediates["mo_list"]
+        moe_list = intermediates["moe_list"]
+        conf_info_list = intermediates["conf_info_list"]
+        dmet_core_list = intermediates["dmet_core_list"]
+        ov_list = intermediates["ov_list"]
+        ecore_list = intermediates["ecore_list"]
+
         gradients = []
         for r in roots:
             r = int(r)
-            grad = grad_method.kernel(state=r)
+            ci_r = ci_list[r]
+
+            try:
+                grad = grad_method.kernel(
+                    mo_cas,
+                    gbci._scf.mo_energy,
+                    mo_list,
+                    moe_list,
+                    conf_info_list,
+                    dmet_core_list,
+                    ov_list,
+                    ecore_list,
+                    ci_r,
+                )
+            except TypeError:
+                # Fallbacks for PySCF-like gradient APIs.
+                try:
+                    grad = grad_method.kernel(mo_coeff=mo_cas, state=r)
+                except TypeError:
+                    try:
+                        grad = grad_method.kernel(state=r)
+                    except TypeError:
+                        grad = grad_method.kernel(r)
+
             gradients.append(np.asarray(grad, dtype=float))
 
         return np.stack(gradients, axis=0)
@@ -1487,11 +1603,6 @@ class GBCIActiveRootTrackedPairScanner(CASCIActiveRootTrackedPairScanner):
         if not mf.converged:
             print("WARNING: RHF did not converge.")
 
-        # The fork may use an ROHF driver internally for FASSCF, where Fock
-        # damping is unsupported.  Keep damping for the initial RHF only.
-        mf.damp = 0.0
-        mf.level_shift = 0.0
-
         gbci = self.make_cas(mf)
         mo_cas, selected_act, active_diag = self.make_cas_mo(gbci, mf)
 
@@ -1508,7 +1619,7 @@ class GBCIActiveRootTrackedPairScanner(CASCIActiveRootTrackedPairScanner):
         e_tot = np.atleast_1d(np.asarray(gbci.e_tot, dtype=float))
         ci_list = self._as_ci_list(gbci)
         energies = e_tot[list(roots)].astype(float)
-        gradients = self.compute_gbci_gradients(gbci, roots)
+        gradients = self.compute_gbci_gradients(gbci, mo_cas, roots, intermediates)
 
         self.print_diagnostics(
             mf=mf,

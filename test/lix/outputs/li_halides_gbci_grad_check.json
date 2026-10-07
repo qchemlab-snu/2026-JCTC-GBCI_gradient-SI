@@ -1,0 +1,434 @@
+{
+  "script": "test/li_halides/gbci/li_halides_gbci_grad_check.py",
+  "timestamp_utc": "2026-10-05T12:07:48.844763+00:00",
+  "pyscf_version": "2.10.0",
+  "modules": {
+    "gbci": "/home/jiseong0626/labgit/pyscf-forge/pyscf/gbci/gbci.py",
+    "gbci_gradient": "/home/jiseong0626/labgit/pyscf-forge/pyscf/grad/gbci.py"
+  },
+  "num_threads": 1,
+  "results": [
+    {
+      "molecule": {
+        "name": "LiH",
+        "geometry_angstrom": [
+          [
+            "Li",
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            "H",
+            0.0,
+            0.0,
+            1.5
+          ]
+        ],
+        "bond_length_angstrom": 1.5,
+        "charge": 0,
+        "spin": 0,
+        "basis": "ccpvdz",
+        "unit": "Angstrom"
+      },
+      "calculation": {
+        "method": "RHF / GBCI",
+        "ncas": 2,
+        "nelecas": [
+          1,
+          1
+        ],
+        "act_list": [
+          2,
+          3
+        ],
+        "act_base": 1,
+        "act_list_character": "2: sigma(Li2s/2pz-H1s); 3: sigma*(Li3s/3pz). Same as the default window for this molecule.",
+        "reordered_from_default_window": false,
+        "group_a": {
+          "atom": [
+            0
+          ],
+          "threshold": 0.4
+        },
+        "lowdin_threshold": 0.4,
+        "reference_groups": [
+          [
+            0
+          ],
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ],
+        "scf_conv_tol": 1e-12,
+        "scf_conv_tol_grad": 1e-09,
+        "fasscf_conv_tol": 1e-14,
+        "fasscf_conv_tol_grad": 1e-12,
+        "gbci_conv_tol": 1e-12,
+        "max_cycle": 400,
+        "finite_difference": "two-point central difference",
+        "step_bohr": 0.0001,
+        "tilt_degrees": 30.0
+      },
+      "reference_energy_hartree": -7.981843552641519,
+      "tilted_energy_hartree": -7.9818435526415215,
+      "analytic_gradient_hartree_per_bohr": [
+        [
+          5.673487896060961e-19,
+          -8.872049459520683e-19,
+          0.018301027973483708
+        ],
+        [
+          -5.67348789606142e-19,
+          8.872049459520545e-19,
+          -0.018301027973483874
+        ]
+      ],
+      "tilted_analytic_gradient_hartree_per_bohr": [
+        [
+          0.009150513986740966,
+          1.829130871026061e-17,
+          0.01584915514040497
+        ],
+        [
+          -0.009150513986740882,
+          -1.8291308710260573e-17,
+          -0.015849155140404525
+        ]
+      ],
+      "numerical_z_gradient_hartree_per_bohr": [
+        0.018301028292810884,
+        -0.018301028217315718
+      ],
+      "analytic_z_minus_numerical_hartree_per_bohr": [
+        -3.1932717581284464e-10,
+        2.438318436048803e-10
+      ],
+      "displaced_calculations": [
+        {
+          "atom_index": 0,
+          "energy_minus_hartree": -7.981845382253525,
+          "energy_plus_hartree": -7.981841722047866,
+          "min_active_overlap": 0.9999980429658295
+        },
+        {
+          "atom_index": 1,
+          "energy_minus_hartree": -7.981841722047878,
+          "energy_plus_hartree": -7.981845382253521,
+          "min_active_overlap": 0.9999980429658295
+        }
+      ],
+      "diagnostics": {
+        "max_abs_z_error_hartree_per_bohr": 3.1932717581284464e-10,
+        "max_abs_analytic_transverse_hartree_per_bohr": 8.872049459520683e-19,
+        "net_force_norm_hartree_per_bohr": 1.6653345369377348e-16,
+        "torque_hartree": 2.985102716948732e-18,
+        "tilted_net_force_norm_hartree_per_bohr": 4.518280359883027e-16,
+        "tilted_torque_hartree": 4.746848981608839e-16,
+        "rotational_energy_error_hartree": 2.6645352591003757e-15,
+        "min_active_overlap": 0.9999980429658295,
+        "passed": true
+      }
+    },
+    {
+      "molecule": {
+        "name": "LiF",
+        "geometry_angstrom": [
+          [
+            "Li",
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            "F",
+            0.0,
+            0.0,
+            1.5
+          ]
+        ],
+        "bond_length_angstrom": 1.5,
+        "charge": 0,
+        "spin": 0,
+        "basis": "ccpvdz",
+        "unit": "Angstrom"
+      },
+      "calculation": {
+        "method": "RHF / GBCI",
+        "ncas": 4,
+        "nelecas": [
+          2,
+          2
+        ],
+        "act_list": [
+          3,
+          4,
+          7,
+          10
+        ],
+        "act_base": 1,
+        "act_list_character": "3: sigma(F2s); 4: sigma(F2pz-Li); 7: sigma*(Li3s); 10: sigma*(Li3pz).  Default window would be [5,6,7,8], whose MOs 5 and 6 are the F 2p pi lone pairs.",
+        "reordered_from_default_window": true,
+        "group_a": {
+          "atom": [
+            0
+          ],
+          "threshold": 0.4
+        },
+        "lowdin_threshold": 0.4,
+        "reference_groups": [
+          [
+            0
+          ],
+          [
+            1,
+            2,
+            6,
+            7
+          ],
+          [
+            3,
+            4,
+            5,
+            8,
+            9,
+            10,
+            13,
+            14,
+            15
+          ],
+          [
+            11,
+            12,
+            16,
+            17
+          ],
+          [
+            18
+          ]
+        ],
+        "scf_conv_tol": 1e-12,
+        "scf_conv_tol_grad": 1e-09,
+        "fasscf_conv_tol": 1e-14,
+        "fasscf_conv_tol_grad": 1e-12,
+        "gbci_conv_tol": 1e-12,
+        "max_cycle": 400,
+        "finite_difference": "two-point central difference",
+        "step_bohr": 0.0001,
+        "tilt_degrees": 30.0
+      },
+      "reference_energy_hartree": -106.94300178579867,
+      "tilted_energy_hartree": -106.94300178579843,
+      "analytic_gradient_hartree_per_bohr": [
+        [
+          4.852001820665262e-17,
+          5.2741819661307717e-17,
+          0.035247443215270735
+        ],
+        [
+          -4.852001820667358e-17,
+          -5.2741819661338476e-17,
+          -0.035247443215257857
+        ]
+      ],
+      "tilted_analytic_gradient_hartree_per_bohr": [
+        [
+          0.017623721607647802,
+          1.4056396762186904e-16,
+          0.030525181242892163
+        ],
+        [
+          -0.01762372160764958,
+          -1.405815001376462e-16,
+          -0.030525181242892607
+        ]
+      ],
+      "numerical_z_gradient_hartree_per_bohr": [
+        0.03524744450089656,
+        -0.03524744499827648
+      ],
+      "analytic_z_minus_numerical_hartree_per_bohr": [
+        -1.2856258280180555e-09,
+        1.7830186216372113e-09
+      ],
+      "displaced_calculations": [
+        {
+          "atom_index": 0,
+          "energy_minus_hartree": -106.94300530908252,
+          "energy_plus_hartree": -106.94299825959362,
+          "min_active_overlap": 0.9999978339853581
+        },
+        {
+          "atom_index": 1,
+          "energy_minus_hartree": -106.94299825959361,
+          "energy_plus_hartree": -106.94300530908261,
+          "min_active_overlap": 0.9999978339853581
+        }
+      ],
+      "diagnostics": {
+        "max_abs_z_error_hartree_per_bohr": 1.7830186216372113e-09,
+        "max_abs_analytic_transverse_hartree_per_bohr": 5.2741819661338476e-17,
+        "net_force_norm_hartree_per_bohr": 1.2878587085651816e-14,
+        "torque_hartree": 2.031412193831128e-16,
+        "tilted_net_force_norm_hartree_per_bohr": 1.8310267194928337e-15,
+        "tilted_torque_hartree": 8.405512816434625e-15,
+        "rotational_energy_error_hartree": 2.4158453015843406e-13,
+        "min_active_overlap": 0.9999978339853581,
+        "passed": true
+      }
+    },
+    {
+      "molecule": {
+        "name": "LiCl",
+        "geometry_angstrom": [
+          [
+            "Li",
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            "Cl",
+            0.0,
+            0.0,
+            1.5
+          ]
+        ],
+        "bond_length_angstrom": 1.5,
+        "charge": 0,
+        "spin": 0,
+        "basis": "ccpvdz",
+        "unit": "Angstrom"
+      },
+      "calculation": {
+        "method": "RHF / GBCI",
+        "ncas": 4,
+        "nelecas": [
+          2,
+          2
+        ],
+        "act_list": [
+          7,
+          8,
+          11,
+          14
+        ],
+        "act_base": 1,
+        "act_list_character": "7: sigma(Cl3s); 8: sigma(Cl3pz-Li); 11: sigma*(Li3s); 14: sigma*(Li3pz).  Default window would be [9,10,11,12], whose MOs 9 and 10 are the Cl 3p pi lone pairs.",
+        "reordered_from_default_window": true,
+        "group_a": {
+          "atom": [
+            0
+          ],
+          "threshold": 0.4
+        },
+        "lowdin_threshold": 0.4,
+        "reference_groups": [
+          [
+            0
+          ],
+          [
+            1,
+            2,
+            6,
+            7
+          ],
+          [
+            3,
+            4,
+            5,
+            8,
+            9,
+            10,
+            13,
+            14
+          ],
+          [
+            11,
+            12,
+            16,
+            17
+          ],
+          [
+            15
+          ],
+          [
+            18
+          ]
+        ],
+        "scf_conv_tol": 1e-12,
+        "scf_conv_tol_grad": 1e-09,
+        "fasscf_conv_tol": 1e-14,
+        "fasscf_conv_tol_grad": 1e-12,
+        "gbci_conv_tol": 1e-12,
+        "max_cycle": 400,
+        "finite_difference": "two-point central difference",
+        "step_bohr": 0.0001,
+        "tilt_degrees": 30.0
+      },
+      "reference_energy_hartree": -466.9090605907163,
+      "tilted_energy_hartree": -466.90906059071676,
+      "analytic_gradient_hartree_per_bohr": [
+        [
+          2.408239055582191e-16,
+          -6.736944509220549e-16,
+          0.3397175965658299
+        ],
+        [
+          -2.4082390555865825e-16,
+          6.736944509220013e-16,
+          -0.3397175965657562
+        ]
+      ],
+      "tilted_analytic_gradient_hartree_per_bohr": [
+        [
+          0.16985879828293005,
+          -8.47085939655861e-16,
+          0.29420406873862603
+        ],
+        [
+          -0.16985879828292205,
+          8.474287703097636e-16,
+          -0.29420406873861005
+        ]
+      ],
+      "numerical_z_gradient_hartree_per_bohr": [
+        0.33971759876294527,
+        -0.33971759989981365
+      ],
+      "analytic_z_minus_numerical_hartree_per_bohr": [
+        -2.19711537852163e-09,
+        3.3340574745466256e-09
+      ],
+      "displaced_calculations": [
+        {
+          "atom_index": 0,
+          "energy_minus_hartree": -466.9090945587446,
+          "energy_plus_hartree": -466.90902661522483,
+          "min_active_overlap": 0.9999881719069121
+        },
+        {
+          "atom_index": 1,
+          "energy_minus_hartree": -466.90902661522483,
+          "energy_plus_hartree": -466.9090945587448,
+          "min_active_overlap": 0.9999881719069121
+        }
+      ],
+      "diagnostics": {
+        "max_abs_z_error_hartree_per_bohr": 3.3340574745466256e-09,
+        "max_abs_analytic_transverse_hartree_per_bohr": 6.736944509220549e-16,
+        "net_force_norm_hartree_per_bohr": 7.37188088351104e-14,
+        "torque_hartree": 2.0279903205646268e-15,
+        "tilted_net_force_norm_hartree_per_bohr": 1.7874245906668137e-14,
+        "tilted_torque_hartree": 6.407035134486817e-15,
+        "rotational_energy_error_hartree": 4.547473508864641e-13,
+        "min_active_overlap": 0.9999881719069121,
+        "passed": true
+      }
+    }
+  ],
+  "passed": true
+}

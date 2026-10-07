@@ -1,0 +1,309 @@
+{
+  "run_name": "ch2nh2_ccpvtz_meci_descriptors",
+  "script": "ch2nh2_meci_geometry_descriptors.py",
+  "created_at": "2026-10-04T19:47:55+09:00",
+  "molecule": "CH2NH2",
+  "basis": "cc-pVTZ",
+  "pyramidalization_convention": "angle between the C->N bond vector and the H-C-H plane; 0 deg = planar sp2",
+  "reference_self_check": {
+    "source_xyz": "test/CH2NH2/fig/xms_geom.xyz",
+    "cn_bond_angstrom": 1.411890106830202,
+    "pyramidalization_at_C_deg": 31.304371728134143,
+    "expected_cn_bond_angstrom": 1.412,
+    "expected_pyramidalization_at_C_deg": 31.3,
+    "cn_bond_matches": true,
+    "pyramidalization_matches": true
+  },
+  "geometries": [
+    {
+      "label": "CASCI",
+      "method": "CASCI",
+      "active_space": "5o8e",
+      "states": "S0/S1 MECI",
+      "run_name": "ch2nh2_casci_S0S1_meci_5o8e_ccpvtz",
+      "source_xyz": "test/CH2NH2/ccpvtz/casci/outputs/ch2nh2_casci_S0S1_meci_5o8e_ccpvtz/ch2nh2_casci_S0S1_meci_5o8e_ccpvtz_optimized.xyz",
+      "source_summary": "test/CH2NH2/ccpvtz/casci/outputs/ch2nh2_casci_S0S1_meci_5o8e_ccpvtz/ch2nh2_casci_S0S1_meci_5o8e_ccpvtz_summary.json",
+      "geometry_angstrom": [
+        [
+          "N",
+          0.63872657,
+          -0.04625786,
+          -0.02818618
+        ],
+        [
+          "C",
+          -0.64605085,
+          -0.23604075,
+          -0.14436966
+        ],
+        [
+          "H",
+          1.06996661,
+          0.73544685,
+          0.45938873
+        ],
+        [
+          "H",
+          1.31573691,
+          -0.68154502,
+          -0.42875921
+        ],
+        [
+          "H",
+          -1.12667533,
+          -0.16778782,
+          0.84905308
+        ],
+        [
+          "H",
+          -1.1243549,
+          0.6886676,
+          -0.51908775
+        ]
+      ],
+      "cn_bond_angstrom": 1.303905351359338,
+      "pyramidalization_at_C_deg": 60.48571694017451,
+      "pyramidalization_at_N_deg": 0.10336713610271886,
+      "hcnh_torsion_deg": -50.761939827548815,
+      "basis": "cc-pVTZ",
+      "charge": 1,
+      "spin": 0,
+      "unit": "Angstrom",
+      "final_energies_hartree": [
+        -94.21067506952687,
+        -94.21062495469113
+      ],
+      "final_gap_ev": 0.0013636941520938242,
+      "has_imaginary_frequency": true,
+      "imag_frequency_cm": -20129.018689570985,
+      "active_orbitals_1based": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "groupA": null
+    },
+    {
+      "label": "CASSCF",
+      "method": "CASSCF",
+      "active_space": "5o8e",
+      "states": "S0/S1 MECI",
+      "run_name": "ch2nh2_casscf_S0S1_meci_5o8e_ccpvtz",
+      "source_xyz": "test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_5o8e_ccpvtz/ch2nh2_casscf_S0S1_meci_5o8e_ccpvtz_optimized.xyz",
+      "source_summary": "test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_5o8e_ccpvtz/ch2nh2_casscf_S0S1_meci_5o8e_ccpvtz_summary.json",
+      "geometry_angstrom": [
+        [
+          "N",
+          0.69597649,
+          0.01060875,
+          0.00695859
+        ],
+        [
+          "C",
+          -0.68834698,
+          0.00421908,
+          0.00388399
+        ],
+        [
+          "H",
+          1.23403003,
+          0.73825483,
+          0.46218277
+        ],
+        [
+          "H",
+          1.24067285,
+          -0.71163896,
+          -0.44576094
+        ],
+        [
+          "H",
+          -1.17660926,
+          -0.37619941,
+          0.8815723
+        ],
+        [
+          "H",
+          -1.17837414,
+          0.62723872,
+          -0.72079771
+        ]
+      ],
+      "cn_bond_angstrom": 1.384341630754746,
+      "pyramidalization_at_C_deg": 16.632006000543512,
+      "pyramidalization_at_N_deg": 0.006774960385172335,
+      "hcnh_torsion_deg": -81.23278885738794,
+      "basis": "cc-pVTZ",
+      "charge": 1,
+      "spin": 0,
+      "unit": "Angstrom",
+      "final_energies_hartree": [
+        -94.2925948396414,
+        -94.29257342547707
+      ],
+      "final_gap_ev": 0.0005827090965190651,
+      "has_imaginary_frequency": true,
+      "imag_frequency_cm": -74.12782996940626,
+      "active_orbitals_1based": [
+        4,
+        5,
+        7,
+        8,
+        9
+      ],
+      "groupA": null
+    },
+    {
+      "label": "GBCI (groupocc)",
+      "method": "GBCI",
+      "active_space": "5o8e",
+      "states": "S0/S1 MECI",
+      "run_name": "ch2nh2_gbci_S0S1_meci_5o8e_groupocc_ccpvtz",
+      "source_xyz": "test/CH2NH2/ccpvtz/gbci/outputs/ch2nh2_gbci_S0S1_meci_5o8e_groupocc_ccpvtz/ch2nh2_gbci_S0S1_meci_5o8e_groupocc_ccpvtz_optimized.xyz",
+      "source_summary": "test/CH2NH2/ccpvtz/gbci/outputs/ch2nh2_gbci_S0S1_meci_5o8e_groupocc_ccpvtz/ch2nh2_gbci_S0S1_meci_5o8e_groupocc_ccpvtz_summary.json",
+      "geometry_angstrom": [
+        [
+          "N",
+          0.64006815,
+          -0.03513603,
+          -0.02155419
+        ],
+        [
+          "C",
+          -0.67188666,
+          -0.20872275,
+          -0.12879853
+        ],
+        [
+          "H",
+          1.09239042,
+          0.74160574,
+          0.46387804
+        ],
+        [
+          "H",
+          1.30127172,
+          -0.68849137,
+          -0.43172617
+        ],
+        [
+          "H",
+          -1.11708389,
+          -0.20827049,
+          0.87176268
+        ],
+        [
+          "H",
+          -1.11741075,
+          0.6914979,
+          -0.56552283
+        ]
+      ],
+      "cn_bond_angstrom": 1.3277270507542318,
+      "pyramidalization_at_C_deg": 58.86873600860079,
+      "pyramidalization_at_N_deg": 0.03334532852588268,
+      "hcnh_torsion_deg": -55.012706491106584,
+      "basis": "cc-pVTZ",
+      "charge": 1,
+      "spin": 0,
+      "unit": "Angstrom",
+      "final_energies_hartree": [
+        -94.22964439519032,
+        -94.22954372422292
+      ],
+      "final_gap_ev": 0.0027393965776444235,
+      "has_imaginary_frequency": true,
+      "imag_frequency_cm": -475.6310365522029,
+      "active_orbitals_1based": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "groupA": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4
+        ]
+      ]
+    },
+    {
+      "label": "GBCI (nogroup)",
+      "method": "GBCI",
+      "active_space": "5o8e",
+      "states": "S0/S1 MECI",
+      "run_name": "ch2nh2_gbci_S0S1_meci_5o8e_nogroup_ccpvtz",
+      "source_xyz": "test/CH2NH2/ccpvtz/gbci/outputs/ch2nh2_gbci_S0S1_meci_5o8e_nogroup_ccpvtz/ch2nh2_gbci_S0S1_meci_5o8e_nogroup_ccpvtz_optimized.xyz",
+      "source_summary": "test/CH2NH2/ccpvtz/gbci/outputs/ch2nh2_gbci_S0S1_meci_5o8e_nogroup_ccpvtz/ch2nh2_gbci_S0S1_meci_5o8e_nogroup_ccpvtz_summary.json",
+      "geometry_angstrom": [
+        [
+          "N",
+          0.64050706,
+          -0.03299256,
+          -0.02035428
+        ],
+        [
+          "C",
+          -0.68028641,
+          -0.20419554,
+          -0.12647551
+        ],
+        [
+          "H",
+          1.09496173,
+          0.74164431,
+          0.46422519
+        ],
+        [
+          "H",
+          1.29767054,
+          -0.68898325,
+          -0.43140318
+        ],
+        [
+          "H",
+          -1.11210945,
+          -0.2162436,
+          0.87753144
+        ],
+        [
+          "H",
+          -1.11339447,
+          0.69325364,
+          -0.57548466
+        ]
+      ],
+      "cn_bond_angstrom": 1.3360642073688802,
+      "pyramidalization_at_C_deg": 59.05596395447583,
+      "pyramidalization_at_N_deg": 0.006129502994866698,
+      "hcnh_torsion_deg": -55.8334946570433,
+      "basis": "cc-pVTZ",
+      "charge": 1,
+      "spin": 0,
+      "unit": "Angstrom",
+      "final_energies_hartree": [
+        -94.23218159418357,
+        -94.23207961485537
+      ],
+      "final_gap_ev": 0.002774998888943801,
+      "has_imaginary_frequency": true,
+      "imag_frequency_cm": -855.7488514968719,
+      "active_orbitals_1based": [
+        5,
+        7,
+        6,
+        8,
+        9
+      ],
+      "groupA": null
+    }
+  ]
+}

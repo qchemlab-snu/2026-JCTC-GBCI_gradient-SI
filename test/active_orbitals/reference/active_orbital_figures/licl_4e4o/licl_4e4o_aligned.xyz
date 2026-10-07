@@ -1,0 +1,4 @@
+2
+licl_4e4o: Li-Cl 1.5 A, sigma-only act_list [7, 8, 11, 14]; 7: sigma(Cl3s), 8: sigma(Cl3pz-Li), 11: sigma*(Li3s), 14: sigma*(Li3pz) (canonical frame)
+Li        0.00000000       0.00000000       0.00000000
+Cl       -1.50000000       0.00000000       0.00000000

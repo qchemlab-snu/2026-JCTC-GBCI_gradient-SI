@@ -1,0 +1,64 @@
+{
+  "system": "so2_8e5o",
+  "note": "asymmetric C1 geometry, default window",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "ncas": 5,
+  "nelecas": [
+    4,
+    4
+  ],
+  "act_list": null,
+  "window": [
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "linear": false,
+  "views": [
+    "front",
+    "side"
+  ],
+  "grid": 80,
+  "margin": 4.0,
+  "orbitals": [
+    {
+      "mo": 13,
+      "energy": -0.6615460998334168,
+      "occ": 2.0,
+      "pi_out_of_plane": 0.9733552732693938,
+      "cube": "so2_8e5o_mo13.cube"
+    },
+    {
+      "mo": 14,
+      "energy": -0.5107253889150404,
+      "occ": 2.0,
+      "pi_out_of_plane": 9.731758612285888e-26,
+      "cube": "so2_8e5o_mo14.cube"
+    },
+    {
+      "mo": 15,
+      "energy": -0.48633895814183403,
+      "occ": 2.0,
+      "pi_out_of_plane": 3.5987439979551392e-28,
+      "cube": "so2_8e5o_mo15.cube"
+    },
+    {
+      "mo": 16,
+      "energy": -0.48564539231983395,
+      "occ": 2.0,
+      "pi_out_of_plane": 0.9176834409852596,
+      "cube": "so2_8e5o_mo16.cube"
+    },
+    {
+      "mo": 17,
+      "energy": 0.013739589328645132,
+      "occ": 0.0,
+      "pi_out_of_plane": 0.9528511741936805,
+      "cube": "so2_8e5o_mo17.cube"
+    }
+  ]
+}
