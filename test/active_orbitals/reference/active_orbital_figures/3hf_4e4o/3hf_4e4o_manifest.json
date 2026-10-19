@@ -1,0 +1,61 @@
+{
+  "system": "3hf_4e4o",
+  "note": "GBCI(4e,4o)/6-31G frontier pi/pi* window, at the B3LYP/6-31G(d) S0 minimum",
+  "basis": "6-31G",
+  "charge": 0,
+  "spin": 0,
+  "ncas": 4,
+  "nelecas": [
+    2,
+    2
+  ],
+  "act_list": [
+    61,
+    62,
+    63,
+    64
+  ],
+  "window": [
+    61,
+    62,
+    63,
+    64
+  ],
+  "linear": false,
+  "views": [
+    "front",
+    "side"
+  ],
+  "grid": 80,
+  "margin": 4.0,
+  "orbitals": [
+    {
+      "mo": 61,
+      "energy": -0.3392175490858732,
+      "occ": 2.0,
+      "pi_out_of_plane": 0.9999535989147113,
+      "cube": "3hf_4e4o_mo61.cube"
+    },
+    {
+      "mo": 62,
+      "energy": -0.30224986071883214,
+      "occ": 2.0,
+      "pi_out_of_plane": 0.9999657946284012,
+      "cube": "3hf_4e4o_mo62.cube"
+    },
+    {
+      "mo": 63,
+      "energy": 0.044289233009306386,
+      "occ": 0.0,
+      "pi_out_of_plane": 0.9999753946121468,
+      "cube": "3hf_4e4o_mo63.cube"
+    },
+    {
+      "mo": 64,
+      "energy": 0.1009359931796285,
+      "occ": 0.0,
+      "pi_out_of_plane": 0.9999755349936785,
+      "cube": "3hf_4e4o_mo64.cube"
+    }
+  ]
+}

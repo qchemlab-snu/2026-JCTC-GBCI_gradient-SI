@@ -5,8 +5,11 @@ Analytic energy gradient for Grouped-Bath Configuration Interaction (GBCI)
 
 This repository was developed and tested with the
 [qchemlab-snu pyscf-forge fork](https://github.com/qchemlab-snu/pyscf-forge),
-including its GBCI implementation. The compatibility baseline used here is the
-fork's `master` commit `4e014735` (2026-08-11).
+which supplies the GBCI wave-function code (`pyscf.gbci`) that the gradient
+module builds on.
+
+`pyscf/grad/gbci.py` in this repository is the analytic-gradient implementation
+that produced the published results, including the 2026-09-30 corrections. 
 
 The calculation and geometry-optimization scripts also require
 [geomeTRIC](https://github.com/leeping/geomeTRIC) and
@@ -22,7 +25,8 @@ GBCI-grad/
 ├── utils/
 │   ├── active_space_tracking_optimizer.py
 │   │                                  # CASCI/CASSCF/GBCI active-space and root tracking
-│   ├── bath_grouping.py               # Complete-linkage grouping of bath configurations (SO2)
+│   ├── bath_grouping.py               # Complete-linkage grouping of bath configurations
+│   ├── bath_semicanonical.py          # Semicanonicalizes the group bath orbitals
 │   ├── gbci_compat.py                 # Legacy input conversion for the fork's GBCI API
 │   ├── gbci_setup.py                  # Shared GBCI construction for the gradient checks
 │   ├── geometry_descriptors.py        # Bond lengths, pyramidalization and XYZ alignment
@@ -32,8 +36,12 @@ GBCI-grad/
 ├── test/
 │   ├── lix/                           # LiH/LiF/LiCl analytic-vs-finite-difference checks
 │   │   └── outputs/                   # Saved sweep tables and JSON results
-│   ├── so2/                           # SO2 analytic-vs-finite-difference checks at a C1 geometry
-│   │   └── outputs/                   # CAS(8e,5o) step sweeps and summary tables
+│   ├── bath_groups/                   # Configuration-grouping tables for every system
+│   │   └── outputs/                   # bath_groups.tex as included in the Supporting Information
+│   ├── 3hf/                           # 3-hydroxyflavone S1 analytic-vs-finite-difference checks
+│   │   ├── dft/                       # B3LYP/6-31G(d) ground-state optimization
+│   │   └── gbci/                      # GBCI(4e,4o)/6-31G S1 gradients, step sweep, tables and figure
+│   │       └── outputs/01_partials*/  # Per-task finite-difference energies behind each step size
 │   ├── active_orbitals/               # Active-space orbital export and figure rendering
 │   │   └── reference/                 # Active-space moldens and rendered orbital panels
 │   ├── ch2nh2/                        # Protonated formaldimine, CAS(8e,5o)/cc-pVTZ
@@ -46,6 +54,7 @@ GBCI-grad/
 │       ├── casci/                     # 4-(1-pyrrolyl)-pyridine CASCI optimizations and NEB calculations
 │       ├── gbci/                      # 4-(1-pyrrolyl)-pyridine GBCI optimizations and NEB calculations
 │       ├── casscf/                    # SA-CASSCF single points on the CASCI and GBCI paths
+│       ├── figures/                   # Structure figure with the manuscript's atom labeling
 │       └── pes/                       # 4-(1-pyrrolyl)-pyridine potential-energy-path construction and export
 ├── .gitignore
 └── README.md
@@ -54,6 +63,13 @@ GBCI-grad/
 `pyscf/grad/gbci.py` mirrors the `pyscf.grad` namespace and is intended to be
 loaded as the GBCI gradient module in a PySCF/pyscf-forge environment. The
 `utils/` modules are shared by the calculation scripts under `test/`.
+
+Two of the validation scripts — `test/lix/li_halides_gbci_grad_check.py` and
+`test/3hf/gbci/01_gbci_s1_grad_check_631g.py` — refuse to run when
+`pyscf.grad.gbci` resolves to a copy inside this repository, because they were
+written to measure whichever module `PYSCF_EXT_PATH` selects. To run them, place
+`pyscf/grad/gbci.py` on the `pyscf-forge` extension path rather than importing it
+from the repository root.
 
 The `test/` tree contains reproducible research calculations and their archived
 outputs rather than only lightweight unit tests. Output directories may include

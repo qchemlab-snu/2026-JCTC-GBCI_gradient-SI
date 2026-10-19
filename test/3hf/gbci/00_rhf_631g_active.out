@@ -1,0 +1,288 @@
+#INFO: **** input file is /home/jiseong0626/mygit/grad/pysfnocigrad/test/3HF/gbci/00_rhf_631g_active.py ****
+"""RHF/6-31G reference for 3-hydroxyflavone at the B3LYP-optimized geometry.
+
+Runs RHF, writes a chkfile and a Molden file, and screens the frontier MOs for
+pi character so the GBCI (4e,4o) active space used by the gradient check in this directory can be
+chosen from orbitals that actually carry the conjugated system.
+"""
+
+from pathlib import Path
+import json
+import sys
+
+import numpy as np
+from pyscf import gto, scf
+from pyscf.tools import molden
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = SCRIPT_DIR.parents[2]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from utils.pi_character import molecular_plane_normal, pi_weights, suggest_pi_active_list
+
+# ---- settings -------------------------------------------------------------
+GEOM_FILE = Path("../dft/outputs/3hf_dft_S0_opt.xyz")
+
+BASIS = "6-31G"
+CHARGE = 0
+SPIN = 0
+VERBOSE = 4
+
+SCF_CONV_TOL = 1e-10
+SCF_MAX_CYCLE = 200
+
+CHK_FILE = "3hf_rhf_631g.chk"
+MOLDEN_FILE = "3hf_rhf_631g.molden"
+OUTPUT_JSON = "00_rhf_631g_active.json"
+
+# Active-space size suggested for the SA-CASSCF step: frontier pi / pi*.
+# 4 occupied + 4 virtual pi orbitals span the chromone and phenyl pi systems,
+# which is what the S0 -> S1 charge transfer needs.
+N_OCC_PI = 2
+N_VIR_PI = 2
+PI_THRESHOLD = 0.5
+
+# Window of MOs around the frontier to tabulate (counted from the HOMO).
+REPORT_BELOW_HOMO = 8
+REPORT_ABOVE_LUMO = 8
+# ---------------------------------------------------------------------------
+
+
+def build_molecule():
+    return gto.M(
+        atom=str(GEOM_FILE),
+        basis=BASIS,
+        charge=CHARGE,
+        spin=SPIN,
+        verbose=VERBOSE,
+    )
+
+
+def run_scf(mol):
+    mf = scf.RHF(mol)
+    mf.conv_tol = SCF_CONV_TOL
+    mf.max_cycle = SCF_MAX_CYCLE
+    mf.chkfile = CHK_FILE
+    mf.kernel()
+    if not mf.converged:
+        raise RuntimeError("RHF did not converge")
+    molden.from_scf(mf, MOLDEN_FILE)
+    return mf
+
+
+def report_frontier(mol, mf):
+    normal, rms_dev = molecular_plane_normal(mol)
+    print(f"\nHeavy-atom plane fit: rms out-of-plane deviation = {rms_dev:.4f} Angstrom")
+    if rms_dev > 0.1:
+        print("WARNING: molecule is not planar; the pi/sigma assignment below is unreliable.")
+
+    pi_w, p_w = pi_weights(mol, mf.mo_coeff, normal=normal)
+    nocc = int((np.asarray(mf.mo_occ) > 0).sum())
+    homo, lumo = nocc, nocc + 1  # 1-based
+
+    print(f"\nnelectron = {mol.nelectron}, nocc = {nocc}, nmo = {mf.mo_coeff.shape[1]}")
+    print(f"HOMO = MO {homo}, LUMO = MO {lumo}  (1-based)")
+    print("\n  MO   occ     energy/Ha    pi weight    p weight   label")
+    lo = max(1, homo - REPORT_BELOW_HOMO)
+    hi = min(mf.mo_coeff.shape[1], lumo + REPORT_ABOVE_LUMO)
+    rows = []
+    for i in range(lo, hi + 1):
+        k = i - 1
+        kind = "pi " if pi_w[k] >= PI_THRESHOLD else "   "
+        tag = "HOMO" if i == homo else ("LUMO" if i == lumo else "")
+        print(f"{i:5d} {mf.mo_occ[k]:5.2f} {mf.mo_energy[k]:13.6f} "
+              f"{pi_w[k]:11.4f} {p_w[k]:11.4f}   {kind}{tag}")
+        rows.append({
+            "mo": i,
+            "occ": float(mf.mo_occ[k]),
+            "energy": float(mf.mo_energy[k]),
+            "pi_weight": float(pi_w[k]),
+            "p_weight": float(p_w[k]),
+            "is_pi": bool(pi_w[k] >= PI_THRESHOLD),
+        })
+
+    act_list = suggest_pi_active_list(
+        mol, mf.mo_coeff, mf.mo_occ,
+        n_occ=N_OCC_PI, n_vir=N_VIR_PI,
+        pi_threshold=PI_THRESHOLD, normal=normal,
+    )
+    ncas = N_OCC_PI + N_VIR_PI
+    nelecas = 2 * N_OCC_PI
+    print(f"\nSuggested active space: ({nelecas}e, {ncas}o)")
+    print(f"act_list (1-based) = {act_list}")
+
+    return {
+        "geometry_file": str(GEOM_FILE),
+        "basis": BASIS,
+        "charge": CHARGE,
+        "spin": SPIN,
+        "e_rhf": float(mf.e_tot),
+        "nocc": nocc,
+        "homo": homo,
+        "lumo": lumo,
+        "plane_rms_dev_angstrom": rms_dev,
+        "pi_threshold": PI_THRESHOLD,
+        "frontier_mos": rows,
+        "suggested_act_list": act_list,
+        "suggested_ncas": ncas,
+        "suggested_nelecas": nelecas,
+    }
+
+
+def main():
+    mol = build_molecule()
+    mf = run_scf(mol)
+    print(f"\nRHF/{BASIS} energy: {mf.e_tot:.10f} Hartree")
+
+    summary = report_frontier(mol, mf)
+    Path(OUTPUT_JSON).write_text(json.dumps(summary, indent=2))
+    print(f"\nWrote {CHK_FILE}, {MOLDEN_FILE}, {OUTPUT_JSON}")
+
+
+if __name__ == "__main__":
+    main()
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='master', release='5.4.0-216-generic', version='#236-Ubuntu SMP Fri Apr 11 19:53:21 UTC 2025', machine='x86_64')  Threads 4
+Python 3.10.18 (main, Jun  5 2025, 13:14:17) [GCC 11.2.0]
+numpy 2.2.5  scipy 1.15.3  h5py 3.14.0
+Date: Tue Oct 13 14:33:11 2026
+PySCF version 2.10.0
+PySCF path  /home/jiseong0626/pyscf
+GIT ORIG_HEAD 21aafdcc5c978cfcc80263f7d5fdd8f3603c83f1
+GIT HEAD (branch master) 6f9d9399cac057e5965e8250cf8e3ef57716510d
+
+[ENV] PYSCF_EXT_PATH /home/jiseong0626/pyscf_dispersion/dispersion:/home/jiseong0626/labgit/pyscf-forge:
+[CONFIG] conf_file None
+[INPUT] verbose = 4
+[INPUT] num. atoms = 28
+[INPUT] num. electrons = 124
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 0
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = angstrom
+[INPUT] Symbol           X                Y                Z      unit          X                Y                Z       unit  Magmom
+[INPUT]  1 O     -1.665571680000   1.280411790000   3.098067240000 AA   -3.147474316032   2.419627609764   5.854498599087 Bohr   0.0
+[INPUT]  2 C     -1.358641340000   0.829560550000   1.981379390000 AA   -2.567460034112   1.567642243244   3.744264395958 Bohr   0.0
+[INPUT]  3 C      0.053988410000   0.586827300000   1.694715630000 AA    0.102023308801   1.108942879418   3.202548399720 Bohr   0.0
+[INPUT]  4 O      0.874556950000   0.898377600000   2.724380150000 AA    1.652673115835   1.697687620444   5.148332342701 Bohr   0.0
+[INPUT]  5 C      0.483473000000   0.089767050000   0.492959050000 AA    0.913631558622   0.169635139510   0.931557595126 Bohr   0.0
+[INPUT]  6 C      1.855242320000  -0.208244490000   0.061893130000 AA    3.505899879503  -0.393525053050   0.116961064692 Bohr   0.0
+[INPUT]  7 C      2.086905850000  -0.733320290000  -1.225930080000 AA    3.943680504253  -1.385774509687  -2.316672099066 Bohr   0.0
+[INPUT]  8 C      3.379053040000  -1.023940630000  -1.653518220000 AA    6.385484805979  -1.934967358515  -3.124696577778 Bohr   0.0
+[INPUT]  9 C      4.469531440000  -0.798744020000  -0.810495840000 AA    8.446190326733  -1.509407441434  -1.531615162699 Bohr   0.0
+[INPUT] 10 C      4.252048050000  -0.278795900000   0.466687720000 AA    8.035206282991  -0.526847895652   0.881911976498 Bohr   0.0
+[INPUT] 11 C      2.962863130000   0.015581160000   0.905230840000 AA    5.598999860272   0.029444125103   1.710638367110 Bohr   0.0
+[INPUT] 12 O     -0.445338510000  -0.190407190000  -0.483236700000 AA   -0.841567816622  -0.359817441248  -0.913185016339 Bohr   0.0
+[INPUT] 13 C     -1.776314170000   0.007308310000  -0.294717280000 AA   -3.356747292484   0.013810704333  -0.556934943377 Bohr   0.0
+[INPUT] 14 C     -2.624284460000  -0.316547330000  -1.362856600000 AA   -4.959178902352  -0.598187759162  -2.575425721056 Bohr   0.0
+[INPUT] 15 C     -3.990540520000  -0.130222980000  -1.213478470000 AA   -7.541028671779  -0.246085767325  -2.293141966356 Bohr   0.0
+[INPUT] 16 C     -4.525078000000   0.375445190000  -0.012246380000 AA   -8.551158112295   0.709488583885  -0.023142304217 Bohr   0.0
+[INPUT] 17 C     -3.681272320000   0.692976470000   1.037968610000 AA   -6.956596474742   1.309535739068   1.961476398795 Bohr   0.0
+[INPUT] 18 C     -2.290408420000   0.512327990000   0.909742910000 AA   -4.328244627198   0.968159587049   1.719164943665 Bohr   0.0
+[INPUT] 19 H      0.244344880000   1.218847580000   3.415100480000 AA    0.461744903140   2.303288113789   6.453604595071 Bohr   0.0
+[INPUT] 20 H      1.248921930000  -0.912041470000  -1.888636680000 AA    2.360120398663  -1.723508592546  -3.569006074008 Bohr   0.0
+[INPUT] 21 H      3.533907440000  -1.428418600000  -2.650189320000 AA    6.678117211163  -2.699319945235  -5.008131993047 Bohr   0.0
+[INPUT] 22 H      5.477703930000  -1.026167030000  -1.145980210000 AA   10.351360219154  -1.939174644758  -2.165588741072 Bohr   0.0
+[INPUT] 23 H      5.092493060000  -0.098953160000   1.131587980000 AA    9.623417174648  -0.186994371560   2.138391368050 Bohr   0.0
+[INPUT] 24 H      2.810542640000   0.417660100000   1.897408070000 AA    5.311155851012   0.789263202158   3.585581598840 Bohr   0.0
+[INPUT] 25 H     -2.195248640000  -0.704934050000  -2.280704480000 AA   -4.148418704924  -1.332132290380  -4.309906838269 Bohr   0.0
+[INPUT] 26 H     -4.654413220000  -0.378982930000  -2.036641130000 AA   -8.795566256355  -0.716173943585  -3.848693949725 Bohr   0.0
+[INPUT] 27 H     -5.597470140000   0.514453520000   0.085755750000 AA  -10.577685555031   0.972176256618   0.162054881107 Bohr   0.0
+[INPUT] 28 H     -4.056949130000   1.084548740000   1.977854860000 AA   -7.666522756992   2.049500087342   3.737603999540 Bohr   0.0
+
+nuclear repulsion = 1202.83825737651
+number of shells = 110
+number of NR pGTOs = 436
+number of NR cGTOs = 182
+basis = 6-31G
+ecp = {}
+CPU time:         0.53
+
+
+******** <class 'pyscf.scf.hf.RHF'> ********
+method = RHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-10
+SCF conv_tol_grad = None
+SCF max_cycles = 200
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = 3hf_rhf_631g.chk
+max_memory 4000 MB (current use 123 MB)
+Set gradient conv threshold to 1e-05
+Initial guess from minao.
+init E= -804.182519661702
+  HOMO = -0.179928736493343  LUMO = -0.0285321491928111
+cycle= 1 E= -797.783574747602  delta_E=  6.4  |g|= 1.05  |ddm|= 5.86
+  HOMO = -0.313156270733501  LUMO = -0.0182153410259356
+cycle= 2 E= -797.970620242425  delta_E= -0.187  |g|= 0.827  |ddm|= 3.16
+  HOMO = -0.301377851333432  LUMO = 0.0267358321832607
+cycle= 3 E= -798.112638905097  delta_E= -0.142  |g|= 0.147  |ddm|= 1.61
+  HOMO = -0.298279092427094  LUMO = 0.0445095924210496
+cycle= 4 E= -798.11977649422  delta_E= -0.00714  |g|= 0.0518  |ddm|= 0.316
+  HOMO = -0.301026313329058  LUMO = 0.0430207485088394
+cycle= 5 E= -798.120573046532  delta_E= -0.000797  |g|= 0.0134  |ddm|= 0.0932
+  HOMO = -0.302543546244335  LUMO = 0.042772321694049
+cycle= 6 E= -798.120722506716  delta_E= -0.000149  |g|= 0.00735  |ddm|= 0.0426
+  HOMO = -0.302146382402943  LUMO = 0.0440267143956015
+cycle= 7 E= -798.120772983987  delta_E= -5.05e-05  |g|= 0.00272  |ddm|= 0.0351
+  HOMO = -0.302242399924017  LUMO = 0.0442813150892637
+cycle= 8 E= -798.120779110887  delta_E= -6.13e-06  |g|= 0.00132  |ddm|= 0.0108
+  HOMO = -0.302296142306635  LUMO = 0.0442940931848037
+cycle= 9 E= -798.120780274834  delta_E= -1.16e-06  |g|= 0.000425  |ddm|= 0.00413
+  HOMO = -0.302266722559795  LUMO = 0.044287535407894
+cycle= 10 E= -798.12078044064  delta_E= -1.66e-07  |g|= 0.00016  |ddm|= 0.00147
+  HOMO = -0.302250889190909  LUMO = 0.0442969575260866
+cycle= 11 E= -798.120780460855  delta_E= -2.02e-08  |g|= 6.07e-05  |ddm|= 0.000445
+  HOMO = -0.302253144776331  LUMO = 0.0442876310523868
+cycle= 12 E= -798.120780464255  delta_E= -3.4e-09  |g|= 2.9e-05  |ddm|= 0.000167
+  HOMO = -0.302250076505621  LUMO = 0.0442892832131098
+cycle= 13 E= -798.120780464939  delta_E= -6.84e-10  |g|= 1.42e-05  |ddm|= 0.000105
+  HOMO = -0.30224958327616  LUMO = 0.0442895193915635
+cycle= 14 E= -798.120780465093  delta_E= -1.54e-10  |g|= 4.86e-06  |ddm|= 3.81e-05
+  HOMO = -0.302249903706656  LUMO = 0.0442891976592485
+cycle= 15 E= -798.120780465122  delta_E= -2.93e-11  |g|= 1.75e-06  |ddm|= 1.96e-05
+  HOMO = -0.302249805627318  LUMO = 0.044289292452068
+Extra cycle  E= -798.120780465126  delta_E= -4.09e-12  |g|= 1.01e-06  |ddm|= 5.59e-06
+converged SCF energy = -798.120780465126
+
+RHF/6-31G energy: -798.1207804651 Hartree
+
+Heavy-atom plane fit: rms out-of-plane deviation = 0.0054 Angstrom
+
+nelectron = 124, nocc = 62, nmo = 182
+HOMO = MO 62, LUMO = MO 63  (1-based)
+
+  MO   occ     energy/Ha    pi weight    p weight   label
+   54  2.00     -0.505058      0.0001      0.7715      
+   55  2.00     -0.499954      0.9999      1.0000   pi 
+   56  2.00     -0.485103      0.0001      0.7286      
+   57  2.00     -0.443730      0.0000      0.9504      
+   58  2.00     -0.397488      1.0000      1.0000   pi 
+   59  2.00     -0.369748      1.0000      1.0000   pi 
+   60  2.00     -0.342839      1.0000      1.0000   pi 
+   61  2.00     -0.339217      0.9999      1.0000   pi 
+   62  2.00     -0.302250      1.0000      1.0000   pi HOMO
+   63  0.00      0.044289      1.0000      1.0000   pi LUMO
+   64  0.00      0.100936      1.0000      1.0000   pi 
+   65  0.00      0.127879      1.0000      1.0000   pi 
+   66  0.00      0.142602      0.9999      1.0000   pi 
+   67  0.00      0.182526      0.9999      1.0000   pi 
+   68  0.00      0.223141      0.0000      0.2198      
+   69  0.00      0.239121      0.0000      0.1896      
+   70  0.00      0.252397      0.0000      0.3177      
+   71  0.00      0.272672      0.0001      0.2541      
+
+Suggested active space: (4e, 4o)
+act_list (1-based) = [61, 62, 63, 64]
+
+Wrote 3hf_rhf_631g.chk, 3hf_rhf_631g.molden, 00_rhf_631g_active.json

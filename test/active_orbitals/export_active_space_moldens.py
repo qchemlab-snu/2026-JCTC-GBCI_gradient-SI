@@ -4,7 +4,7 @@ One file per system, holding only the active orbitals in window order, so the
 figures can be rendered directly. Each system is rebuilt from the geometry and
 settings its own production or benchmark script uses.
 
-For the lithium halides and SO2 the active space is the default contiguous
+For the lithium halides the active space is the default contiguous
 window, so the RHF orbitals are used as they come. For pp and CH2NH2 the
 scripts pass an explicit ``act_list``, which is applied here with ``sort_mo``;
 those spaces are the *initial* selection at the starting geometry, since the
@@ -26,7 +26,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 
 
 # One bond length for all three, deliberately off equilibrium (LiH 1.595, LiF 1.564,
-# LiCl 2.021 A), as in test/lix/li_halides_gbci_grad_check.py: at a
+# LiCl 2.021 A), as in test/li_halides/gbci/li_halides_gbci_grad_check.py: at a
 # stationary point both the analytic and the numerical gradient go to zero, which
 # weakens the comparison.
 LI_BOND = 1.50
@@ -46,21 +46,6 @@ def li_halide(partner: str, ncas: int, nelecas, act_list, character: str,
         basis="ccpvdz", charge=0, spin=0, ncas=ncas, nelecas=nelecas,
         act_list=list(act_list),
         note=f"Li-{partner} {bond} A, sigma-only act_list {list(act_list)}; {character}",
-    )
-
-
-def so2_distorted():
-    half = np.deg2rad(112.0) / 2.0
-    coords = np.array([
-        [0.0, 0.0, 0.0],
-        [1.38 * np.sin(half), 0.0, 1.38 * np.cos(half)],
-        [-1.52 * np.sin(half), 0.0, 1.52 * np.cos(half)],
-    ])
-    coords[2, 1] += 0.08
-    return dict(
-        atom=[(s, tuple(c)) for s, c in zip(("S", "O", "O"), coords)],
-        basis="ccpvdz", charge=0, spin=0, ncas=5, nelecas=(4, 4),
-        act_list=None, note="asymmetric C1 geometry, default window",
     )
 
 
@@ -87,7 +72,7 @@ H           2.14739911        3.03255902        0.00001156
 H          -0.26909246        2.73308097       -0.00000537"""
 
 # CH2NH2+: CASCI(8e,5o)/cc-pVTZ S0-optimised geometry, from
-# test/ch2nh2/casci/outputs/ch2nh2_casci_S0_opt_5o8e_ccpvtz/
+# test/CH2NH2/ccpvtz/casci/outputs/ch2nh2_casci_S0_opt_5o8e_ccpvtz/
 #   ch2nh2_casci_S0_opt_5o8e_ccpvtz_optimized.xyz
 CH2NH2_ATOMS = """N           0.59255061       -0.00001238       -0.00004047
 C          -0.67410400       -0.00005196       -0.00022958
@@ -95,6 +80,42 @@ H           1.11801778        0.21864286        0.82486620
 H           1.11847219       -0.21860303       -0.82467092
 H          -1.20415283        0.23914922        0.90215389
 H          -1.20495876       -0.23912870       -0.90217914"""
+
+# 3-hydroxyflavone: B3LYP/6-31G(d) S0 minimum, from
+# test/3HF/dft/outputs/3hf_dft_S0_opt.xyz (no imaginary frequencies).
+HF3_ATOMS = """O -1.66557168 1.28041179 3.09806724
+C -1.35864134 0.82956055 1.98137939
+C 0.05398841 0.58682730 1.69471563
+O 0.87455695 0.89837760 2.72438015
+C 0.48347300 0.08976705 0.49295905
+C 1.85524232 -0.20824449 0.06189313
+C 2.08690585 -0.73332029 -1.22593008
+C 3.37905304 -1.02394063 -1.65351822
+C 4.46953144 -0.79874402 -0.81049584
+C 4.25204805 -0.27879590 0.46668772
+C 2.96286313 0.01558116 0.90523084
+O -0.44533851 -0.19040719 -0.48323670
+C -1.77631417 0.00730831 -0.29471728
+C -2.62428446 -0.31654733 -1.36285660
+C -3.99054052 -0.13022298 -1.21347847
+C -4.52507800 0.37544519 -0.01224638
+C -3.68127232 0.69297647 1.03796861
+C -2.29040842 0.51232799 0.90974291
+H 0.24434488 1.21884758 3.41510048
+H 1.24892193 -0.91204147 -1.88863668
+H 3.53390744 -1.42841860 -2.65018932
+H 5.47770393 -1.02616703 -1.14598021
+H 5.09249306 -0.09895316 1.13158798
+H 2.81054264 0.41766010 1.89740807
+H -2.19524864 -0.70493405 -2.28070448
+H -4.65441322 -0.37898293 -2.03664113
+H -5.59747014 0.51445352 0.08575575
+H -4.05694913 1.08454874 1.97785486"""
+
+# The chromone acceptor: carbonyl O, the pyranone ring, the fused benzo ring and
+# its hydrogens. The 2-phenyl ring and the 3-OH stay outside, so the group
+# boundary straddles the phenyl -> chromone charge transfer that S1 carries.
+HF3_ACCEPTOR = [0, 1, 2, 4, 11, 12, 13, 14, 15, 16, 17, 24, 25, 26, 27]
 
 SYSTEMS = {
     "lih_2e2o": li_halide(
@@ -106,7 +127,6 @@ SYSTEMS = {
     "licl_4e4o": li_halide(
         "Cl", 4, (2, 2), (7, 8, 11, 14),
         "7: sigma(Cl3s), 8: sigma(Cl3pz-Li), 11: sigma*(Li3s), 14: sigma*(Li3pz)"),
-    "so2_8e5o": so2_distorted(),
     "pp_8e6o": dict(atom=PP_ATOMS, basis="ccpvdz", charge=0, spin=0,
                     ncas=6, nelecas=(4, 4), act_list=[35, 36, 37, 38, 39, 40],
                     note="CASCI(8e,6o)/cc-pVDZ S0-optimised geometry"),
@@ -115,6 +135,10 @@ SYSTEMS = {
     "pp_2e2o": dict(atom=PP_ATOMS, basis="ccpvdz", charge=0, spin=0,
                     ncas=2, nelecas=(1, 1), act_list=[38, 39],
                     note="CAS(2e,2o) of pp_gbci_S1.py, at the CASCI S0-optimised geometry"),
+    "3hf_4e4o": dict(atom=HF3_ATOMS, basis="6-31G", charge=0, spin=0,
+                      ncas=4, nelecas=(2, 2), act_list=[61, 62, 63, 64],
+                      note="GBCI(4e,4o)/6-31G frontier pi/pi* window, at the "
+                           "B3LYP/6-31G(d) S0 minimum"),
     "ch2nh2_8e5o": dict(atom=CH2NH2_ATOMS, basis="cc-pVTZ", charge=1, spin=0,
                         ncas=5, nelecas=(4, 4), act_list=[5, 6, 7, 8, 9],
                         note="CASCI(8e,5o)/cc-pVTZ S0-optimised geometry"),

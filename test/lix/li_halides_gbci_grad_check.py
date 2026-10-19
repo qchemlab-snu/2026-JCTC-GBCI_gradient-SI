@@ -474,9 +474,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--torque-atol", type=positive_float, default=1.0e-6)
     parser.add_argument("--rotation-energy-atol", type=positive_float, default=1.0e-8)
     parser.add_argument("--active-overlap-thresh", type=positive_float, default=0.9)
-    # Tolerances are shared with the SO2 sweep
-    # (test/so2/gbci_so2_grad_fd_sweep.py) except for the two energy
-    # thresholds, which stay at 1e-12 here.  SO2's 1e-14 is below what these
+    # Tolerances follow the SO2 sweep these thresholds were originally tuned
+    # on (that system was dropped from the manuscript) except for the two
+    # energy thresholds, which stay at 1e-12 here.  SO2's 1e-14 is below what these
     # molecules can resolve in double precision -- LiCl sits at -467 Eh, so
     # 1e-14 is a relative 2e-17 -- and an unreachable threshold makes the SCF
     # and the Davidson stop on numerical noise instead of converging.  Measured:

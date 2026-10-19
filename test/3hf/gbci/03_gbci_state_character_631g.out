@@ -1,0 +1,1716 @@
+#INFO: **** input file is /home/jiseong0626/mygit/grad/pysfnocigrad/test/3HF/gbci/03_gbci_state_character_631g.py ****
+"""GBCI(4e,4o) state character analysis for 3-hydroxyflavone in a 6-31G basis.
+
+Answers which GBCI root carries charge transfer, and how much, by building the
+AO density of every root and reporting Lowdin fragment charges, the dipole, the
+active natural occupations, and the dominant hole -> particle pair of each
+transition.  Fragment charges and dipoles come from the *state densities*, so
+unlike the occupation-pattern populations in ``02_group_threshold_check_631g.py``
+they include the grouped-bath relaxation.
+
+The active space is the frontier pi/pi* window from ``00_rhf_631g_active.py``,
+determined directly in this basis, so no cross-basis orbital matching is needed.
+The grouped bath uses threshold 0.5, which ``02_group_threshold_check_631g.py``
+shows gives 4 groups while still keeping the S0 and HOMO -> LUMO configurations
+in separate groups (they merge only at 1.0).  The gradient cost carries a
+ngroup**2 factor, so 4 groups instead of the default 7 is roughly 3x cheaper.
+"""
+
+import json
+from functools import reduce
+from pathlib import Path
+
+import numpy as np
+import scipy.linalg
+from pyscf import gto, scf
+from pyscf.gbci.gbci import GBCI
+
+from utils.bath_grouping import patch_gbci_grouping
+from utils.gbci_setup import apply_act_list, check_active_window, is_contiguous_window
+
+GEOMETRY = "../dft/outputs/3hf_dft_S0_opt.xyz"
+BASIS = "6-31G"
+SCF_CHK = "3hf_rhf_631g_character.chk"
+OUTPUT_JSON = "03_gbci_state_character_631g.json"
+
+# Frontier pi/pi* window from 00_rhf_631g_active.py, determined in this basis.
+ACT_LIST = [61, 62, 63, 64]
+
+NCAS = 4
+NELECAS = (2, 2)
+ACT_BASE = 1
+
+NROOTS = 4
+
+# Fragments of 3-hydroxyflavone (0-based atoms, hydrogens with their heavy atom).
+# chromone = benzo-4-pyranone incl. the carbonyl and ring oxygens; the 3-OH and
+# the 2-phenyl ring are kept separate so a charge shift between them is visible.
+ACCEPTOR_ATOMS = [0, 1, 2, 4, 11, 12, 13, 14, 15, 16, 17, 24, 25, 26, 27]
+DONOR_ATOMS = [5, 6, 7, 8, 9, 10, 19, 20, 21, 22, 23]
+HYDROXY_ATOMS = [3, 18]
+
+# Grouped bath keyed on the chromone population, the coordinate a charge-transfer
+# state moves along. threshold 0.5 -> 4 groups (see 02_group_threshold_check).
+GROUP_THRESHOLD = 0.5
+GROUP_A = {"atom": [ACCEPTOR_ATOMS], "threshold": GROUP_THRESHOLD}
+
+SCF_CONV_TOL = 1e-10
+FASSCF_CONV_TOL = 1e-10
+FCI_CONV_TOL = 1e-12
+
+HARTREE2EV = 27.211386245988
+
+
+def lowdin_atom_charges(mol, dm_ao):
+    """Lowdin charge per atom from an AO-basis density matrix."""
+    s = mol.intor_symmetric("int1e_ovlp")
+    s12 = scipy.linalg.sqrtm(s).real
+    pop = np.diag(reduce(np.dot, (s12, dm_ao, s12))).real
+
+    charges = np.zeros(mol.natm)
+    slices = mol.aoslice_by_atom()
+    for atom in range(mol.natm):
+        p0, p1 = slices[atom][2], slices[atom][3]
+        charges[atom] = mol.atom_charge(atom) - pop[p0:p1].sum()
+    return charges
+
+
+def dipole_moment(mol, dm_ao):
+    """Total dipole moment in Debye."""
+    charges = mol.atom_charges()
+    coords = mol.atom_coords()
+    nuclear = np.einsum("a,ax->x", charges, coords)
+    with mol.with_common_orig((0, 0, 0)):
+        ao_dip = mol.intor_symmetric("int1e_r", comp=3)
+    electronic = np.einsum("xij,ji->x", ao_dip, dm_ao)
+    return (nuclear - electronic) * 2.541746473
+
+
+def total_density(gbci, ci_root):
+    """AO density of one root. ``make_rdm1`` already includes the grouped core."""
+    return gbci.make_rdm1(ci_root)
+
+
+def main():
+    patch_gbci_grouping()  # complete-linkage bath grouping, see utils/bath_grouping.py
+
+    mol = gto.M(atom=GEOMETRY, basis=BASIS, charge=0, spin=0, unit="Angstrom",
+                verbose=4)
+    mf = scf.RHF(mol)
+    mf.conv_tol = SCF_CONV_TOL
+    mf.chkfile = SCF_CHK
+    mf.kernel()
+    if not mf.converged:
+        raise RuntimeError(f"RHF/{BASIS} did not converge")
+
+    act_list = list(ACT_LIST)
+    print(f"act_list ({BASIS}, 1-based) = {act_list}")
+
+    probe = GBCI(mf, ncas=NCAS, nelecas=NELECAS, group_a=GROUP_A)
+    if not is_contiguous_window(probe, act_list, base=ACT_BASE):
+        print(f"act_list {act_list} is not the default window "
+              f"{list(range(probe.ncore + 1, probe.ncore + NCAS + 1))}; reordering")
+        apply_act_list(mf, probe, act_list, base=ACT_BASE)
+
+    gbci = GBCI(mf, ncas=NCAS, nelecas=NELECAS, group_a=GROUP_A)
+    check_active_window(gbci)
+    gbci.fix_spin_(ss=0)
+    gbci.fcisolver.nroots = NROOTS
+    gbci.fcisolver.conv_tol = FCI_CONV_TOL
+
+    fasscf = gbci._get_fasscf(gbci.group_a, gbci.mo_coeff, gbci.ncas,
+                              gbci.nelecas, gbci.ncore)
+    fasscf.conv_tol = FASSCF_CONV_TOL
+
+    gbci.kernel()
+
+    ncore = gbci.ncore
+    e_tot = np.asarray(gbci.e_tot).reshape(-1)
+    ci = gbci.ci
+
+    print(f"\nncore = {ncore}, active MOs (1-based) = {act_list}")
+    print(f"GBCI energies (Eh): {e_tot}")
+
+    # Reference: ground-state fragment charges
+    dm0 = total_density(gbci, ci[0])
+    q0 = lowdin_atom_charges(mol, dm0)
+    q0_acc, q0_don = q0[ACCEPTOR_ATOMS].sum(), q0[DONOR_ATOMS].sum()
+    q0_oh = q0[HYDROXY_ATOMS].sum()
+    print(f"electron count check: trace(dm0 S) = "
+          f"{np.einsum('ij,ji->', dm0, mol.intor_symmetric('int1e_ovlp')):.6f} "
+          f"(nelectron = {mol.nelectron})")
+
+    results = []
+    for root in range(NROOTS):
+        dm = total_density(gbci, ci[root])
+        q = lowdin_atom_charges(mol, dm)
+        q_acc, q_don = q[ACCEPTOR_ATOMS].sum(), q[DONOR_ATOMS].sum()
+        q_oh = q[HYDROXY_ATOMS].sum()
+
+        # make_rdm1_mo is the full nmo x nmo density; the active block is what
+        # carries the excitation, the core diagonal shows the bath relaxation.
+        rdm_mo = gbci.make_rdm1_mo(ci[root])
+        act = slice(ncore, ncore + NCAS)
+        rdm_act = 0.5 * (rdm_mo[act, act] + rdm_mo[act, act].T)
+        occ_no = np.sort(np.linalg.eigvalsh(rdm_act))[::-1]
+        occ_mo = np.diag(rdm_mo)[act]
+        core_dev = float(np.abs(np.diag(rdm_mo)[:ncore] - 2.0).max())
+
+        info = {
+            "root": root,
+            "e_tot": float(e_tot[root]),
+            "exc_ev": float((e_tot[root] - e_tot[0]) * HARTREE2EV),
+            "natural_occ": [float(x) for x in occ_no],
+            "active_mo_occ": {str(act_list[i]): float(occ_mo[i]) for i in range(NCAS)},
+            "max_core_occ_deviation": core_dev,
+            "q_acceptor": float(q_acc),
+            "q_donor": float(q_don),
+            "dq_acceptor": float(q_acc - q0_acc),
+            "dq_donor": float(q_don - q0_don),
+            "q_hydroxy": float(q_oh),
+            "dq_hydroxy": float(q_oh - q0_oh),
+            "dipole_debye": [float(x) for x in dipole_moment(mol, dm)],
+        }
+
+        if root > 0:
+            # trans_rdm1_mo(bra, ket)[p, q] = <bra| p^dagger q |ket>, so rows are
+            # the particle (virtual active) and columns the hole (occupied active).
+            tdm_mo = gbci.trans_rdm1_mo(ci[root], ci[0])
+            nocc_act = NELECAS[0]
+            t_vo = tdm_mo[ncore + nocc_act:ncore + NCAS, ncore:ncore + nocc_act]
+            u_p, sv, vt_h = np.linalg.svd(t_vo)
+            weights = sv**2 / max(float((sv**2).sum()), 1e-14)
+            pairs = []
+            for k in range(len(sv)):
+                if weights[k] < 0.02:
+                    continue
+                hole = {str(act_list[i]): float(vt_h[k, i] ** 2)
+                        for i in range(nocc_act) if vt_h[k, i] ** 2 > 0.02}
+                part = {str(act_list[nocc_act + i]): float(u_p[i, k] ** 2)
+                        for i in range(NCAS - nocc_act) if u_p[i, k] ** 2 > 0.02}
+                pairs.append({"weight": float(weights[k]),
+                              "singular_value": float(sv[k]),
+                              "hole": hole, "particle": part})
+            info["nto_pairs"] = pairs
+
+        results.append(info)
+
+        print(f"\n=== Root {root} (S{root}) ===")
+        print(f"  E = {info['e_tot']:.10f} Eh, dE = {info['exc_ev']:.3f} eV")
+        print("  active natural occupations: "
+              + " ".join(f"{x:.4f}" for x in info["natural_occ"]))
+        print("  occupation per active MO: "
+              + " ".join(f"MO{act_list[i]}={occ_mo[i]:.3f}" for i in range(NCAS)))
+        print(f"  max |core occ - 2| = {core_dev:.2e}")
+        print(f"  Lowdin charge: chromone {q_acc:+.4f} (d {info['dq_acceptor']:+.4f}), "
+              f"phenyl {q_don:+.4f} (d {info['dq_donor']:+.4f}), "
+              f"3-OH {q_oh:+.4f} (d {info['dq_hydroxy']:+.4f})")
+        d = info["dipole_debye"]
+        print(f"  dipole = ({d[0]:.3f}, {d[1]:.3f}, {d[2]:.3f}) D, "
+              f"|mu| = {np.linalg.norm(d):.3f} D")
+        for pair in info.get("nto_pairs", []):
+            hole = ", ".join(f"MO{k}:{v:.2f}" for k, v in pair["hole"].items())
+            part = ", ".join(f"MO{k}:{v:.2f}" for k, v in pair["particle"].items())
+            print(f"  transition weight {pair['weight']:.3f}: "
+                  f"[{hole}] -> [{part}]")
+
+    Path(OUTPUT_JSON).write_text(json.dumps({
+        "geometry": GEOMETRY,
+        "basis": BASIS,
+        "group_threshold": GROUP_THRESHOLD,
+        "act_list": act_list,
+        "ncas": NCAS,
+        "nelecas": list(NELECAS),
+        "group_a": GROUP_A,
+        "acceptor_atoms": ACCEPTOR_ATOMS,
+        "donor_atoms": DONOR_ATOMS,
+        "hydroxy_atoms": HYDROXY_ATOMS,
+        "roots": results,
+    }, indent=2))
+    print(f"\nSaved {OUTPUT_JSON}")
+
+
+if __name__ == "__main__":
+    main()
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='node14', release='5.4.0-216-generic', version='#236-Ubuntu SMP Fri Apr 11 19:53:21 UTC 2025', machine='x86_64')  Threads 20
+Python 3.10.18 (main, Jun  5 2025, 13:14:17) [GCC 11.2.0]
+numpy 2.2.5  scipy 1.15.3  h5py 3.14.0
+Date: Tue Oct 13 15:38:44 2026
+PySCF version 2.10.0
+PySCF path  /home/jiseong0626/pyscf
+GIT ORIG_HEAD 21aafdcc5c978cfcc80263f7d5fdd8f3603c83f1
+GIT HEAD (branch master) 6f9d9399cac057e5965e8250cf8e3ef57716510d
+
+[ENV] PYSCF_EXT_PATH /home/jiseong0626/labgit/pyscf-forge
+[CONFIG] conf_file None
+[INPUT] verbose = 4
+[INPUT] num. atoms = 28
+[INPUT] num. electrons = 124
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 0
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = Angstrom
+[INPUT] Symbol           X                Y                Z      unit          X                Y                Z       unit  Magmom
+[INPUT]  1 O     -1.665571680000   1.280411790000   3.098067240000 AA   -3.147474316032   2.419627609764   5.854498599087 Bohr   0.0
+[INPUT]  2 C     -1.358641340000   0.829560550000   1.981379390000 AA   -2.567460034112   1.567642243244   3.744264395958 Bohr   0.0
+[INPUT]  3 C      0.053988410000   0.586827300000   1.694715630000 AA    0.102023308801   1.108942879418   3.202548399720 Bohr   0.0
+[INPUT]  4 O      0.874556950000   0.898377600000   2.724380150000 AA    1.652673115835   1.697687620444   5.148332342701 Bohr   0.0
+[INPUT]  5 C      0.483473000000   0.089767050000   0.492959050000 AA    0.913631558622   0.169635139510   0.931557595126 Bohr   0.0
+[INPUT]  6 C      1.855242320000  -0.208244490000   0.061893130000 AA    3.505899879503  -0.393525053050   0.116961064692 Bohr   0.0
+[INPUT]  7 C      2.086905850000  -0.733320290000  -1.225930080000 AA    3.943680504253  -1.385774509687  -2.316672099066 Bohr   0.0
+[INPUT]  8 C      3.379053040000  -1.023940630000  -1.653518220000 AA    6.385484805979  -1.934967358515  -3.124696577778 Bohr   0.0
+[INPUT]  9 C      4.469531440000  -0.798744020000  -0.810495840000 AA    8.446190326733  -1.509407441434  -1.531615162699 Bohr   0.0
+[INPUT] 10 C      4.252048050000  -0.278795900000   0.466687720000 AA    8.035206282991  -0.526847895652   0.881911976498 Bohr   0.0
+[INPUT] 11 C      2.962863130000   0.015581160000   0.905230840000 AA    5.598999860272   0.029444125103   1.710638367110 Bohr   0.0
+[INPUT] 12 O     -0.445338510000  -0.190407190000  -0.483236700000 AA   -0.841567816622  -0.359817441248  -0.913185016339 Bohr   0.0
+[INPUT] 13 C     -1.776314170000   0.007308310000  -0.294717280000 AA   -3.356747292484   0.013810704333  -0.556934943377 Bohr   0.0
+[INPUT] 14 C     -2.624284460000  -0.316547330000  -1.362856600000 AA   -4.959178902352  -0.598187759162  -2.575425721056 Bohr   0.0
+[INPUT] 15 C     -3.990540520000  -0.130222980000  -1.213478470000 AA   -7.541028671779  -0.246085767325  -2.293141966356 Bohr   0.0
+[INPUT] 16 C     -4.525078000000   0.375445190000  -0.012246380000 AA   -8.551158112295   0.709488583885  -0.023142304217 Bohr   0.0
+[INPUT] 17 C     -3.681272320000   0.692976470000   1.037968610000 AA   -6.956596474742   1.309535739068   1.961476398795 Bohr   0.0
+[INPUT] 18 C     -2.290408420000   0.512327990000   0.909742910000 AA   -4.328244627198   0.968159587049   1.719164943665 Bohr   0.0
+[INPUT] 19 H      0.244344880000   1.218847580000   3.415100480000 AA    0.461744903140   2.303288113789   6.453604595071 Bohr   0.0
+[INPUT] 20 H      1.248921930000  -0.912041470000  -1.888636680000 AA    2.360120398663  -1.723508592546  -3.569006074008 Bohr   0.0
+[INPUT] 21 H      3.533907440000  -1.428418600000  -2.650189320000 AA    6.678117211163  -2.699319945235  -5.008131993047 Bohr   0.0
+[INPUT] 22 H      5.477703930000  -1.026167030000  -1.145980210000 AA   10.351360219154  -1.939174644758  -2.165588741072 Bohr   0.0
+[INPUT] 23 H      5.092493060000  -0.098953160000   1.131587980000 AA    9.623417174648  -0.186994371560   2.138391368050 Bohr   0.0
+[INPUT] 24 H      2.810542640000   0.417660100000   1.897408070000 AA    5.311155851012   0.789263202158   3.585581598840 Bohr   0.0
+[INPUT] 25 H     -2.195248640000  -0.704934050000  -2.280704480000 AA   -4.148418704924  -1.332132290380  -4.309906838269 Bohr   0.0
+[INPUT] 26 H     -4.654413220000  -0.378982930000  -2.036641130000 AA   -8.795566256355  -0.716173943585  -3.848693949725 Bohr   0.0
+[INPUT] 27 H     -5.597470140000   0.514453520000   0.085755750000 AA  -10.577685555031   0.972176256618   0.162054881107 Bohr   0.0
+[INPUT] 28 H     -4.056949130000   1.084548740000   1.977854860000 AA   -7.666522756992   2.049500087342   3.737603999540 Bohr   0.0
+
+nuclear repulsion = 1202.83825737651
+number of shells = 110
+number of NR pGTOs = 436
+number of NR cGTOs = 182
+basis = 6-31G
+ecp = {}
+CPU time:         0.97
+
+
+******** <class 'pyscf.scf.hf.RHF'> ********
+method = RHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-10
+SCF conv_tol_grad = None
+SCF max_cycles = 50
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = 3hf_rhf_631g_character.chk
+max_memory 4000 MB (current use 121 MB)
+Set gradient conv threshold to 1e-05
+Initial guess from minao.
+init E= -804.182519661702
+  HOMO = -0.179928736493338  LUMO = -0.0285321491928184
+cycle= 1 E= -797.783574747602  delta_E=  6.4  |g|= 1.05  |ddm|= 5.86
+  HOMO = -0.313156270733534  LUMO = -0.018215341025937
+cycle= 2 E= -797.970620242426  delta_E= -0.187  |g|= 0.827  |ddm|= 3.16
+  HOMO = -0.301377851333439  LUMO = 0.0267358321832593
+cycle= 3 E= -798.112638905097  delta_E= -0.142  |g|= 0.147  |ddm|= 1.61
+  HOMO = -0.298279092427095  LUMO = 0.0445095924210591
+cycle= 4 E= -798.119776494222  delta_E= -0.00714  |g|= 0.0518  |ddm|= 0.316
+  HOMO = -0.301026313329023  LUMO = 0.0430207485088672
+cycle= 5 E= -798.120573046529  delta_E= -0.000797  |g|= 0.0134  |ddm|= 0.0932
+  HOMO = -0.302543546244356  LUMO = 0.0427723216940254
+cycle= 6 E= -798.120722506713  delta_E= -0.000149  |g|= 0.00735  |ddm|= 0.0426
+  HOMO = -0.302146382402944  LUMO = 0.0440267143955857
+cycle= 7 E= -798.120772983984  delta_E= -5.05e-05  |g|= 0.00272  |ddm|= 0.0351
+  HOMO = -0.302242399923988  LUMO = 0.0442813150892757
+cycle= 8 E= -798.120779110887  delta_E= -6.13e-06  |g|= 0.00132  |ddm|= 0.0108
+  HOMO = -0.302296142306637  LUMO = 0.0442940931848059
+cycle= 9 E= -798.120780274833  delta_E= -1.16e-06  |g|= 0.000425  |ddm|= 0.00413
+  HOMO = -0.302266722559785  LUMO = 0.0442875354078917
+cycle= 10 E= -798.120780440639  delta_E= -1.66e-07  |g|= 0.00016  |ddm|= 0.00147
+  HOMO = -0.302250889190906  LUMO = 0.044296957526084
+cycle= 11 E= -798.120780460854  delta_E= -2.02e-08  |g|= 6.07e-05  |ddm|= 0.000445
+  HOMO = -0.302253144776353  LUMO = 0.0442876310523728
+cycle= 12 E= -798.120780464254  delta_E= -3.4e-09  |g|= 2.9e-05  |ddm|= 0.000167
+  HOMO = -0.302250076505605  LUMO = 0.0442892832131291
+cycle= 13 E= -798.120780464937  delta_E= -6.82e-10  |g|= 1.42e-05  |ddm|= 0.000105
+  HOMO = -0.302249583276152  LUMO = 0.0442895193915623
+cycle= 14 E= -798.120780465094  delta_E= -1.57e-10  |g|= 4.86e-06  |ddm|= 3.81e-05
+  HOMO = -0.302249903706667  LUMO = 0.0442891976592515
+cycle= 15 E= -798.120780465121  delta_E= -2.66e-11  |g|= 1.75e-06  |ddm|= 1.96e-05
+  HOMO = -0.302249805627326  LUMO = 0.0442892924520544
+Extra cycle  E= -798.120780465126  delta_E= -5.68e-12  |g|= 1.01e-06  |ddm|= 5.59e-06
+converged SCF energy = -798.120780465126
+act_list (6-31G, 1-based) = [61, 62, 63, 64]
+init E= -796.910201714343
+cycle= 1 E= -797.050629706673  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.062328352923  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.06549728612  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.066547208159  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487514  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711709  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.067196320444  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773447  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458814  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.067273443669  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115844  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751968  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599046  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.06729036844  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.067291478189  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.067292179342  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625068  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909984  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093036  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211239  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287946  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.06729333798  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370818  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.06729339248  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.067293406872  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.067293416504  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422982  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.067293427389  delta_E= -4.41e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.067293430405  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.067293432488  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433937  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.06729343496  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435682  delta_E= -7.22e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436199  delta_E= -5.17e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.067293436569  delta_E= -3.7e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436836  delta_E= -2.66e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437035  delta_E= -2e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437178  delta_E= -1.43e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437286  delta_E= -1.08e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.067293437365  delta_E= -7.94e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.067293437535  delta_E= -1.7e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273079
+cycle= 1 E= -797.345552421317  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.35073413533  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649398  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543398  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.352717720044  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706016  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754633  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.352820178488  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195426  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229133  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805036  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641756  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.352832093161  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339576  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.35283247528  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550502  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.352832592409  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.35283261586  delta_E= -2.35e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.35283262901  delta_E= -1.31e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636411  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640587  delta_E= -4.18e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642943  delta_E= -2.36e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644276  delta_E= -1.33e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645028  delta_E= -7.52e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.35283264546  delta_E= -4.32e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.352832645699  delta_E= -2.4e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.352832645839  delta_E= -1.4e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.352832645918  delta_E= -7.82e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645992  delta_E= -7.44e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.650370989601
+cycle= 1 E= -797.66751880645  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811753  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.669472227081  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.66961064963  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226006  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347604  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937544  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821856  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660403  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561836  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015706  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.669697248785  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370233  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.669697434202  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468165  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486297  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496022  delta_E= -9.72e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.669697501264  delta_E= -5.24e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504092  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.669697505621  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506448  delta_E= -8.27e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506892  delta_E= -4.43e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.66969750714  delta_E= -2.48e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507275  delta_E= -1.36e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.669697507341  delta_E= -6.57e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507407  delta_E= -6.64e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465127
+cycle= 1 E= -798.120780465128  delta_E= -1.36e-12 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.12078046513  delta_E= -2.05e-12 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+GBCI converged
+
+ncore = 60, active MOs (1-based) = [61, 62, 63, 64]
+GBCI energies (Eh): [-798.125605   -797.92154811 -797.88281698 -797.85517518]
+init E= -796.910201714343
+cycle= 1 E= -797.050629706676  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.062328352927  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.06549728612  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.066547208158  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487509  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711708  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.067196320447  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773443  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458811  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.067273443668  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115842  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751966  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599042  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.067290368442  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.067291478187  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.06729217934  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625062  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909982  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093035  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211235  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287942  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.067293337983  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370816  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.06729339248  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.067293406873  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.0672934165  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422984  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.06729342739  delta_E= -4.41e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.067293430406  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.067293432489  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433937  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.067293434955  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435682  delta_E= -7.26e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436197  delta_E= -5.15e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.067293436569  delta_E= -3.72e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436833  delta_E= -2.64e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437032  delta_E= -1.99e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437177  delta_E= -1.45e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437285  delta_E= -1.08e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.067293437364  delta_E= -7.87e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.06729343753  delta_E= -1.66e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273079
+cycle= 1 E= -797.345552421315  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.350734135329  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.3521156494  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543401  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.352717720044  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706017  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754636  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.352820178487  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195429  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229135  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805033  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641752  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.352832093158  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339579  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.352832475281  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550501  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.352832592411  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.352832615857  delta_E= -2.34e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.352832629012  delta_E= -1.32e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636416  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640582  delta_E= -4.17e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642942  delta_E= -2.36e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644275  delta_E= -1.33e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645034  delta_E= -7.59e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645457  delta_E= -4.23e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.352832645697  delta_E= -2.4e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.352832645837  delta_E= -1.4e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.352832645919  delta_E= -8.12e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645992  delta_E= -7.34e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.6503709896
+cycle= 1 E= -797.667518806451  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811755  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.669472227078  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.66961064963  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226006  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347603  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937543  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821853  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660402  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561835  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015707  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.66969724878  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370233  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.669697434199  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468165  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486296  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496025  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.669697501263  delta_E= -5.24e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504091  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.669697505621  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506448  delta_E= -8.27e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506892  delta_E= -4.44e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507138  delta_E= -2.46e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507272  delta_E= -1.34e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.66969750734  delta_E= -6.78e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507408  delta_E= -6.84e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465127
+cycle= 1 E= -798.12078046513  delta_E= -2.96e-12 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.120780465131  delta_E= -9.09e-13 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+electron count check: trace(dm0 S) = 124.000000 (nelectron = 124)
+init E= -796.910201714343
+cycle= 1 E= -797.050629706675  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.062328352921  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.065497286117  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.066547208159  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487511  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711706  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.06719632045  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773442  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458808  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.067273443669  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115846  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751963  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599043  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.067290368445  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.067291478186  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.067292179336  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625063  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909981  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093037  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211234  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287941  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.067293337979  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370814  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.06729339248  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.067293406869  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.0672934165  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422983  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.067293427388  delta_E= -4.41e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.067293430407  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.067293432488  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433934  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.067293434957  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435684  delta_E= -7.27e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436196  delta_E= -5.12e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.067293436564  delta_E= -3.67e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436835  delta_E= -2.71e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437032  delta_E= -1.97e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437176  delta_E= -1.44e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437286  delta_E= -1.1e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.06729343736  delta_E= -7.44e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.06729343753  delta_E= -1.7e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273078
+cycle= 1 E= -797.345552421316  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.35073413533  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649397  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543401  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.352717720039  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706017  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754632  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.352820178487  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195429  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229134  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805034  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641756  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.352832093164  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339578  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.352832475281  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550501  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.352832592411  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.35283261586  delta_E= -2.34e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.352832629014  delta_E= -1.32e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636413  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640588  delta_E= -4.18e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642942  delta_E= -2.35e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644276  delta_E= -1.33e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645028  delta_E= -7.52e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645461  delta_E= -4.34e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.3528326457  delta_E= -2.39e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.352832645844  delta_E= -1.43e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.352832645915  delta_E= -7.12e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645997  delta_E= -8.19e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.650370989601
+cycle= 1 E= -797.667518806449  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.66905081175  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.669472227084  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.669610649629  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226007  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347606  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937542  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821855  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660402  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561833  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015706  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.66969724878  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370233  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.669697434201  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468165  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486298  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496027  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.669697501261  delta_E= -5.23e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504095  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.66969750562  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506447  delta_E= -8.27e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506893  delta_E= -4.46e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507137  delta_E= -2.43e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507274  delta_E= -1.37e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.669697507338  delta_E= -6.41e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507406  delta_E= -6.82e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465126
+cycle= 1 E= -798.120780465131  delta_E= -4.77e-12 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.120780465131  delta_E= -2.27e-13 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+init E= -796.910201714343
+cycle= 1 E= -797.050629706675  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.062328352919  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.065497286117  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.066547208159  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487514  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711707  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.067196320448  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773444  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458811  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.067273443667  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115844  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751964  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599045  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.067290368442  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.06729147819  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.067292179337  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625066  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909981  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093038  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211234  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287944  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.067293337982  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370816  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.067293392483  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.067293406872  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.0672934165  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422982  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.06729342739  delta_E= -4.41e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.067293430407  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.06729343249  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433935  delta_E= -1.44e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.06729343496  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435682  delta_E= -7.22e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436195  delta_E= -5.13e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.067293436566  delta_E= -3.71e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436832  delta_E= -2.66e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437031  delta_E= -1.99e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437178  delta_E= -1.47e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437284  delta_E= -1.06e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.067293437367  delta_E= -8.37e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.067293437532  delta_E= -1.65e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273078
+cycle= 1 E= -797.345552421316  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.350734135327  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649397  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543399  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.352717720039  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706015  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754637  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.352820178484  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195427  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229136  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805036  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641754  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.352832093161  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339578  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.352832475281  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550501  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.352832592412  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.35283261586  delta_E= -2.34e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.35283262901  delta_E= -1.32e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636413  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640586  delta_E= -4.17e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642942  delta_E= -2.36e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644272  delta_E= -1.33e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645031  delta_E= -7.58e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645458  delta_E= -4.27e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.352832645702  delta_E= -2.45e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.35283264584  delta_E= -1.38e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.35283264592  delta_E= -8.03e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645996  delta_E= -7.57e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.650370989601
+cycle= 1 E= -797.667518806447  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811753  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.669472227082  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.669610649625  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226003  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347601  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937542  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821858  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660405  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561828  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015705  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.669697248778  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370233  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.669697434198  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468165  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486295  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496027  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.669697501259  delta_E= -5.23e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504093  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.669697505619  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506449  delta_E= -8.3e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506895  delta_E= -4.47e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507139  delta_E= -2.44e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507273  delta_E= -1.33e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.669697507342  delta_E= -6.96e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507405  delta_E= -6.32e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465126
+cycle= 1 E= -798.120780465127  delta_E= -2.27e-13 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.120780465128  delta_E= -1.36e-12 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+
+=== Root 0 (S0) ===
+  E = -798.1256050004 Eh, dE = 0.000 eV
+  active natural occupations: 1.9973 1.9819 0.0193 0.0014
+  occupation per active MO: MO61=1.997 MO62=1.981 MO63=0.014 MO64=0.008
+  max |core occ - 2| = 2.86e-05
+  Lowdin charge: chromone -0.0203 (d -0.0000), phenyl +0.0864 (d +0.0000), 3-OH -0.0661 (d +0.0000)
+  dipole = (-0.838, -1.352, -3.765) D, |mu| = 4.087 D
+init E= -796.910201714343
+cycle= 1 E= -797.050629706672  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.062328352922  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.065497286117  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.066547208159  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487513  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711707  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.067196320448  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773446  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458816  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.067273443668  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115843  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751966  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599046  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.067290368446  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.067291478191  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.067292179338  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625065  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909985  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093038  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211237  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287943  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.067293337985  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370814  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.067293392485  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.067293406873  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.067293416501  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422982  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.06729342739  delta_E= -4.41e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.067293430405  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.06729343249  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.06729343394  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.06729343496  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435681  delta_E= -7.21e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436195  delta_E= -5.14e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.067293436569  delta_E= -3.74e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436837  delta_E= -2.68e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437034  delta_E= -1.97e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437179  delta_E= -1.45e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437284  delta_E= -1.06e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.067293437363  delta_E= -7.82e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.067293437532  delta_E= -1.69e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273078
+cycle= 1 E= -797.345552421316  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.35073413533  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649394  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543401  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.352717720041  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706014  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754636  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.352820178488  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195428  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229133  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805033  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641753  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.35283209316  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.35283233958  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.35283247528  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550502  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.35283259241  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.352832615857  delta_E= -2.34e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.352832629011  delta_E= -1.32e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636415  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640579  delta_E= -4.16e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642941  delta_E= -2.36e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644275  delta_E= -1.33e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645027  delta_E= -7.52e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645455  delta_E= -4.28e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.352832645698  delta_E= -2.43e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.352832645838  delta_E= -1.4e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.352832645915  delta_E= -7.71e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.35283264599  delta_E= -7.48e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.650370989601
+cycle= 1 E= -797.667518806449  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811751  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.669472227084  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.669610649625  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226007  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347601  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937543  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821856  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660402  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561832  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015703  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.669697248778  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370227  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.669697434199  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468166  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486297  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496029  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.669697501261  delta_E= -5.23e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504091  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.669697505619  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506449  delta_E= -8.31e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506893  delta_E= -4.44e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507138  delta_E= -2.45e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507274  delta_E= -1.36e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.669697507338  delta_E= -6.43e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507406  delta_E= -6.78e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465127
+cycle= 1 E= -798.12078046513  delta_E= -2.96e-12 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.120780465129  delta_E= 2.27e-13 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+init E= -796.910201714343
+cycle= 1 E= -797.050629706674  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.06232835292  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.065497286119  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.066547208162  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487515  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.06711571171  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.067196320445  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773443  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458811  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.067273443668  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115845  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751962  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599045  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.067290368441  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.067291478186  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.067292179336  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625067  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909981  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093037  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211237  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287944  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.067293337982  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370817  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.067293392479  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.06729340687  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.067293416498  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422985  delta_E= -6.49e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.067293427385  delta_E= -4.4e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.067293430403  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.067293432487  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433936  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.067293434957  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435683  delta_E= -7.25e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436191  delta_E= -5.08e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.06729343657  delta_E= -3.79e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436834  delta_E= -2.64e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437033  delta_E= -1.98e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437173  delta_E= -1.41e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437287  delta_E= -1.14e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.06729343736  delta_E= -7.34e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.067293437533  delta_E= -1.73e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273078
+cycle= 1 E= -797.345552421316  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.350734135329  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649397  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.3525585434  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.352717720041  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706015  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754635  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.35282017849  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195425  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229131  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805032  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641751  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.352832093162  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339577  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.352832475278  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550495  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.35283259241  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.352832615857  delta_E= -2.34e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.352832629011  delta_E= -1.32e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636411  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640579  delta_E= -4.17e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642941  delta_E= -2.36e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644274  delta_E= -1.33e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645028  delta_E= -7.54e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645455  delta_E= -4.27e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.352832645696  delta_E= -2.41e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.352832645837  delta_E= -1.42e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.352832645915  delta_E= -7.8e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645991  delta_E= -7.57e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.6503709896
+cycle= 1 E= -797.667518806448  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811749  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.669472227085  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.66961064963  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226006  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347603  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937543  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821857  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660404  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561836  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015701  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.669697248784  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370228  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.669697434197  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468165  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486296  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496023  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.669697501262  delta_E= -5.24e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504092  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.669697505618  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506449  delta_E= -8.31e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506891  delta_E= -4.42e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507139  delta_E= -2.48e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507274  delta_E= -1.36e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.669697507339  delta_E= -6.46e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507406  delta_E= -6.73e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465126
+cycle= 1 E= -798.12078046513  delta_E= -3.87e-12 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.120780465127  delta_E= 3.18e-12 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+init E= -796.910201714343
+cycle= 1 E= -797.050629706676  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.062328352922  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.065497286117  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.066547208161  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487514  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711707  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.06719632045  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773445  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458815  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.06727344367  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115843  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751968  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599044  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.067290368444  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.067291478189  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.067292179335  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625065  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909981  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093033  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211235  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287943  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.067293337981  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370814  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.06729339248  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.067293406872  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.067293416501  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422985  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.06729342739  delta_E= -4.4e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.067293430405  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.067293432489  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433939  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.067293434958  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435685  delta_E= -7.27e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436193  delta_E= -5.08e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.06729343657  delta_E= -3.77e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436833  delta_E= -2.63e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437032  delta_E= -1.99e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437178  delta_E= -1.46e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437284  delta_E= -1.05e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.067293437362  delta_E= -7.78e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.067293437533  delta_E= -1.72e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273078
+cycle= 1 E= -797.345552421316  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.350734135329  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649398  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543402  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.352717720041  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706014  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754632  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.352820178488  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195427  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229134  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805035  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641753  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.35283209316  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339583  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.352832475277  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550504  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.352832592409  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.352832615856  delta_E= -2.34e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.352832629013  delta_E= -1.32e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636409  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640585  delta_E= -4.18e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642937  delta_E= -2.35e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644275  delta_E= -1.34e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645027  delta_E= -7.52e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645458  delta_E= -4.3e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.352832645698  delta_E= -2.41e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.352832645839  delta_E= -1.41e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.352832645915  delta_E= -7.57e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645991  delta_E= -7.57e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.6503709896
+cycle= 1 E= -797.667518806445  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811753  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.669472227083  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.669610649629  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226003  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347601  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937544  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821855  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660402  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561835  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015706  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.669697248782  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370232  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.669697434201  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468163  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486295  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496024  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.669697501261  delta_E= -5.24e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504092  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.669697505619  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506449  delta_E= -8.3e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506891  delta_E= -4.42e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507137  delta_E= -2.46e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.66969750727  delta_E= -1.33e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.66969750734  delta_E= -6.96e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507405  delta_E= -6.5e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465127
+cycle= 1 E= -798.120780465131  delta_E= -4.32e-12 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.120780465131  delta_E= -4.55e-13 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+
+=== Root 1 (S1) ===
+  E = -797.9215481135 Eh, dE = 5.553 eV
+  active natural occupations: 1.9958 1.1441 0.8565 0.0036
+  occupation per active MO: MO61=1.989 MO62=0.999 MO63=0.976 MO64=0.036
+  max |core occ - 2| = 2.10e-03
+  Lowdin charge: chromone -0.3412 (d -0.3209), phenyl +0.3477 (d +0.2613), 3-OH -0.0065 (d +0.0596)
+  dipole = (8.375, -2.250, -3.786) D, |mu| = 9.462 D
+  transition weight 1.000: [MO62:0.99] -> [MO63:0.97, MO64:0.03]
+init E= -796.910201714343
+cycle= 1 E= -797.05062970667  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.06232835292  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.065497286119  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.066547208164  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.06694548751  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711709  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.06719632045  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773442  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458815  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.067273443669  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115844  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751961  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599043  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.067290368443  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.067291478192  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.06729217934  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625061  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909984  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093033  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211234  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287943  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.067293337983  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370813  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.067293392479  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.06729340687  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.067293416499  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422981  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.06729342739  delta_E= -4.41e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.067293430404  delta_E= -3.01e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.067293432486  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433936  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.067293434955  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435681  delta_E= -7.26e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436196  delta_E= -5.15e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.067293436567  delta_E= -3.71e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436836  delta_E= -2.68e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437032  delta_E= -1.96e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437175  delta_E= -1.43e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437286  delta_E= -1.11e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.067293437363  delta_E= -7.71e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.067293437529  delta_E= -1.66e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273078
+cycle= 1 E= -797.345552421313  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.350734135327  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649396  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543399  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.352717720041  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.35278070601  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754638  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.35282017849  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195428  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229137  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805035  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641753  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.352832093162  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339581  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.35283247528  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550503  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.352832592411  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.35283261586  delta_E= -2.34e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.352832629006  delta_E= -1.31e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636411  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640583  delta_E= -4.17e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642939  delta_E= -2.36e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644277  delta_E= -1.34e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645028  delta_E= -7.52e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645459  delta_E= -4.31e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.352832645701  delta_E= -2.41e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.352832645839  delta_E= -1.38e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.352832645917  delta_E= -7.8e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645993  delta_E= -7.53e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.6503709896
+cycle= 1 E= -797.667518806449  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811753  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.66947222708  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.669610649629  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226005  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347602  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937544  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821859  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660404  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561832  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015709  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.669697248783  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370229  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.669697434201  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468165  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486298  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496024  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.669697501264  delta_E= -5.24e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504091  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.669697505618  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506446  delta_E= -8.28e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506895  delta_E= -4.49e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507137  delta_E= -2.42e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507273  delta_E= -1.35e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.669697507341  delta_E= -6.84e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507409  delta_E= -6.78e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465126
+cycle= 1 E= -798.120780465125  delta_E= 1.14e-12 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.120780465132  delta_E= -7.28e-12 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+init E= -796.910201714343
+cycle= 1 E= -797.050629706674  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.062328352919  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.065497286118  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.06654720816  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487513  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711708  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.067196320448  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773442  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458814  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.067273443672  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115847  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751967  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599043  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.067290368443  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.067291478189  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.067292179338  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625066  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909983  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093038  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211235  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287942  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.067293337982  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370819  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.067293392482  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.06729340687  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.067293416504  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422983  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.067293427392  delta_E= -4.41e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.067293430408  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.067293432488  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433938  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.067293434962  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435681  delta_E= -7.19e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436194  delta_E= -5.13e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.06729343657  delta_E= -3.76e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436835  delta_E= -2.64e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437033  delta_E= -1.99e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437178  delta_E= -1.44e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437286  delta_E= -1.08e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.067293437365  delta_E= -7.96e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.067293437533  delta_E= -1.68e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273078
+cycle= 1 E= -797.345552421316  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.350734135328  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649396  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543399  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.35271772004  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706013  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754637  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.352820178489  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195427  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229132  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805035  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641754  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.352832093161  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339578  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.35283247528  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550502  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.352832592409  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.352832615862  delta_E= -2.35e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.352832629011  delta_E= -1.31e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636413  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640582  delta_E= -4.17e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642943  delta_E= -2.36e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644273  delta_E= -1.33e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645031  delta_E= -7.58e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645459  delta_E= -4.28e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.352832645695  delta_E= -2.36e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.35283264584  delta_E= -1.46e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.352832645921  delta_E= -8.12e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645993  delta_E= -7.16e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.6503709896
+cycle= 1 E= -797.667518806454  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811751  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.669472227083  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.669610649628  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226006  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347605  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937544  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821854  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660403  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561832  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015706  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.669697248783  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370234  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.6696974342  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468165  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486297  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496028  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.669697501263  delta_E= -5.24e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504094  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.669697505622  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506452  delta_E= -8.29e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506894  delta_E= -4.42e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507138  delta_E= -2.44e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507277  delta_E= -1.38e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.669697507341  delta_E= -6.41e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507408  delta_E= -6.75e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465127
+cycle= 1 E= -798.120780465128  delta_E= -1.36e-12 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.120780465128  delta_E=    0 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+init E= -796.910201714343
+cycle= 1 E= -797.050629706675  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.062328352923  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.065497286119  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.066547208157  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487513  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711707  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.067196320447  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.06723777344  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458815  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.067273443671  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115846  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.06728575196  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599042  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.067290368441  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.067291478186  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.067292179335  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625063  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909983  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093036  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211238  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287939  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.06729333798  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370813  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.06729339248  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.067293406868  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.067293416498  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.06729342298  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.067293427388  delta_E= -4.41e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.067293430406  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.067293432488  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433936  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.067293434956  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.06729343568  delta_E= -7.24e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436195  delta_E= -5.15e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.067293436565  delta_E= -3.7e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436833  delta_E= -2.69e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437031  delta_E= -1.97e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437176  delta_E= -1.45e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437285  delta_E= -1.09e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.067293437362  delta_E= -7.71e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.067293437534  delta_E= -1.72e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273078
+cycle= 1 E= -797.345552421316  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.35073413533  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649393  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543399  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.352717720043  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706018  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754635  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.352820178486  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195425  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229133  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805037  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.35283164175  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.35283209316  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339578  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.352832475282  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.3528325505  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.35283259241  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.352832615858  delta_E= -2.34e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.35283262901  delta_E= -1.32e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636411  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640587  delta_E= -4.18e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642943  delta_E= -2.36e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644276  delta_E= -1.33e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645031  delta_E= -7.56e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645459  delta_E= -4.27e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.3528326457  delta_E= -2.41e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.352832645838  delta_E= -1.38e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.352832645918  delta_E= -7.98e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645992  delta_E= -7.39e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.650370989601
+cycle= 1 E= -797.667518806446  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811752  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.669472227083  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.669610649626  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226008  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347602  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937543  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821857  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660408  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561833  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015708  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.66969724878  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370232  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.669697434201  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468162  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486296  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496025  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.669697501265  delta_E= -5.24e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.66969750409  delta_E= -2.82e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.669697505618  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506448  delta_E= -8.3e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506893  delta_E= -4.45e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507139  delta_E= -2.46e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507273  delta_E= -1.33e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.66969750734  delta_E= -6.71e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507408  delta_E= -6.82e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465127
+cycle= 1 E= -798.120780465132  delta_E= -5e-12 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.12078046513  delta_E= 2.05e-12 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+
+=== Root 2 (S2) ===
+  E = -797.8828169760 Eh, dE = 6.607 eV
+  active natural occupations: 1.9653 1.0245 0.9806 0.0297
+  occupation per active MO: MO61=1.027 MO62=1.923 MO63=1.003 MO64=0.047
+  max |core occ - 2| = 2.23e-03
+  Lowdin charge: chromone -0.5782 (d -0.5579), phenyl +0.6522 (d +0.5658), 3-OH -0.0740 (d -0.0080)
+  dipole = (11.217, -3.760, -7.025) D, |mu| = 13.759 D
+  transition weight 0.978: [MO61:1.00] -> [MO63:1.00]
+  transition weight 0.022: [MO62:1.00] -> [MO64:1.00]
+init E= -796.910201714343
+cycle= 1 E= -797.050629706674  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.062328352921  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.06549728612  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.06654720816  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487515  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711709  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.067196320447  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773442  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458812  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.06727344367  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115844  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751963  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599043  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.06729036844  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.067291478189  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.067292179336  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625064  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909984  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093035  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211237  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287939  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.067293337981  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370812  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.067293392481  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.067293406871  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.067293416503  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422979  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.067293427391  delta_E= -4.41e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.067293430408  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.067293432489  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433937  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.067293434957  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435682  delta_E= -7.25e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436195  delta_E= -5.13e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.067293436567  delta_E= -3.72e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436836  delta_E= -2.68e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.06729343703  delta_E= -1.95e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437175  delta_E= -1.44e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437286  delta_E= -1.11e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.067293437364  delta_E= -7.8e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.067293437534  delta_E= -1.7e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273079
+cycle= 1 E= -797.345552421318  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.350734135332  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649398  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543399  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.35271772004  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706011  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754637  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.35282017849  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195426  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229135  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805035  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641756  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.35283209316  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339577  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.352832475279  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550503  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.352832592406  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.352832615859  delta_E= -2.35e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.352832629009  delta_E= -1.32e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636415  delta_E= -7.41e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640586  delta_E= -4.17e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642941  delta_E= -2.35e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644277  delta_E= -1.34e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645032  delta_E= -7.55e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645456  delta_E= -4.24e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.352832645702  delta_E= -2.46e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.352832645844  delta_E= -1.42e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.352832645917  delta_E= -7.37e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645991  delta_E= -7.39e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.650370989601
+cycle= 1 E= -797.667518806447  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811751  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.669472227081  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.669610649626  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226003  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347603  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937544  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821858  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660408  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561833  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015705  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.669697248783  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370229  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.669697434201  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468164  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486294  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496024  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.66969750126  delta_E= -5.24e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504091  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.66969750562  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.66969750645  delta_E= -8.3e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506893  delta_E= -4.42e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507139  delta_E= -2.46e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507271  delta_E= -1.33e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.669697507339  delta_E= -6.75e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507406  delta_E= -6.71e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465127
+cycle= 1 E= -798.120780465128  delta_E= -1.14e-12 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.120780465126  delta_E= 2.05e-12 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+init E= -796.910201714343
+cycle= 1 E= -797.050629706676  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.062328352921  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.065497286117  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.06654720816  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487514  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711706  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.067196320447  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773444  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.06726045881  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.067273443668  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115844  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751961  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599045  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.067290368443  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.067291478189  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.067292179337  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625065  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909983  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093039  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211238  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287943  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.067293337979  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370816  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.067293392486  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.067293406874  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.067293416502  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422985  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.067293427391  delta_E= -4.41e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.06729343041  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.067293432485  delta_E= -2.07e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433936  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.067293434959  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435686  delta_E= -7.26e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436196  delta_E= -5.1e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.06729343657  delta_E= -3.74e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436833  delta_E= -2.63e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437034  delta_E= -2e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437176  delta_E= -1.42e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437287  delta_E= -1.12e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.067293437364  delta_E= -7.64e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.067293437536  delta_E= -1.72e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273079
+cycle= 1 E= -797.345552421315  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.35073413533  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649398  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543399  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.35271772004  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706015  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754635  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.352820178491  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.35282619543  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229134  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805034  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641754  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.352832093158  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339582  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.352832475279  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550502  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.35283259241  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.352832615856  delta_E= -2.34e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.352832629009  delta_E= -1.32e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636411  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640583  delta_E= -4.17e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.352832642942  delta_E= -2.36e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644279  delta_E= -1.34e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.352832645033  delta_E= -7.54e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645459  delta_E= -4.26e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.352832645699  delta_E= -2.4e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.352832645845  delta_E= -1.45e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.35283264592  delta_E= -7.53e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645995  delta_E= -7.55e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.650370989601
+cycle= 1 E= -797.667518806446  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811751  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.669472227083  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.669610649626  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226006  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347602  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.66968993754  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821856  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660405  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561831  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015705  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.669697248782  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370232  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.6696974342  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468165  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486296  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496024  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.669697501263  delta_E= -5.24e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504092  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.669697505622  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506449  delta_E= -8.27e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506893  delta_E= -4.44e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507139  delta_E= -2.46e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507271  delta_E= -1.31e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.669697507341  delta_E= -7e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507403  delta_E= -6.28e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465126
+cycle= 1 E= -798.120780465131  delta_E= -4.55e-12 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.120780465131  delta_E=    0 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+init E= -796.910201714343
+cycle= 1 E= -797.050629706672  delta_E= -0.14 |g_bath|= 0.16 |ddm|= 0.99
+cycle= 2 E= -797.062328352924  delta_E= -0.0117 |g_bath|= 0.0788 |ddm|= 0.326
+cycle= 3 E= -797.065497286116  delta_E= -0.00317 |g_bath|= 0.0436 |ddm|= 0.155
+cycle= 4 E= -797.066547208156  delta_E= -0.00105 |g_bath|= 0.0257 |ddm|= 0.0812
+cycle= 5 E= -797.066945487511  delta_E= -0.000398 |g_bath|= 0.0161 |ddm|= 0.0452
+cycle= 6 E= -797.067115711708  delta_E= -0.00017 |g_bath|= 0.0106 |ddm|= 0.0265
+cycle= 7 E= -797.067196320448  delta_E= -8.06e-05 |g_bath|= 0.00731 |ddm|= 0.0163
+cycle= 8 E= -797.067237773444  delta_E= -4.15e-05 |g_bath|= 0.00524 |ddm|= 0.0105
+cycle= 9 E= -797.067260458809  delta_E= -2.27e-05 |g_bath|= 0.00387 |ddm|= 0.00713
+cycle= 10 E= -797.067273443668  delta_E= -1.3e-05 |g_bath|= 0.00293 |ddm|= 0.00503
+cycle= 11 E= -797.067281115846  delta_E= -7.67e-06 |g_bath|= 0.00225 |ddm|= 0.00367
+cycle= 12 E= -797.067285751964  delta_E= -4.64e-06 |g_bath|= 0.00174 |ddm|= 0.00275
+cycle= 13 E= -797.067288599044  delta_E= -2.85e-06 |g_bath|= 0.00136 |ddm|= 0.0021
+cycle= 14 E= -797.067290368443  delta_E= -1.77e-06 |g_bath|= 0.00107 |ddm|= 0.00162
+cycle= 15 E= -797.06729147819  delta_E= -1.11e-06 |g_bath|= 0.000846 |ddm|= 0.00127
+cycle= 16 E= -797.067292179336  delta_E= -7.01e-07 |g_bath|= 0.000671 |ddm|= 0.001
+cycle= 17 E= -797.067292625068  delta_E= -4.46e-07 |g_bath|= 0.000533 |ddm|= 0.000793
+cycle= 18 E= -797.067292909982  delta_E= -2.85e-07 |g_bath|= 0.000426 |ddm|= 0.000631
+cycle= 19 E= -797.067293093035  delta_E= -1.83e-07 |g_bath|= 0.00034 |ddm|= 0.000504
+cycle= 20 E= -797.067293211233  delta_E= -1.18e-07 |g_bath|= 0.000273 |ddm|= 0.000404
+cycle= 21 E= -797.067293287938  delta_E= -7.67e-08 |g_bath|= 0.000219 |ddm|= 0.000325
+cycle= 22 E= -797.067293337982  delta_E= -5e-08 |g_bath|= 0.000177 |ddm|= 0.000262
+cycle= 23 E= -797.067293370817  delta_E= -3.28e-08 |g_bath|= 0.000143 |ddm|= 0.000212
+cycle= 24 E= -797.067293392482  delta_E= -2.17e-08 |g_bath|= 0.000116 |ddm|= 0.000172
+cycle= 25 E= -797.06729340687  delta_E= -1.44e-08 |g_bath|= 9.41e-05 |ddm|= 0.00014
+cycle= 26 E= -797.067293416503  delta_E= -9.63e-09 |g_bath|= 7.68e-05 |ddm|= 0.000114
+cycle= 27 E= -797.067293422983  delta_E= -6.48e-09 |g_bath|= 6.29e-05 |ddm|= 9.33e-05
+cycle= 28 E= -797.06729342739  delta_E= -4.41e-09 |g_bath|= 5.17e-05 |ddm|= 7.67e-05
+cycle= 29 E= -797.06729343041  delta_E= -3.02e-09 |g_bath|= 4.27e-05 |ddm|= 6.33e-05
+cycle= 30 E= -797.067293432487  delta_E= -2.08e-09 |g_bath|= 3.54e-05 |ddm|= 5.24e-05
+cycle= 31 E= -797.067293433937  delta_E= -1.45e-09 |g_bath|= 2.95e-05 |ddm|= 4.36e-05
+cycle= 32 E= -797.067293434959  delta_E= -1.02e-09 |g_bath|= 2.46e-05 |ddm|= 3.64e-05
+cycle= 33 E= -797.067293435682  delta_E= -7.23e-10 |g_bath|= 2.07e-05 |ddm|= 3.06e-05
+cycle= 34 E= -797.067293436196  delta_E= -5.14e-10 |g_bath|= 1.75e-05 |ddm|= 2.58e-05
+cycle= 35 E= -797.06729343657  delta_E= -3.74e-10 |g_bath|= 1.48e-05 |ddm|= 2.18e-05
+cycle= 36 E= -797.067293436833  delta_E= -2.63e-10 |g_bath|= 1.26e-05 |ddm|= 1.85e-05
+cycle= 37 E= -797.067293437033  delta_E= -2e-10 |g_bath|= 1.07e-05 |ddm|= 1.58e-05
+cycle= 38 E= -797.067293437178  delta_E= -1.44e-10 |g_bath|= 9.19e-06 |ddm|= 1.35e-05
+cycle= 39 E= -797.067293437287  delta_E= -1.1e-10 |g_bath|= 7.89e-06 |ddm|= 1.16e-05
+cycle= 40 E= -797.06729343736  delta_E= -7.3e-11 |g_bath|= 6.8e-06 |ddm|= 9.94e-06
+Extra cycle  E= -797.067293437534  delta_E= -1.73e-10 |g_bath|= 4.64e-06 |ddm|= 3.03e-05
+init E= -797.284101273079
+cycle= 1 E= -797.345552421315  delta_E= -0.0615 |g_bath|= 0.107 |ddm|= 0.654
+cycle= 2 E= -797.35073413533  delta_E= -0.00518 |g_bath|= 0.0525 |ddm|= 0.21
+cycle= 3 E= -797.352115649399  delta_E= -0.00138 |g_bath|= 0.0289 |ddm|= 0.0983
+cycle= 4 E= -797.352558543399  delta_E= -0.000443 |g_bath|= 0.0168 |ddm|= 0.051
+cycle= 5 E= -797.352717720039  delta_E= -0.000159 |g_bath|= 0.0102 |ddm|= 0.028
+cycle= 6 E= -797.352780706017  delta_E= -6.3e-05 |g_bath|= 0.0065 |ddm|= 0.0162
+cycle= 7 E= -797.352807754635  delta_E= -2.7e-05 |g_bath|= 0.00429 |ddm|= 0.00969
+cycle= 8 E= -797.352820178488  delta_E= -1.24e-05 |g_bath|= 0.00292 |ddm|= 0.00604
+cycle= 9 E= -797.352826195427  delta_E= -6.02e-06 |g_bath|= 0.00203 |ddm|= 0.00389
+cycle= 10 E= -797.352829229135  delta_E= -3.03e-06 |g_bath|= 0.00145 |ddm|= 0.00259
+cycle= 11 E= -797.352830805031  delta_E= -1.58e-06 |g_bath|= 0.00104 |ddm|= 0.00177
+cycle= 12 E= -797.352831641752  delta_E= -8.37e-07 |g_bath|= 0.000762 |ddm|= 0.00123
+cycle= 13 E= -797.35283209316  delta_E= -4.51e-07 |g_bath|= 0.00056 |ddm|= 0.000876
+cycle= 14 E= -797.352832339578  delta_E= -2.46e-07 |g_bath|= 0.000414 |ddm|= 0.00063
+cycle= 15 E= -797.352832475282  delta_E= -1.36e-07 |g_bath|= 0.000307 |ddm|= 0.000458
+cycle= 16 E= -797.352832550501  delta_E= -7.52e-08 |g_bath|= 0.000229 |ddm|= 0.000336
+cycle= 17 E= -797.352832592406  delta_E= -4.19e-08 |g_bath|= 0.000171 |ddm|= 0.000248
+cycle= 18 E= -797.352832615856  delta_E= -2.35e-08 |g_bath|= 0.000128 |ddm|= 0.000184
+cycle= 19 E= -797.352832629012  delta_E= -1.32e-08 |g_bath|= 9.56e-05 |ddm|= 0.000137
+cycle= 20 E= -797.352832636412  delta_E= -7.4e-09 |g_bath|= 7.17e-05 |ddm|= 0.000102
+cycle= 21 E= -797.352832640585  delta_E= -4.17e-09 |g_bath|= 5.38e-05 |ddm|= 7.62e-05
+cycle= 22 E= -797.35283264294  delta_E= -2.36e-09 |g_bath|= 4.04e-05 |ddm|= 5.7e-05
+cycle= 23 E= -797.352832644274  delta_E= -1.33e-09 |g_bath|= 3.04e-05 |ddm|= 4.27e-05
+cycle= 24 E= -797.35283264503  delta_E= -7.56e-10 |g_bath|= 2.29e-05 |ddm|= 3.21e-05
+cycle= 25 E= -797.352832645455  delta_E= -4.25e-10 |g_bath|= 1.72e-05 |ddm|= 2.41e-05
+cycle= 26 E= -797.352832645698  delta_E= -2.43e-10 |g_bath|= 1.29e-05 |ddm|= 1.81e-05
+cycle= 27 E= -797.352832645838  delta_E= -1.41e-10 |g_bath|= 9.76e-06 |ddm|= 1.36e-05
+cycle= 28 E= -797.352832645916  delta_E= -7.82e-11 |g_bath|= 7.35e-06 |ddm|= 1.03e-05
+Extra cycle  E= -797.352832645989  delta_E= -7.28e-11 |g_bath|= 4.42e-06 |ddm|= 1.56e-05
+init E= -797.6503709896
+cycle= 1 E= -797.667518806449  delta_E= -0.0171 |g_bath|= 0.0584 |ddm|= 0.339
+cycle= 2 E= -797.669050811751  delta_E= -0.00153 |g_bath|= 0.0288 |ddm|= 0.107
+cycle= 3 E= -797.66947222708  delta_E= -0.000421 |g_bath|= 0.016 |ddm|= 0.05
+cycle= 4 E= -797.669610649627  delta_E= -0.000138 |g_bath|= 0.00943 |ddm|= 0.0258
+cycle= 5 E= -797.669661226003  delta_E= -5.06e-05 |g_bath|= 0.00579 |ddm|= 0.0143
+cycle= 6 E= -797.669681347605  delta_E= -2.01e-05 |g_bath|= 0.0037 |ddm|= 0.00833
+cycle= 7 E= -797.669689937542  delta_E= -8.59e-06 |g_bath|= 0.00244 |ddm|= 0.00504
+cycle= 8 E= -797.669693821854  delta_E= -3.88e-06 |g_bath|= 0.00165 |ddm|= 0.00316
+cycle= 9 E= -797.669695660404  delta_E= -1.84e-06 |g_bath|= 0.00114 |ddm|= 0.00205
+cycle= 10 E= -797.669696561835  delta_E= -9.01e-07 |g_bath|= 0.0008 |ddm|= 0.00136
+cycle= 11 E= -797.669697015706  delta_E= -4.54e-07 |g_bath|= 0.000569 |ddm|= 0.000926
+cycle= 12 E= -797.669697248779  delta_E= -2.33e-07 |g_bath|= 0.000408 |ddm|= 0.000642
+cycle= 13 E= -797.669697370235  delta_E= -1.21e-07 |g_bath|= 0.000295 |ddm|= 0.000451
+cycle= 14 E= -797.669697434199  delta_E= -6.4e-08 |g_bath|= 0.000215 |ddm|= 0.000321
+cycle= 15 E= -797.669697468164  delta_E= -3.4e-08 |g_bath|= 0.000157 |ddm|= 0.00023
+cycle= 16 E= -797.669697486293  delta_E= -1.81e-08 |g_bath|= 0.000114 |ddm|= 0.000166
+cycle= 17 E= -797.669697496026  delta_E= -9.73e-09 |g_bath|= 8.39e-05 |ddm|= 0.000121
+cycle= 18 E= -797.66969750126  delta_E= -5.23e-09 |g_bath|= 6.16e-05 |ddm|= 8.81e-05
+cycle= 19 E= -797.669697504092  delta_E= -2.83e-09 |g_bath|= 4.53e-05 |ddm|= 6.44e-05
+cycle= 20 E= -797.669697505619  delta_E= -1.53e-09 |g_bath|= 3.33e-05 |ddm|= 4.72e-05
+cycle= 21 E= -797.669697506447  delta_E= -8.28e-10 |g_bath|= 2.45e-05 |ddm|= 3.46e-05
+cycle= 22 E= -797.669697506894  delta_E= -4.47e-10 |g_bath|= 1.8e-05 |ddm|= 2.54e-05
+cycle= 23 E= -797.669697507138  delta_E= -2.44e-10 |g_bath|= 1.33e-05 |ddm|= 1.87e-05
+cycle= 24 E= -797.669697507272  delta_E= -1.34e-10 |g_bath|= 9.8e-06 |ddm|= 1.38e-05
+cycle= 25 E= -797.669697507343  delta_E= -7.07e-11 |g_bath|= 7.23e-06 |ddm|= 1.01e-05
+Extra cycle  E= -797.669697507407  delta_E= -6.48e-11 |g_bath|= 4.39e-06 |ddm|= 1.34e-05
+init E= -798.120780465127
+cycle= 1 E= -798.120780465127  delta_E= 2.27e-13 |g_bath|= 4.71e-07 |ddm|= 1.04e-06
+Extra cycle  E= -798.12078046513  delta_E= -3.18e-12 |g_bath|= 2.34e-07 |ddm|= 9.91e-07
+
+=== Root 3 (S3) ===
+  E = -797.8551751809 Eh, dE = 7.359 eV
+  active natural occupations: 1.9810 1.0934 0.8738 0.0518
+  occupation per active MO: MO61=1.980 MO62=0.992 MO63=0.094 MO64=0.934
+  max |core occ - 2| = 2.10e-03
+  Lowdin charge: chromone -0.1611 (d -0.1408), phenyl +0.1958 (d +0.1094), 3-OH -0.0346 (d +0.0314)
+  dipole = (5.219, -1.429, -2.424) D, |mu| = 5.929 D
+  transition weight 0.984: [MO62:1.00] -> [MO63:0.03, MO64:0.97]
+
+Saved 03_gbci_state_character_631g.json

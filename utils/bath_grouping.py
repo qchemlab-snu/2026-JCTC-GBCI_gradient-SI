@@ -131,3 +131,32 @@ def patch_gbci_grouping(rule: Callable[..., list[list[int]]] = group_complete_li
 
     gbci_module.group_by_atom = patched
     return original
+
+
+def frozen_rule(groups: list[list[int]]) -> Callable[..., list[list[int]]]:
+    """A grouping rule that always returns ``groups``, ignoring populations.
+
+    The group assignment is discrete, so the analytic gradient can only be the
+    derivative of the energy at *fixed* assignment.  Letting the assignment
+    follow the populations makes the energy a discontinuous function of the
+    geometry, and a finite difference across a boundary then subtracts two
+    different objectives.  Freezing the assignment to the reference geometry's
+    makes the finite difference measure the same surface the analytic gradient
+    differentiates.
+
+    ``groups`` indexes into ``po_list``, which is generated combinatorially from
+    ``ncas``/``nelecas`` and is therefore the same at every geometry; the frozen
+    assignment is well defined as long as the active space does not change.
+    """
+    frozen = [[int(i) for i in group] for group in groups]
+    expected = sum(len(g) for g in frozen)
+
+    def rule(values: np.ndarray, thres: float) -> list[list[int]]:
+        count = len(np.atleast_2d(np.asarray(values, dtype=float).T).T)
+        if count != expected:
+            raise RuntimeError(
+                f"frozen grouping covers {expected} occupation patterns but "
+                f"this geometry has {count}; the active space must have changed")
+        return [list(g) for g in frozen]
+
+    return rule

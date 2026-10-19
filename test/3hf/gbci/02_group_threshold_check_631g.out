@@ -1,0 +1,25 @@
+19 possible occupation patterns, acceptor population range 1.131 .. 3.066
+  S0 closed shell        occ=(2, 2, 0, 0)  acceptor population = 1.1307
+  HOMO->LUMO (S1)        occ=(2, 1, 1, 0)  acceptor population = 1.4732
+  HOMO->LUMO+1           occ=(2, 1, 0, 1)  acceptor population = 1.4012
+  HOMO-1->LUMO           occ=(1, 2, 1, 0)  acceptor population = 1.8276
+
+S0 <-> S1 acceptor population separation = 0.3425 electrons
+A threshold at or above this merges the two into one group.
+
+  thres=0.2  leader (forge)             groups=  7  S0 in g6, S1 in g5, L+1 in g5, H-1 in g3  max diameter 0.342  -> separate
+  thres=0.2  complete_linkage (utils)   groups=  7  S0 in g6, S1 in g5, L+1 in g5, H-1 in g4  max diameter 0.156  -> separate
+  thres=0.3  leader (forge)             groups=  6  S0 in g5, S1 in g4, L+1 in g4, H-1 in g3  max diameter 0.283  -> separate
+  thres=0.3  complete_linkage (utils)   groups=  6  S0 in g5, S1 in g4, L+1 in g4, H-1 in g3  max diameter 0.283  -> separate
+  thres=0.4  leader (forge)             groups=  4  S0 in g3, S1 in g2, L+1 in g2, H-1 in g2  max diameter 0.498  -> separate
+  thres=0.4  complete_linkage (utils)   groups=  5  S0 in g4, S1 in g3, L+1 in g3, H-1 in g2  max diameter 0.354  -> separate
+  thres=0.5  leader (forge)             groups=  4  S0 in g3, S1 in g2, L+1 in g2, H-1 in g2  max diameter 0.498  -> separate
+  thres=0.5  complete_linkage (utils)   groups=  4  S0 in g3, S1 in g2, L+1 in g2, H-1 in g2  max diameter 0.498  -> separate
+  thres=0.6  leader (forge)             groups=  4  S0 in g3, S1 in g2, L+1 in g2, H-1 in g1  max diameter 0.637  -> separate
+  thres=0.6  complete_linkage (utils)   groups=  4  S0 in g3, S1 in g2, L+1 in g2, H-1 in g2  max diameter 0.541  -> separate
+  thres=0.8  leader (forge)             groups=  3  S0 in g2, S1 in g1, L+1 in g1, H-1 in g1  max diameter 0.769  -> separate
+  thres=0.8  complete_linkage (utils)   groups=  3  S0 in g2, S1 in g1, L+1 in g1, H-1 in g1  max diameter 0.769  -> separate
+  thres=1.0  leader (forge)             groups=  2  S0 in g1, S1 in g1, L+1 in g1, H-1 in g1  max diameter 0.967  -> MERGED - S1 bath relaxation lost
+  thres=1.0  complete_linkage (utils)   groups=  2  S0 in g1, S1 in g1, L+1 in g1, H-1 in g1  max diameter 0.967  -> MERGED - S1 bath relaxation lost
+
+Saved /home/jiseong0626/mygit/grad/pysfnocigrad/test/3HF/gbci/outputs/02_group_threshold_check_631g.json

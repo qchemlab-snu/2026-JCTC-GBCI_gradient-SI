@@ -14,7 +14,7 @@ comparable.
 Usage::
 
     python make_active_orbital_panels.py                     # every rendered system
-    python make_active_orbital_panels.py --systems so2_8e5o
+    python make_active_orbital_panels.py --systems 3hf_4e4o
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ VIEW_LABELS = {"front": "in-plane view", "side": "edge-on view"}
 TILE_INCHES = 2.3
 
 # Label size is set per inch of figure width, not in absolute points.  A panel is
-# as wide as it has orbitals -- two for pp, five for SO2 -- but every panel ends up
+# as wide as it has orbitals -- two for pp, five for CH2NH2 -- but every panel ends up
 # at the same column width on the page, so a fixed point size comes out large on
 # the narrow panels and small on the wide ones.  Scaling with the figure width
 # cancels that: at 1.15 pt/in a four-orbital panel gets the familiar ~10.5 pt.

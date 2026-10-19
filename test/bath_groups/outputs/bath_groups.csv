@@ -1,0 +1,78 @@
+system,active_space,basis,group_a,grouping_quantity,threshold,n_groups,group,group_size,configuration,po_index,descriptor_label,descriptor_value
+LiH,"CAS(2e,2o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,3,1,1,02,0,n(atoms Li1),1.9734215684641359
+LiH,"CAS(2e,2o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,3,2,1,11,1,n(atoms Li1),1.4145148215199443
+LiH,"CAS(2e,2o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,3,3,1,20,2,n(atoms Li1),0.8556080745757532
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,1,1,0022,0,n(atoms Li1),3.975393224608252
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,2,4,0112,1,n(atoms Li1),3.006239499375664
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,2,4,0121,2,n(atoms Li1),3.014893370226253
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,2,4,1012,6,n(atoms Li1),3.1202480299177116
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,2,4,1021,7,n(atoms Li1),3.1289019007683008
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,3,9,0202,3,n(atoms Li1),2.0370857741430752
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,3,9,0211,4,n(atoms Li1),2.045739644993665
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,3,9,0220,5,n(atoms Li1),2.0543935158442537
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,3,9,1102,8,n(atoms Li1),2.151094304685123
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,3,9,1111,9,n(atoms Li1),2.1597481755357117
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,3,9,1120,10,n(atoms Li1),2.1684020463863014
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,3,9,2002,13,n(atoms Li1),2.2651028352271707
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,3,9,2011,14,n(atoms Li1),2.27375670607776
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,3,9,2020,15,n(atoms Li1),2.282410576928349
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,4,4,1201,11,n(atoms Li1),1.190594450303124
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,4,4,1210,12,n(atoms Li1),1.1992483211537133
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,4,4,2101,16,n(atoms Li1),1.3046029808451722
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,4,4,2110,17,n(atoms Li1),1.313256851695761
+LiF,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,5,5,1,2200,18,n(atoms Li1),0.34410312646317287
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,1,1,0022,0,n(atoms Li1),3.930271818898486
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,2,4,0112,1,n(atoms Li1),3.0030946162911705
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,2,4,0121,2,n(atoms Li1),3.026129705315756
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,2,4,1012,6,n(atoms Li1),3.1912004501068796
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,2,4,1021,7,n(atoms Li1),3.214235539131466
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,3,8,0202,3,n(atoms Li1),2.0759174136838534
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,3,8,0211,4,n(atoms Li1),2.0989525027084395
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,3,8,0220,5,n(atoms Li1),2.1219875917330246
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,3,8,1102,8,n(atoms Li1),2.2640232474995643
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,3,8,1111,9,n(atoms Li1),2.28705833652415
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,3,8,1120,10,n(atoms Li1),2.310093425548736
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,3,8,2002,13,n(atoms Li1),2.452129081315274
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,3,8,2011,14,n(atoms Li1),2.4751641703398595
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,4,4,1201,11,n(atoms Li1),1.359881133916833
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,4,4,1210,12,n(atoms Li1),1.3829162229414191
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,4,4,2101,16,n(atoms Li1),1.547986967732543
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,4,4,2110,17,n(atoms Li1),1.571022056757129
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,5,1,2020,15,n(atoms Li1),2.498199259364446
+LiCl,"CAS(4e,4o)",ccpvdz,"{""atom"": [0], ""threshold"": 0.4}",Lowdin population,0.4,6,6,1,2200,18,n(atoms Li1),0.6438448541498123
+pp,"CAS(2e,2o)",ccpvdz,"{""atom"": [[0, 1, 2, 3, 4, 5, 6, 7, 8], [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]]}",Lowdin population,0.2,3,1,1,02,0,n(atoms 1-9),0.6461001652186316
+pp,"CAS(2e,2o)",ccpvdz,"{""atom"": [[0, 1, 2, 3, 4, 5, 6, 7, 8], [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]]}",Lowdin population,0.2,3,1,1,02,0,n(atoms 10-19),1.3538998347813636
+pp,"CAS(2e,2o)",ccpvdz,"{""atom"": [[0, 1, 2, 3, 4, 5, 6, 7, 8], [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]]}",Lowdin population,0.2,3,2,1,11,1,n(atoms 1-9),1.303715678084947
+pp,"CAS(2e,2o)",ccpvdz,"{""atom"": [[0, 1, 2, 3, 4, 5, 6, 7, 8], [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]]}",Lowdin population,0.2,3,2,1,11,1,n(atoms 10-19),0.6962843219150531
+pp,"CAS(2e,2o)",ccpvdz,"{""atom"": [[0, 1, 2, 3, 4, 5, 6, 7, 8], [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]]}",Lowdin population,0.2,3,3,1,20,2,n(atoms 1-9),1.961331190951262
+pp,"CAS(2e,2o)",ccpvdz,"{""atom"": [[0, 1, 2, 3, 4, 5, 6, 7, 8], [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]]}",Lowdin population,0.2,3,3,1,20,2,n(atoms 10-19),0.03866880904874241
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,02222,0,n(MO 1+2+3+4),6.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,02222,0,n(MO 5),2.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,11222,1,n(MO 1+2+3+4),6.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,11222,1,n(MO 5),2.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,12122,2,n(MO 1+2+3+4),6.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,12122,2,n(MO 5),2.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,12212,3,n(MO 1+2+3+4),6.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,12212,3,n(MO 5),2.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,20222,5,n(MO 1+2+3+4),6.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,20222,5,n(MO 5),2.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,21122,6,n(MO 1+2+3+4),6.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,21122,6,n(MO 5),2.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,21212,7,n(MO 1+2+3+4),6.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,21212,7,n(MO 5),2.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,22022,9,n(MO 1+2+3+4),6.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,22022,9,n(MO 5),2.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,22112,10,n(MO 1+2+3+4),6.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,22112,10,n(MO 5),2.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,22202,12,n(MO 1+2+3+4),6.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,1,10,22202,12,n(MO 5),2.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,2,4,12221,4,n(MO 1+2+3+4),7.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,2,4,12221,4,n(MO 5),1.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,2,4,21221,8,n(MO 1+2+3+4),7.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,2,4,21221,8,n(MO 5),1.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,2,4,22121,11,n(MO 1+2+3+4),7.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,2,4,22121,11,n(MO 5),1.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,2,4,22211,13,n(MO 1+2+3+4),7.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,2,4,22211,13,n(MO 5),1.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,3,1,22220,14,n(MO 1+2+3+4),8.0
+CH2NH2,"CAS(8e,5o)",cc-pVTZ,"{""mo"": [[0, 1, 2, 3], [4]]}",occupation sum,,3,3,1,22220,14,n(MO 5),0.0

@@ -1,0 +1,367 @@
+{
+  "chkfile": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/3HF/gbci/3hf_rhf_631g.chk",
+  "act_list": [
+    61,
+    62,
+    63,
+    64
+  ],
+  "acceptor_atoms": [
+    0,
+    1,
+    2,
+    4,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    24,
+    25,
+    26,
+    27
+  ],
+  "po_list": [
+    [
+      0,
+      0,
+      2,
+      2
+    ],
+    [
+      0,
+      1,
+      1,
+      2
+    ],
+    [
+      0,
+      1,
+      2,
+      1
+    ],
+    [
+      0,
+      2,
+      0,
+      2
+    ],
+    [
+      0,
+      2,
+      1,
+      1
+    ],
+    [
+      0,
+      2,
+      2,
+      0
+    ],
+    [
+      1,
+      0,
+      1,
+      2
+    ],
+    [
+      1,
+      0,
+      2,
+      1
+    ],
+    [
+      1,
+      1,
+      0,
+      2
+    ],
+    [
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      2,
+      0
+    ],
+    [
+      1,
+      2,
+      0,
+      1
+    ],
+    [
+      1,
+      2,
+      1,
+      0
+    ],
+    [
+      2,
+      0,
+      0,
+      2
+    ],
+    [
+      2,
+      0,
+      1,
+      1
+    ],
+    [
+      2,
+      0,
+      2,
+      0
+    ],
+    [
+      2,
+      1,
+      0,
+      1
+    ],
+    [
+      2,
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      2,
+      0,
+      0
+    ]
+  ],
+  "acceptor_population": [
+    3.065530367697573,
+    2.7230785929512282,
+    2.795023734493802,
+    2.3806268182048824,
+    2.4525719597474565,
+    2.524517101290031,
+    2.3686226949802447,
+    2.4405678365228196,
+    2.026170920233901,
+    2.098116061776474,
+    2.1700612033190474,
+    1.7556642870301284,
+    1.8276094285727027,
+    1.6717150222629173,
+    1.7436601638054916,
+    1.8156053053480656,
+    1.4012083890591458,
+    1.4731535306017198,
+    1.1307017558553747
+  ],
+  "key_occupations": {
+    "S0 closed shell": [
+      2,
+      2,
+      0,
+      0
+    ],
+    "HOMO->LUMO (S1)": [
+      2,
+      1,
+      1,
+      0
+    ],
+    "HOMO->LUMO+1": [
+      2,
+      1,
+      0,
+      1
+    ],
+    "HOMO-1->LUMO": [
+      1,
+      2,
+      1,
+      0
+    ]
+  },
+  "s0_s1_separation": 0.34245177474634514,
+  "thresholds": [
+    {
+      "threshold": 0.2,
+      "leader (forge)": {
+        "n_groups": 7,
+        "group_of": {
+          "S0 closed shell": 6,
+          "HOMO->LUMO (S1)": 5,
+          "HOMO->LUMO+1": 5,
+          "HOMO-1->LUMO": 3
+        },
+        "max_diameter": 0.3424517747463447,
+        "s0_s1_merged": false
+      },
+      "complete_linkage (utils)": {
+        "n_groups": 7,
+        "group_of": {
+          "S0 closed shell": 6,
+          "HOMO->LUMO (S1)": 5,
+          "HOMO->LUMO+1": 5,
+          "HOMO-1->LUMO": 4
+        },
+        "max_diameter": 0.15589440630978624,
+        "s0_s1_merged": false
+      }
+    },
+    {
+      "threshold": 0.3,
+      "leader (forge)": {
+        "n_groups": 6,
+        "group_of": {
+          "S0 closed shell": 5,
+          "HOMO->LUMO (S1)": 4,
+          "HOMO->LUMO+1": 4,
+          "HOMO-1->LUMO": 3
+        },
+        "max_diameter": 0.2825107564284095,
+        "s0_s1_merged": false
+      },
+      "complete_linkage (utils)": {
+        "n_groups": 6,
+        "group_of": {
+          "S0 closed shell": 5,
+          "HOMO->LUMO (S1)": 4,
+          "HOMO->LUMO+1": 4,
+          "HOMO-1->LUMO": 3
+        },
+        "max_diameter": 0.2825107564284095,
+        "s0_s1_merged": false
+      }
+    },
+    {
+      "threshold": 0.4,
+      "leader (forge)": {
+        "n_groups": 4,
+        "group_of": {
+          "S0 closed shell": 3,
+          "HOMO->LUMO (S1)": 2,
+          "HOMO->LUMO+1": 2,
+          "HOMO-1->LUMO": 2
+        },
+        "max_diameter": 0.4983461810561298,
+        "s0_s1_merged": false
+      },
+      "complete_linkage (utils)": {
+        "n_groups": 5,
+        "group_of": {
+          "S0 closed shell": 4,
+          "HOMO->LUMO (S1)": 3,
+          "HOMO->LUMO+1": 3,
+          "HOMO-1->LUMO": 2
+        },
+        "max_diameter": 0.35445589797098354,
+        "s0_s1_merged": false
+      }
+    },
+    {
+      "threshold": 0.5,
+      "leader (forge)": {
+        "n_groups": 4,
+        "group_of": {
+          "S0 closed shell": 3,
+          "HOMO->LUMO (S1)": 2,
+          "HOMO->LUMO+1": 2,
+          "HOMO-1->LUMO": 2
+        },
+        "max_diameter": 0.4983461810561298,
+        "s0_s1_merged": false
+      },
+      "complete_linkage (utils)": {
+        "n_groups": 4,
+        "group_of": {
+          "S0 closed shell": 3,
+          "HOMO->LUMO (S1)": 2,
+          "HOMO->LUMO+1": 2,
+          "HOMO-1->LUMO": 2
+        },
+        "max_diameter": 0.4983461810561298,
+        "s0_s1_merged": false
+      }
+    },
+    {
+      "threshold": 0.6,
+      "leader (forge)": {
+        "n_groups": 4,
+        "group_of": {
+          "S0 closed shell": 3,
+          "HOMO->LUMO (S1)": 2,
+          "HOMO->LUMO+1": 2,
+          "HOMO-1->LUMO": 1
+        },
+        "max_diameter": 0.6369666543993908,
+        "s0_s1_merged": false
+      },
+      "complete_linkage (utils)": {
+        "n_groups": 4,
+        "group_of": {
+          "S0 closed shell": 3,
+          "HOMO->LUMO (S1)": 2,
+          "HOMO->LUMO+1": 2,
+          "HOMO-1->LUMO": 2
+        },
+        "max_diameter": 0.5410132664075422,
+        "s0_s1_merged": false
+      }
+    },
+    {
+      "threshold": 0.8,
+      "leader (forge)": {
+        "n_groups": 3,
+        "group_of": {
+          "S0 closed shell": 2,
+          "HOMO->LUMO (S1)": 1,
+          "HOMO->LUMO+1": 1,
+          "HOMO-1->LUMO": 1
+        },
+        "max_diameter": 0.7688528142599016,
+        "s0_s1_merged": false
+      },
+      "complete_linkage (utils)": {
+        "n_groups": 3,
+        "group_of": {
+          "S0 closed shell": 2,
+          "HOMO->LUMO (S1)": 1,
+          "HOMO->LUMO+1": 1,
+          "HOMO-1->LUMO": 1
+        },
+        "max_diameter": 0.7688528142599016,
+        "s0_s1_merged": false
+      }
+    },
+    {
+      "threshold": 1.0,
+      "leader (forge)": {
+        "n_groups": 2,
+        "group_of": {
+          "S0 closed shell": 1,
+          "HOMO->LUMO (S1)": 1,
+          "HOMO->LUMO+1": 1,
+          "HOMO-1->LUMO": 1
+        },
+        "max_diameter": 0.9674143059210993,
+        "s0_s1_merged": true
+      },
+      "complete_linkage (utils)": {
+        "n_groups": 2,
+        "group_of": {
+          "S0 closed shell": 1,
+          "HOMO->LUMO (S1)": 1,
+          "HOMO->LUMO+1": 1,
+          "HOMO-1->LUMO": 1
+        },
+        "max_diameter": 0.9674143059210993,
+        "s0_s1_merged": true
+      }
+    }
+  ]
+}

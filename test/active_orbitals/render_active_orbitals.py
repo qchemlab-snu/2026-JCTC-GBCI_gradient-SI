@@ -9,7 +9,7 @@ The geometry is reoriented before the cubes are made rather than after: Jmol has
 no reliable way to put an arbitrary molecule into a chosen frame from a script,
 so the molecule is rotated into a canonical frame here and the camera in
 ``render_active_orbitals_jmol.spt`` stays fixed for every system.  This is the
-same trick ``ch2nh2/analysis/ch2nh2_meci_geometry_descriptors.py`` uses
+same trick ``CH2NH2/ccpvtz/analysis/ch2nh2_meci_geometry_descriptors.py`` uses
 for the MECI renders.  Canonical frame:
 
 * planar or three-dimensional -- best-fit plane normal along +z, longest in-plane
@@ -25,7 +25,7 @@ is safer than rotating AO coefficients by hand through the l>0 shells.
 Usage::
 
     python render_active_orbitals.py                      # the three SI systems
-    python render_active_orbitals.py --systems so2_8e5o   # one system
+    python render_active_orbitals.py --systems 3hf_4e4o   # one system
 """
 
 from __future__ import annotations
@@ -50,10 +50,49 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 # The systems that go into the Supporting Information.  The lithium halides are in
 # SYSTEMS too and can be rendered with --systems, but their active space is still
 # undecided (the 1.50 A default window here vs the sigma-only act_list of
-# test/lix/li_halides_gbci_grad_check.py), so they are not default.
-DEFAULT_SYSTEMS = ("so2_8e5o", "pp_2e2o", "ch2nh2_8e5o")
+# test/li_halides/gbci/li_halides_gbci_grad_check.py), so they are not default.
+DEFAULT_SYSTEMS = ("3hf_4e4o", "pp_2e2o", "ch2nh2_8e5o")
 
 BOHR = 0.52917721092
+
+
+# The canonical frame is fixed only up to the sign of each singular vector, and
+# those signs are whatever LAPACK returns. For systems whose figure has to match
+# a drawing made elsewhere, pin the signs with chemical anchors:
+#
+#   "x_from_to": (i, j)  atom j must sit at larger x than atom i
+#   "y_above":   k       atom k must sit above the centroid in y
+#
+# Systems absent from this table keep the unpinned frame, so nothing else moves.
+ORIENTATION_ANCHORS = {
+    # Match test/3HF/gbci/10_make_molecule_figure.py: the 2-phenyl ring to the
+    # right of the chromone, the carbonyl oxygen at the top.
+    "3hf_4e4o": {"x_from_to": (12, 5), "y_above": 0},
+}
+
+
+def pin_orientation(rotation: np.ndarray, coords: np.ndarray,
+                    anchors: dict | None) -> np.ndarray:
+    """Flip axis signs so the anchors point the way the figure expects.
+
+    Only sign pairs are applied, so the result stays a proper rotation.
+    """
+    if not anchors:
+        return rotation
+    rotated = (coords - coords.mean(axis=0)) @ rotation.T
+    flip_x = flip_y = False
+    if "x_from_to" in anchors:
+        i, j = anchors["x_from_to"]
+        flip_x = rotated[j, 0] < rotated[i, 0]
+    if "y_above" in anchors:
+        flip_y = rotated[anchors["y_above"], 1] < 0.0
+    if not (flip_x or flip_y):
+        return rotation
+    # det must stay +1: flipping one axis drags z with it, flipping both does not.
+    signs = np.array([-1.0 if flip_x else 1.0,
+                      -1.0 if flip_y else 1.0,
+                      1.0 if flip_x == flip_y else -1.0])
+    return np.diag(signs) @ rotation
 
 
 def canonical_frame(coords: np.ndarray) -> tuple[np.ndarray, bool]:
@@ -116,6 +155,8 @@ def render(name: str, spec: dict, out_dir: Path, grid: int, margin: float,
     """Build one system, orient it, and write a cube per active orbital."""
     mol, _, _, _, window, _, _ = build_system(name, spec, verbose)
     rotation, is_linear = canonical_frame(mol.atom_coords())
+    rotation = pin_orientation(rotation, mol.atom_coords(),
+                               ORIENTATION_ANCHORS.get(name))
     atom_block, symbols, coords = reoriented_atom_block(mol, rotation)
 
     # Same system, canonical frame.  The active window is unchanged by a rotation,

@@ -70,3 +70,6 @@ tmp/
 # IDEs
 .idea/
 .vscode/
+# GBCI bath/SCF caches: pickles, regenerated on demand, and large.
+# A run without --no-gbci-cache recreates these next to the results.
+**/outputs/01_gbci_cache*/
