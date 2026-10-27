@@ -1,15 +1,19 @@
 """LaTeX table of the analytic vs finite-difference S1 gradient.
 
-Writes the best-agreeing comparison: GBCI(4e,4o)/6-31G, h = 2.5e-4 bohr, with
-the bath grouping frozen to the reference so the finite difference measures the
+Writes the best-agreeing comparison: GBCI(4e,4o)/6-31G, h = 1e-4 bohr, with the
+bath grouping frozen to the reference so the finite difference measures the
 same surface the analytic gradient differentiates.
 
-The analytic column is read from `25_tight_gradient_fixed.json`, not from the
-combine result: the combine ran against a reference whose bath came back from
-Newton SOSCF non-semicanonical, which cost the gradient 2e-04 (see
-GRADIENT_INVESTIGATION.md). The numerical column needs no such correction --
-the GBCI energy depends on the bath only through its spaces, so the stored
-displaced energies stand.
+The campaign displaces all 28 atoms, so the summary rows are taken over the
+whole gradient (84 components) while the table lists the five atoms of the
+intramolecular hydrogen bond.  Those five are not the worst agreeing ones --
+the largest difference is on C8a, where the third derivative is largest --
+which is why the summary is not restricted to them.
+
+The analytic column comes from the combine result.  That was wrong until the
+reference .npz was regenerated with a semicanonical bath; a reference whose
+bath comes back from Newton SOSCF non-semicanonical costs the gradient 2e-04
+(see GRADIENT_INVESTIGATION.md).
 """
 
 from pathlib import Path
@@ -19,15 +23,16 @@ import numpy as np
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 RESULT_JSON = (SCRIPT_DIR / "outputs"
-               / "01_gbci_s1_grad_check_631g_tight_frozen_h25e4.json")
-FIXED_JSON = SCRIPT_DIR / "outputs" / "25_tight_gradient_fixed.json"
+               / "01_gbci_s1_grad_check_631g_all_h1e4.json")
 OUTPUT_TEX = SCRIPT_DIR / "outputs" / "09_gradient_table.tex"
 # Written by 10_make_molecule_figure.py; keeps the table and the figure
 # on one set of atom labels.
 LABELS_JSON = SCRIPT_DIR / "outputs" / "10_atom_labels.json"
 
-STEP_BOHR = 2.5e-4   # the combine step; the JSON's step_bohr field records the
-                     # reference run's step, not this one.
+STEP_BOHR = 1.0e-4
+# The atoms the table lists, in the order they are displaced: the
+# intramolecular hydrogen bond.
+TABLE_ATOMS = [0, 1, 2, 3, 18]
 AXES = "xyz"
 
 
@@ -56,19 +61,25 @@ ROLES = {0: "carbonyl O", 1: "C4 (C=O)", 2: "C3", 3: "hydroxy O", 18: "hydroxy H
 
 def main():
     result = json.loads(RESULT_JSON.read_text())
-    fixed = json.loads(FIXED_JSON.read_text())["runs"][1]
-    symbols = [str(s) for s in json.loads(FIXED_JSON.read_text())["symbols"]]
     if LABELS_JSON.exists():
         labels = {int(k): v for k, v in json.loads(LABELS_JSON.read_text()).items()}
     else:
         raise RuntimeError(f"run 10_make_molecule_figure.py first to write "
                            f"{LABELS_JSON}")
-    # The semicanonicalized gradient, not the combine's stored reference.
-    analytic = np.asarray(fixed["analytic"])
+    analytic = np.asarray(result["analytic_gradient"])
 
+    records = sorted(result["displacements"], key=lambda r: (r["atom"], r["axis"]))
+    if len(records) != 84:
+        raise RuntimeError(f"expected all 28 atoms (84 components), "
+                           f"got {len(records)}")
+    # Every component feeds the summary; only TABLE_ATOMS are printed.
+    all_diffs = np.array([analytic[r["atom"]][r["axis"]] - r["numerical"]
+                          for r in records])
     rows = []
-    for rec in sorted(result["displacements"], key=lambda r: (r["atom"], r["axis"])):
+    for rec in records:
         a, x = rec["atom"], rec["axis"]
+        if a not in TABLE_ATOMS:
+            continue
         g, n = analytic[a][x], rec["numerical"]
         rows.append((labels[a], AXES[x], g, n, g - n))
 
@@ -79,8 +90,10 @@ def main():
         r"  \centering",
         r"  \caption{",
         r"  Comparison of the analytic and numerical gradients of the $S_1$ state of",
-        r"  3-hydroxyflavone, for the five atoms of the intramolecular hydrogen bond,",
-        r"  computed with GBCI(4e,4o)/6-31G at the B3LYP/6-31G(d) ground-state minimum.",
+        r"  3-hydroxyflavone, computed with GBCI(4e,4o)/6-31G at the",
+        r"  B3LYP/6-31G(d) ground-state minimum. The rows list the five atoms of",
+        r"  the intramolecular hydrogen bond; the summary is taken over all 28",
+        r"  atoms (84 Cartesian components), every one of which was displaced.",
         rf"  Central differences use a step of ${STEP_BOHR:g}\,a_0$ with the grouped-bath",
         r"  assignment frozen to that of the reference geometry, and the bath",
         r"  orbitals of every point semicanonicalized; atom labels follow",
@@ -107,12 +120,13 @@ def main():
         end = r"\\[2pt]" if last_of_group and k + 1 != len(rows) else r"\\"
         lines.append(f"    {label:<{width}} & ${axis}$ & {grouped(g)} & "
                      f"{grouped(n)} {end}")
-    diffs = np.array([r[4] for r in rows])
     summary = [
-        ("Maximum absolute difference", float(np.abs(diffs).max())),
-        ("Root-mean-square difference", float(np.sqrt((diffs**2).mean()))),
+        ("Maximum absolute difference (all 84 components)",
+         float(np.abs(all_diffs).max())),
+        ("Root-mean-square difference (all 84 components)",
+         float(np.sqrt((all_diffs**2).mean()))),
         (r"Net torque $|\sum_A \mathbf{R}_A \times \mathbf{g}_A|$ "
-         r"(hartree)", float(fixed["torque"])),
+         r"(hartree)", float(result["torque"])),
     ]
     lines.append(r"    \hline")
     for label, value in summary:

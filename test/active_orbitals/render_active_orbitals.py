@@ -51,7 +51,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 # SYSTEMS too and can be rendered with --systems, but their active space is still
 # undecided (the 1.50 A default window here vs the sigma-only act_list of
 # test/li_halides/gbci/li_halides_gbci_grad_check.py), so they are not default.
-DEFAULT_SYSTEMS = ("3hf_4e4o", "pp_2e2o", "ch2nh2_8e5o")
+DEFAULT_SYSTEMS = ("3hf_4e4o", "pp_2e2o", "ch2nh2_2e2o", "ch2nh2_8e5o")
 
 BOHR = 0.52917721092
 

@@ -26,6 +26,15 @@ if str(REPO_ROOT) not in sys.path:
 
 from utils.molecule_figure import FIG_WIDTH, draw_molecule, plane_projection
 
+# pp is wide and short, so the shared style leaves it small in a canvas sized
+# for 3HF.  Enlarge the drawing inside the same 4.6 in width rather than the
+# canvas: the figure is placed at a fixed column width, so only the molecule's
+# share of it is visible as a size.
+MARKER_SCALE = 430 / 340
+FONT_SCALE = 10.5 / 9.0
+MARGINS = 0.03
+PAD_Y, PAD_X = 0.7, 0.9
+
 OUTPUT_STEM = SCRIPT_DIR / "pp_molecule_figure"
 OUTPUT_LABELS = SCRIPT_DIR / "pp_atom_labels.json"
 
@@ -83,8 +92,10 @@ def main():
 
     span = xy.max(axis=0) - xy.min(axis=0)
     fig, ax = plt.subplots(
-        figsize=(FIG_WIDTH, FIG_WIDTH * (span[1] + 1.2) / (span[0] + 1.6)))
-    draw_molecule(ax, symbols, coords, labels, anchors=ANCHORS)
+        figsize=(FIG_WIDTH, FIG_WIDTH * (span[1] + PAD_Y) / (span[0] + PAD_X)))
+    draw_molecule(ax, symbols, coords, labels, anchors=ANCHORS,
+                  marker_scale=MARKER_SCALE, font_scale=FONT_SCALE,
+                  margins=MARGINS)
     fig.tight_layout()
 
     stem = args.output or OUTPUT_STEM

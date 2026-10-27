@@ -1,0 +1,76 @@
+{
+  "created_at": "2026-07-27T14:08:17.220527+00:00",
+  "script": "pp_casscf_S1_gbci_planar_saddle_check.py",
+  "driver": "pp_casscf_S1_planar_saddle_check.py",
+  "run_name": "pp_casscf_S1_gbci_planar_saddle_check",
+  "molecule": "pp",
+  "method": "SA-CASSCF",
+  "state": "S1",
+  "target_root": 1,
+  "geometry_source_label": "GBCI S1 planar stationary geometry",
+  "geometry_source_file": "test/pp/gbci/pp_hessian.py",
+  "geometry_angstrom": "C          -3.82982877        0.63275106        0.00000000\nC          -2.53920964        1.24425728        0.00000000\nC          -3.60199675       -0.70944046        0.00000000\nC          -2.18188051       -0.86081364        0.00000000\nH          -4.76594101        1.16420457        0.00000000\nH          -4.31029725       -1.52002832        0.00000000\nN          -1.57921306        0.32434146        0.00000000\nH          -1.61378850       -1.77431135        0.00000000\nH          -2.30438178        2.29404036        0.00000000\nC          -0.12707750        0.57082026        0.00000000\nC           0.80402415       -0.51138841        0.00000000\nC           2.13410385       -0.20053361        0.00000000\nH           0.51117904       -1.55279152        0.00000000\nN           2.66314252        1.04412675        0.00000000\nH           2.85312721       -1.01340300        0.00000000\nC           1.75323787        2.04461950        0.00000000\nC           0.39502111        1.89959720        0.00000000\nH           2.16398591        3.04913117        0.00000000\nH          -0.22481973        2.78620063        0.00000000",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "unit": "Angstrom",
+  "pyscf_version": "2.10.0",
+  "active_space": {
+    "ncas": 2,
+    "nelecas": [
+      1,
+      1
+    ],
+    "active_orbitals_1based": [
+      38,
+      39
+    ]
+  },
+  "state_average": {
+    "states": [
+      "S0",
+      "S1"
+    ],
+    "weights": [
+      0.5,
+      0.5
+    ]
+  },
+  "energies_hartree": {
+    "S0": -454.34329928531173,
+    "S1": -454.17663770049944
+  },
+  "gradient": {
+    "norm_eh_per_bohr": 0.0391649724257466,
+    "rms_eh_per_bohr": 0.0051875273241461595,
+    "max_eh_per_bohr": 0.020686306796807545,
+    "rms_threshold": 0.0003,
+    "max_threshold": 0.00045,
+    "is_stationary": false,
+    "npz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_gbci_planar_saddle_check/pp_casscf_S1_gbci_planar_saddle_check_S1_gradient.npz"
+  },
+  "frequency_check": {
+    "completed": true,
+    "hessian_step_bohr": 0.001,
+    "imag_threshold_cm": 30.0,
+    "imaginary_mode_indices": [
+      0,
+      1
+    ],
+    "imaginary_frequencies_cm": [
+      -253.65742208229418,
+      -109.60315100435291
+    ],
+    "number_of_significant_imaginary_modes": 2,
+    "most_negative_frequency_cm": -253.65742208229418,
+    "classification": "not_stationary_saddle_classification_not_valid",
+    "is_saddle_point": false,
+    "is_first_order_saddle": false,
+    "hessian_npz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_gbci_planar_saddle_check/pp_casscf_S1_gbci_planar_saddle_check_S1_hessian.npz",
+    "modes_npz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_gbci_planar_saddle_check/pp_casscf_S1_gbci_planar_saddle_check_S1_modes.npz",
+    "frequencies_csv": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_gbci_planar_saddle_check/pp_casscf_S1_gbci_planar_saddle_check_S1_frequencies.csv",
+    "displacement_cache_dir": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_gbci_planar_saddle_check/pp_casscf_S1_gbci_planar_saddle_check_hessian_displacements",
+    "imag_plus_xyz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_gbci_planar_saddle_check/pp_casscf_S1_gbci_planar_saddle_check_S1_imag_plus.xyz",
+    "imag_minus_xyz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_gbci_planar_saddle_check/pp_casscf_S1_gbci_planar_saddle_check_S1_imag_minus.xyz"
+  }
+}

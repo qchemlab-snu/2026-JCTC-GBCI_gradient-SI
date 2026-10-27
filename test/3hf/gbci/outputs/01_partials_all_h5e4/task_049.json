@@ -1,0 +1,63 @@
+{
+  "task_id": 49,
+  "num_tasks": 84,
+  "settings": {
+    "step_bohr": 0.0005,
+    "stencil": 2,
+    "freeze_groups": true,
+    "semicanonical_bath": true,
+    "scf_conv_tol": 1e-14,
+    "scf_conv_tol_grad": 1e-09,
+    "fasscf_conv_tol": 1e-14,
+    "fasscf_conv_tol_grad": 1e-11,
+    "gbci_conv_tol": 1e-14,
+    "cphf_max_cycle": 200,
+    "cphf_tol": 1e-12,
+    "cphf_level_shift": 1e-05,
+    "cphf_level_shift_scan": null,
+    "cphf_lindep": 1e-20,
+    "cphf_lindep_scan": null
+  },
+  "displacements": [
+    {
+      "atom": 16,
+      "axis": 1,
+      "stencil": 2,
+      "points": {
+        "minus1": {
+          "offset": -1.0,
+          "weight": -0.5,
+          "energy": -797.9215457249602,
+          "root": 1,
+          "ci_overlap": 0.999999995170179,
+          "active_overlap": 0.9999979248629465,
+          "all_roots": [
+            -798.1256048056688,
+            -797.9215457249602,
+            -797.8828226667187,
+            -797.855175346353
+          ]
+        },
+        "plus1": {
+          "offset": 1.0,
+          "weight": 0.5,
+          "energy": -797.9215505517284,
+          "root": 1,
+          "ci_overlap": 0.9999999951492735,
+          "active_overlap": 0.9999998053291353,
+          "all_roots": [
+            -798.1256051176193,
+            -797.9215505517284,
+            -797.8828110239525,
+            -797.8551746785329
+          ]
+        }
+      },
+      "ci_overlap_minus": 0.999999995170179,
+      "ci_overlap_plus": 0.9999999951492735,
+      "active_overlap_minus": 0.9999979248629465,
+      "active_overlap_plus": 0.9999998053291353,
+      "numerical": -0.004826768190469011
+    }
+  ]
+}

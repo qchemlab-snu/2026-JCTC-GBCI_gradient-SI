@@ -1,0 +1,52 @@
+bash: cannot set terminal process group (-1): Inappropriate ioctl for device
+bash: no job control in this shell
+ 
+:: initializing oneAPI environment ...
+   bash: BASH_VERSION = 5.0.17(1)-release
+   args: Using "$@" for setvars.sh arguments: --force
+:: compiler -- latest
+:: debugger -- latest
+:: dev-utilities -- latest
+:: dpl -- latest
+:: inspector -- latest
+:: itac -- latest
+:: mpi -- latest
+:: tbb -- latest
+:: oneAPI environment initialized ::
+ 
+node 6 on node28: 34 points
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+bash: /home/jiseong0626/anaconda3/envs/pyscf310/lib/libtinfo.so.6: no version information available (required by bash)
+node 6 done at Thu 22 Oct 2026 02:48:43 PM KST

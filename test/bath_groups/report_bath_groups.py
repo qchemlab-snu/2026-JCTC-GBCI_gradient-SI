@@ -115,6 +115,19 @@ C 0.35659599 1.85706993 0.0
 H 2.13973853 3.02543900 0.0
 H -0.27361675 2.73043999 0.0"""
 
+# CH2NH2+ (2e,2o) S0/S1 MECI, from
+# test/ch2nh2/gbci/outputs/ch2nh2_gbci_S0S1_meci_2o2e_groupN_ccpvtz/
+#   ch2nh2_gbci_S0S1_meci_2o2e_groupN_ccpvtz_optimized.xyz
+# The grouping is reported here, at the intersection, rather than at an S0
+# geometry: MO8 and MO9 are the N- and C-localized p orbitals only near the
+# seam, and that localization is what the nitrogen-seeded grouping rests on.
+CH2NH2_MECI_2O2E_ATOMS = """N  0.72008165 -0.00836083 -0.00494257
+C -0.74978247 -0.02238020 -0.01127616
+H  1.25805170  0.71973138  0.44255403
+H  1.23941784 -0.74638414 -0.46016712
+H -1.16884282 -0.32366550  0.92068559
+H -1.17157688  0.67354229 -0.69881478"""
+
 CH2NH2_ATOMS = """N  0.59504934  0.00000418  0.00002110
 C -0.67688886  0.00000732 -0.00000853
 H  1.12534395  0.22026262  0.83097781
@@ -205,6 +218,26 @@ SYSTEMS = [
         group_a={"mo": [[0, 1, 2, 3], [4]]},
         source="test/ch2nh2/gbci/ch2nh2_gbci_S0_opt_5o8e_groupocc_ccpvtz.py",
         note="occupation-sum grouping, no Lowdin and no threshold; input geometry",
+    ),
+    # The two (2e,2o) entries are the same active space grouped two ways.  They
+    # are both listed because the SI claim is that they coincide, and the only
+    # way to show that is to report both groupings side by side.  The Lowdin-on-N
+    # one is the grouping the manuscript describes and the one Table S6 reports.
+    SystemSpec(
+        name="CH2NH2-2o2e-Lowdin-N", atoms=CH2NH2_MECI_2O2E_ATOMS, basis="cc-pVTZ",
+        charge=1,
+        ncas=2, nelecas=(1, 1), act_list=(8, 9),
+        group_a={"atom": [[0]]},
+        source="test/ch2nh2/gbci/gbci_2o2e_S0S1_meci_groupN_ccpvtz.py",
+        note="Lowdin population on N, default threshold; S0/S1 MECI geometry",
+    ),
+    SystemSpec(
+        name="CH2NH2-2o2e-MO", atoms=CH2NH2_MECI_2O2E_ATOMS, basis="cc-pVTZ",
+        charge=1,
+        ncas=2, nelecas=(1, 1), act_list=(8, 9),
+        group_a={"mo": [[0], [1]]},
+        source="test/ch2nh2/gbci/gbci_2o2e_S0S1_meci_groupocc_ccpvtz.py",
+        note="occupation-sum grouping, one orbital per group; same MECI geometry",
     ),
 ]
 

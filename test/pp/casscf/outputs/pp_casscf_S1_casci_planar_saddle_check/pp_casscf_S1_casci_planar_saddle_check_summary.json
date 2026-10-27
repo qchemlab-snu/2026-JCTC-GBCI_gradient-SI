@@ -1,0 +1,76 @@
+{
+  "created_at": "2026-07-27T13:41:33.512398+00:00",
+  "script": "pp_casscf_S1_casci_planar_saddle_check.py",
+  "driver": "pp_casscf_S1_planar_saddle_check.py",
+  "run_name": "pp_casscf_S1_casci_planar_saddle_check",
+  "molecule": "pp",
+  "method": "SA-CASSCF",
+  "state": "S1",
+  "target_root": 1,
+  "geometry_source_label": "CASCI S1 near-planar stationary geometry",
+  "geometry_source_file": "test/pp/casci/pp_casci_S1.out",
+  "geometry_angstrom": "C          -3.80391387        0.63517605       -0.03017123\nC          -2.51240975        1.26660904       -0.05287748\nC          -3.57677148       -0.70316391        0.03024574\nC          -2.14932698       -0.87311529        0.05291462\nH          -4.74197348        1.16109044       -0.06146135\nH          -4.28879337       -1.50911861        0.06155993\nN          -1.52638301        0.33335353       -0.00000207\nH          -1.59577551       -1.78910122        0.11736982\nH          -2.29212559        2.31395580       -0.11731471\nC          -0.16296058        0.56468437       -0.00003566\nC           0.77715779       -0.50722663       -0.04198334\nC           2.11234286       -0.19107093       -0.04198366\nH           0.48643252       -1.54474273       -0.09061940\nN           2.63104822        1.03869364       -0.00000634\nH           2.83293998       -1.00137175       -0.07955565\nC           1.73574736        2.02858925        0.04195286\nC           0.37102009        1.88667944        0.04193197\nH           2.14877567        3.03121151        0.07953387\nH          -0.24564392        2.77024895        0.09053472",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "unit": "Angstrom",
+  "pyscf_version": "2.10.0",
+  "active_space": {
+    "ncas": 2,
+    "nelecas": [
+      1,
+      1
+    ],
+    "active_orbitals_1based": [
+      38,
+      39
+    ]
+  },
+  "state_average": {
+    "states": [
+      "S0",
+      "S1"
+    ],
+    "weights": [
+      0.5,
+      0.5
+    ]
+  },
+  "energies_hartree": {
+    "S0": -454.35245551928426,
+    "S1": -454.1744528643834
+  },
+  "gradient": {
+    "norm_eh_per_bohr": 0.07929095152278208,
+    "rms_eh_per_bohr": 0.010502343091440068,
+    "max_eh_per_bohr": 0.06111345006919814,
+    "rms_threshold": 0.0003,
+    "max_threshold": 0.00045,
+    "is_stationary": false,
+    "npz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_casci_planar_saddle_check/pp_casscf_S1_casci_planar_saddle_check_S1_gradient.npz"
+  },
+  "frequency_check": {
+    "completed": true,
+    "hessian_step_bohr": 0.001,
+    "imag_threshold_cm": 30.0,
+    "imaginary_mode_indices": [
+      0,
+      1
+    ],
+    "imaginary_frequencies_cm": [
+      -202.29086932615382,
+      -104.13325720865657
+    ],
+    "number_of_significant_imaginary_modes": 2,
+    "most_negative_frequency_cm": -202.29086932615382,
+    "classification": "not_stationary_saddle_classification_not_valid",
+    "is_saddle_point": false,
+    "is_first_order_saddle": false,
+    "hessian_npz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_casci_planar_saddle_check/pp_casscf_S1_casci_planar_saddle_check_S1_hessian.npz",
+    "modes_npz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_casci_planar_saddle_check/pp_casscf_S1_casci_planar_saddle_check_S1_modes.npz",
+    "frequencies_csv": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_casci_planar_saddle_check/pp_casscf_S1_casci_planar_saddle_check_S1_frequencies.csv",
+    "displacement_cache_dir": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_casci_planar_saddle_check/pp_casscf_S1_casci_planar_saddle_check_hessian_displacements",
+    "imag_plus_xyz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_casci_planar_saddle_check/pp_casscf_S1_casci_planar_saddle_check_S1_imag_plus.xyz",
+    "imag_minus_xyz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S1_casci_planar_saddle_check/pp_casscf_S1_casci_planar_saddle_check_S1_imag_minus.xyz"
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "created_at": "2026-10-27T10:11:02.528821+00:00",
+  "script": "pp_casscf_S1_planar_tict_neb.py",
+  "molecule": "pp",
+  "method": "SA-CASSCF",
+  "state": "S1",
+  "path": "casscf_S0_minimum_to_casscf_S1_TICT",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "seed_path_dir": "test/pp/casscf/pp_casscf_S1_neb_outputs/pp_casscf_S1_neb.traj",
+  "seed_path_images": [
+    "test/pp/casscf/pp_casscf_S1_neb_outputs/pp_casscf_S1_neb.traj",
+    "test/pp/casscf/pp_casscf_S1_neb_outputs/pp_casscf_S1_neb.traj",
+    "test/pp/casscf/pp_casscf_S1_neb_outputs/pp_casscf_S1_neb.traj",
+    "test/pp/casscf/pp_casscf_S1_neb_outputs/pp_casscf_S1_neb.traj",
+    "test/pp/casscf/pp_casscf_S1_neb_outputs/pp_casscf_S1_neb.traj",
+    "test/pp/casscf/pp_casscf_S1_neb_outputs/pp_casscf_S1_neb.traj",
+    "test/pp/casscf/pp_casscf_S1_neb_outputs/pp_casscf_S1_neb.traj",
+    "test/pp/casscf/pp_casscf_S1_neb_outputs/pp_casscf_S1_neb.traj",
+    "test/pp/casscf/pp_casscf_S1_neb_outputs/pp_casscf_S1_neb.traj"
+  ],
+  "initial_geometry_source": "test/pp/casscf/outputs/pp_casscf_S0/pp_casscf_S0_optimized.xyz",
+  "final_geometry_source": "test/pp/casscf/outputs/pp_casscf_S1/pp_casscf_S1_optimized.xyz",
+  "endpoint_fmax_ev_per_angstrom": {
+    "initial": 4.315997674622732,
+    "final": 0.003526674527985355
+  },
+  "scanner_kwargs": {
+    "ncas": 2,
+    "nelecas": [
+      1,
+      1
+    ],
+    "act_list": [
+      38,
+      39
+    ],
+    "nroots": 2,
+    "target_root": 1,
+    "conv_tol": 1e-06,
+    "max_cycle": 200,
+    "act_base": 1,
+    "root_tracking": false,
+    "state_average": true,
+    "state_weights": [
+      0.5,
+      0.5
+    ],
+    "project_previous_orbitals": true,
+    "reuse_ci_guess": true,
+    "strict_convergence": false
+  },
+  "neb": {
+    "n_intermediate_images": 7,
+    "total_images": 9,
+    "climb": false,
+    "spring_constant": 30.0,
+    "interpolate": null,
+    "method": "improvedtangent",
+    "initial_band": "seed_traj_step_36",
+    "optimizer": "FIRE",
+    "fmax": 0.1,
+    "max_steps": 60
+  },
+  "barrier": [
+    0.0,
+    -0.9363351417250669
+  ],
+  "max_force": 0.10171011299956519,
+  "energies_ev": [
+    -12358.335529757092,
+    -12358.973938291727,
+    -12359.050698810699,
+    -12359.117130047054,
+    -12359.172720819364,
+    -12359.216163365538,
+    -12359.247013699853,
+    -12359.265565854006,
+    -12359.271864898818
+  ],
+  "relative_energies_ev": [
+    0.0,
+    -0.6384085346344364,
+    -0.7151690536065871,
+    -0.781600289961716,
+    -0.8371910622718133,
+    -0.8806336084453505,
+    -0.9114839427602419,
+    -0.9300360969136818,
+    -0.9363351417250669
+  ],
+  "image_spacings_angstrom": [
+    0.10187524168716659,
+    0.1017576144222788,
+    0.10110678278309349,
+    0.10121942005835334,
+    0.1006140631011872,
+    0.09987047731132993,
+    0.09962978907667502,
+    0.09958963915131797
+  ],
+  "scanner_steps": [
+    1,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    11,
+    1
+  ],
+  "converged": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "output_files": {
+    "results_npz": "pp_casscf_S1_fc_tict_neb_results.npz",
+    "trajectory": "pp_casscf_S1_fc_tict_neb.traj",
+    "ase_log": "pp_casscf_S1_fc_tict_neb_ase.log",
+    "images": "pp_casscf_S1_fc_tict_neb_*.xyz"
+  }
+}

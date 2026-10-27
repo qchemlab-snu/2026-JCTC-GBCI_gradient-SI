@@ -1,0 +1,141 @@
+{
+  "acceptance": {
+    "gap_target_ev": 0.001,
+    "gap_target_met": true,
+    "gradient_max_target_hartree_per_bohr": 0.00045,
+    "gradient_max_target_met": true,
+    "gradient_rms_target_hartree_per_bohr": 0.0003,
+    "gradient_rms_target_met": true
+  },
+  "active_space": {
+    "active_orbitals_1based": [
+      8,
+      9
+    ],
+    "ncas": 2,
+    "nelecas": [
+      1,
+      1
+    ]
+  },
+  "basis": "cc-pVTZ",
+  "charge": 1,
+  "conv_tol": 1e-10,
+  "created_at": "2026-10-23T05:19:07.264123+00:00",
+  "electronic_structure_converged": true,
+  "final_active_orbitals_1based": [
+    8,
+    9
+  ],
+  "final_energies_hartree": [
+    -94.28447831928312,
+    -94.28445032155922
+  ],
+  "final_gap_ev": 0.0007618568791767312,
+  "final_gap_hartree": 2.7997723904604754e-05,
+  "final_pair_npz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz_final_pair.npz",
+  "final_penalty_gradient_max_hartree_per_bohr": 0.000250974817546927,
+  "final_penalty_gradient_rms_hartree_per_bohr": 0.00012743598998234194,
+  "final_penalty_info": {
+    "alpha": 0.0001,
+    "e1": -94.28447831928312,
+    "e2": -94.28445032155922,
+    "eavg": -94.28446432042116,
+    "eobj": -94.28445648175718,
+    "epen": 7.838663993249918e-06,
+    "gap_Eh": 2.7997723904604754e-05,
+    "gap_eV": 0.0007618568791767312,
+    "gavg_stats": {
+      "max": 0.05389343943069718,
+      "norm": 0.06457343065438621,
+      "rms": 0.015220103566731924
+    },
+    "gobj_stats": {
+      "max": 0.000250974817546927,
+      "norm": 0.0005406651161024094,
+      "rms": 0.00012743598998234194
+    },
+    "gpen_stats": {
+      "max": 0.05390686519944971,
+      "norm": 0.06459000187283964,
+      "rms": 0.015224009440378904
+    },
+    "penalty_grad_coeff": 0.5599456995364908,
+    "roots": [
+      0,
+      1
+    ],
+    "sigma": 1.0
+  },
+  "final_penalty_objective_hartree": -94.28445648175718,
+  "final_roots": [
+    0,
+    1
+  ],
+  "frequency_check": {
+    "completed": true,
+    "displacement_cache_dir": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz_hessian_displacements",
+    "has_imaginary_frequency": true,
+    "hessian_npz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz_penalty_hessian.npz",
+    "hessian_step_bohr": 0.001,
+    "imag_amplitude": 0.05,
+    "imag_amplitude_unit": "Angstrom",
+    "imag_frequency_cm": -37.923121559308,
+    "imag_minus_xyz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz_imag_minus.xyz",
+    "imag_plus_xyz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz_imag_plus.xyz",
+    "imag_threshold_cm": 30.0,
+    "interpretation": "These are curvature diagnostics of the penalty objective, not ordinary single-surface vibrational frequencies.",
+    "modes_npz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz_penalty_modes.npz",
+    "objective": "SA2-CASSCF S0/S1 penalty function"
+  },
+  "geometry_optimization": {
+    "gap_target_ev": 0.001,
+    "maxsteps": 500,
+    "parameters": {
+      "convergence_dmax": 0.0018,
+      "convergence_drms": 0.0012,
+      "convergence_energy": 1e-06,
+      "convergence_gmax": 0.00045,
+      "convergence_grms": 0.0003,
+      "tmax": 0.03,
+      "trust": 0.01
+    }
+  },
+  "max_cycle": 200,
+  "method": "SA2-CASSCF penalty MECI",
+  "molecule": "CH2NH2+",
+  "optimized_xyz": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz_optimized.xyz",
+  "orbitals_molden": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz_orbitals.molden",
+  "pair_history_json": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz_pair_history.json",
+  "penalty": {
+    "alpha_hartree_squared": 0.0001,
+    "sigma_hartree": 1.0
+  },
+  "penalty_history_json": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz_penalty_history.json",
+  "project_previous_orbitals": true,
+  "pyscf_version": "2.10.0",
+  "reference_checkpoint": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/CH2NH2/ccpvtz/casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz_reference.npz",
+  "reuse_ci_guess": true,
+  "root_tracking": false,
+  "script": "ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz.py",
+  "spin": 0,
+  "start_geometry_angstrom": "N        0.64635220      -0.06176284      -0.03811068\nC       -0.62662335      -0.23675105      -0.14376773\nH        1.09152634       0.71376239       0.44016899\nH        1.29393142      -0.72058223      -0.44632176\nH       -1.13777228      -0.10817788       0.84703965\nH       -1.14006531       0.70599461      -0.47096947\n",
+  "start_geometry_source": "../casci/outputs/ch2nh2_casci_S0S1_meci_2o2e_ccpvtz/ch2nh2_casci_S0S1_meci_2o2e_ccpvtz_optimized.xyz",
+  "state_average": {
+    "nroots": 2,
+    "target_roots": [
+      0,
+      1
+    ],
+    "weights": [
+      0.5,
+      0.5
+    ]
+  },
+  "states": [
+    "S0",
+    "S1"
+  ],
+  "strict_convergence": true,
+  "unit": "Angstrom"
+}

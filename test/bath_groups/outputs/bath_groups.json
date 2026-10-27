@@ -1,12 +1,12 @@
 {
   "script": "test/bath_groups/report_bath_groups.py",
-  "timestamp_utc": "2026-10-06T14:53:29.190940+00:00",
+  "timestamp_utc": "2026-10-27T17:31:46.991110+00:00",
   "pyscf_version": "2.10.0",
   "gbci_module": "/home/jiseong0626/labgit/pyscf-forge/pyscf/gbci/gbci.py",
   "systems": [
     {
       "name": "LiH",
-      "source": "test/li_halides/gbci/li_halides_gbci_grad_check.py",
+      "source": "test/lix/li_halides_gbci_grad_check.py",
       "note": "sigma-only active space",
       "geometry_angstrom": [
         "Li 0.0 0.0 0.0",
@@ -53,14 +53,14 @@
           ],
           "descriptor": [
             [
-              1.9734215684641359
+              1.9734215684641407
             ]
           ],
           "descriptor_min": [
-            1.9734215684641359
+            1.9734215684641407
           ],
           "descriptor_max": [
-            1.9734215684641359
+            1.9734215684641407
           ],
           "descriptor_span": [
             0.0
@@ -78,14 +78,14 @@
           ],
           "descriptor": [
             [
-              1.4145148215199443
+              1.4145148215199468
             ]
           ],
           "descriptor_min": [
-            1.4145148215199443
+            1.4145148215199468
           ],
           "descriptor_max": [
-            1.4145148215199443
+            1.4145148215199468
           ],
           "descriptor_span": [
             0.0
@@ -103,14 +103,14 @@
           ],
           "descriptor": [
             [
-              0.8556080745757532
+              0.855608074575752
             ]
           ],
           "descriptor_min": [
-            0.8556080745757532
+            0.855608074575752
           ],
           "descriptor_max": [
-            0.8556080745757532
+            0.855608074575752
           ],
           "descriptor_span": [
             0.0
@@ -121,7 +121,7 @@
     },
     {
       "name": "LiF",
-      "source": "test/li_halides/gbci/li_halides_gbci_grad_check.py",
+      "source": "test/lix/li_halides_gbci_grad_check.py",
       "note": "sigma-only active space",
       "geometry_angstrom": [
         "Li 0.0 0.0 0.0",
@@ -157,7 +157,7 @@
       "n_configurations": 19,
       "n_groups": 5,
       "grouping_rule": "complete",
-      "max_group_diameter": 0.2453248027852739,
+      "max_group_diameter": 0.2453248027852757,
       "groups": [
         {
           "group": 1,
@@ -170,14 +170,14 @@
           ],
           "descriptor": [
             [
-              3.975393224608252
+              3.975393224608253
             ]
           ],
           "descriptor_min": [
-            3.975393224608252
+            3.975393224608253
           ],
           "descriptor_max": [
-            3.975393224608252
+            3.975393224608253
           ],
           "descriptor_span": [
             0.0
@@ -201,28 +201,28 @@
           ],
           "descriptor": [
             [
-              3.006239499375664
+              3.0062394993756634
             ],
             [
-              3.014893370226253
+              3.014893370226254
             ],
             [
               3.1202480299177116
             ],
             [
-              3.1289019007683008
+              3.128901900768301
             ]
           ],
           "descriptor_min": [
-            3.006239499375664
+            3.0062394993756634
           ],
           "descriptor_max": [
-            3.1289019007683008
+            3.128901900768301
           ],
           "descriptor_span": [
-            0.12266240139263695
+            0.12266240139263784
           ],
-          "diameter": 0.12266240139263695
+          "diameter": 0.12266240139263784
         },
         {
           "group": 3,
@@ -251,43 +251,43 @@
           ],
           "descriptor": [
             [
-              2.0370857741430752
+              2.037085774143075
             ],
             [
               2.045739644993665
             ],
             [
-              2.0543935158442537
+              2.0543935158442546
             ],
             [
-              2.151094304685123
+              2.1510943046851225
             ],
             [
-              2.1597481755357117
+              2.159748175535712
             ],
             [
               2.1684020463863014
             ],
             [
-              2.2651028352271707
+              2.2651028352271703
             ],
             [
-              2.27375670607776
+              2.2737567060777604
             ],
             [
-              2.282410576928349
+              2.2824105769283505
             ]
           ],
           "descriptor_min": [
-            2.0370857741430752
+            2.037085774143075
           ],
           "descriptor_max": [
-            2.282410576928349
+            2.2824105769283505
           ],
           "descriptor_span": [
-            0.2453248027852739
+            0.2453248027852757
           ],
-          "diameter": 0.2453248027852739
+          "diameter": 0.2453248027852757
         },
         {
           "group": 4,
@@ -306,28 +306,28 @@
           ],
           "descriptor": [
             [
-              1.190594450303124
+              1.1905944503031238
             ],
             [
-              1.1992483211537133
+              1.1992483211537142
             ],
             [
-              1.3046029808451722
+              1.3046029808451718
             ],
             [
-              1.313256851695761
+              1.3132568516957612
             ]
           ],
           "descriptor_min": [
-            1.190594450303124
+            1.1905944503031238
           ],
           "descriptor_max": [
-            1.313256851695761
+            1.3132568516957612
           ],
           "descriptor_span": [
-            0.12266240139263695
+            0.1226624013926374
           ],
-          "diameter": 0.12266240139263695
+          "diameter": 0.1226624013926374
         },
         {
           "group": 5,
@@ -340,14 +340,14 @@
           ],
           "descriptor": [
             [
-              0.34410312646317287
+              0.34410312646317304
             ]
           ],
           "descriptor_min": [
-            0.34410312646317287
+            0.34410312646317304
           ],
           "descriptor_max": [
-            0.34410312646317287
+            0.34410312646317304
           ],
           "descriptor_span": [
             0.0
@@ -358,7 +358,7 @@
     },
     {
       "name": "LiCl",
-      "source": "test/li_halides/gbci/li_halides_gbci_grad_check.py",
+      "source": "test/lix/li_halides_gbci_grad_check.py",
       "note": "sigma-only active space",
       "geometry_angstrom": [
         "Li 0.0 0.0 0.0",
@@ -394,7 +394,7 @@
       "n_configurations": 19,
       "n_groups": 6,
       "grouping_rule": "complete",
-      "max_group_diameter": 0.39924675665600606,
+      "max_group_diameter": 0.3992467566560154,
       "groups": [
         {
           "group": 1,
@@ -407,14 +407,14 @@
           ],
           "descriptor": [
             [
-              3.930271818898486
+              3.9302718188984787
             ]
           ],
           "descriptor_min": [
-            3.930271818898486
+            3.9302718188984787
           ],
           "descriptor_max": [
-            3.930271818898486
+            3.9302718188984787
           ],
           "descriptor_span": [
             0.0
@@ -438,28 +438,28 @@
           ],
           "descriptor": [
             [
-              3.0030946162911705
+              3.0030946162911616
             ],
             [
-              3.026129705315756
+              3.0261297053157517
             ],
             [
-              3.1912004501068796
+              3.191200450106873
             ],
             [
-              3.214235539131466
+              3.2142355391314625
             ]
           ],
           "descriptor_min": [
-            3.0030946162911705
+            3.0030946162911616
           ],
           "descriptor_max": [
-            3.214235539131466
+            3.2142355391314625
           ],
           "descriptor_span": [
-            0.21114092284029562
+            0.21114092284030095
           ],
-          "diameter": 0.21114092284029562
+          "diameter": 0.21114092284030095
         },
         {
           "group": 3,
@@ -486,40 +486,40 @@
           ],
           "descriptor": [
             [
-              2.0759174136838534
+              2.0759174136838436
             ],
             [
-              2.0989525027084395
+              2.0989525027084333
             ],
             [
-              2.1219875917330246
+              2.1219875917330238
             ],
             [
-              2.2640232474995643
+              2.2640232474995567
             ],
             [
-              2.28705833652415
+              2.2870583365241464
             ],
             [
               2.310093425548736
             ],
             [
-              2.452129081315274
+              2.452129081315269
             ],
             [
-              2.4751641703398595
+              2.475164170339859
             ]
           ],
           "descriptor_min": [
-            2.0759174136838534
+            2.0759174136838436
           ],
           "descriptor_max": [
-            2.4751641703398595
+            2.475164170339859
           ],
           "descriptor_span": [
-            0.39924675665600606
+            0.3992467566560154
           ],
-          "diameter": 0.39924675665600606
+          "diameter": 0.3992467566560154
         },
         {
           "group": 4,
@@ -538,28 +538,28 @@
           ],
           "descriptor": [
             [
-              1.359881133916833
+              1.3598811339168295
             ],
             [
               1.3829162229414191
             ],
             [
-              1.547986967732543
+              1.5479869677325415
             ],
             [
-              1.571022056757129
+              1.5710220567571318
             ]
           ],
           "descriptor_min": [
-            1.359881133916833
+            1.3598811339168295
           ],
           "descriptor_max": [
-            1.571022056757129
+            1.5710220567571318
           ],
           "descriptor_span": [
-            0.21114092284029584
+            0.21114092284030228
           ],
-          "diameter": 0.21114092284029584
+          "diameter": 0.21114092284030228
         },
         {
           "group": 5,
@@ -572,14 +572,14 @@
           ],
           "descriptor": [
             [
-              2.498199259364446
+              2.498199259364448
             ]
           ],
           "descriptor_min": [
-            2.498199259364446
+            2.498199259364448
           ],
           "descriptor_max": [
-            2.498199259364446
+            2.498199259364448
           ],
           "descriptor_span": [
             0.0
@@ -597,14 +597,14 @@
           ],
           "descriptor": [
             [
-              0.6438448541498123
+              0.6438448541498146
             ]
           ],
           "descriptor_min": [
-            0.6438448541498123
+            0.6438448541498146
           ],
           "descriptor_max": [
-            0.6438448541498123
+            0.6438448541498146
           ],
           "descriptor_span": [
             0.0
@@ -701,17 +701,17 @@
           ],
           "descriptor": [
             [
-              0.6461001652186316,
-              1.3538998347813636
+              0.6461001202438243,
+              1.3538998797561757
             ]
           ],
           "descriptor_min": [
-            0.6461001652186316,
-            1.3538998347813636
+            0.6461001202438243,
+            1.3538998797561757
           ],
           "descriptor_max": [
-            0.6461001652186316,
-            1.3538998347813636
+            0.6461001202438243,
+            1.3538998797561757
           ],
           "descriptor_span": [
             0.0,
@@ -730,17 +730,17 @@
           ],
           "descriptor": [
             [
-              1.303715678084947,
-              0.6962843219150531
+              1.3037156501502116,
+              0.6962843498497897
             ]
           ],
           "descriptor_min": [
-            1.303715678084947,
-            0.6962843219150531
+            1.3037156501502116,
+            0.6962843498497897
           ],
           "descriptor_max": [
-            1.303715678084947,
-            0.6962843219150531
+            1.3037156501502116,
+            0.6962843498497897
           ],
           "descriptor_span": [
             0.0,
@@ -759,17 +759,17 @@
           ],
           "descriptor": [
             [
-              1.961331190951262,
-              0.03866880904874241
+              1.9613311800565996,
+              0.03866881994340373
             ]
           ],
           "descriptor_min": [
-            1.961331190951262,
-            0.03866880904874241
+            1.9613311800565996,
+            0.03866881994340373
           ],
           "descriptor_max": [
-            1.961331190951262,
-            0.03866880904874241
+            1.9613311800565996,
+            0.03866881994340373
           ],
           "descriptor_span": [
             0.0,
@@ -781,7 +781,7 @@
     },
     {
       "name": "CH2NH2",
-      "source": "test/CH2NH2/ccpvtz/gbci/ch2nh2_gbci_S0_opt_5o8e_groupocc_ccpvtz.py",
+      "source": "test/ch2nh2/gbci/ch2nh2_gbci_S0_opt_5o8e_groupocc_ccpvtz.py",
       "note": "occupation-sum grouping, no Lowdin and no threshold; input geometry",
       "geometry_angstrom": [
         "N  0.59504934  0.00000418  0.00002110",
@@ -983,6 +983,262 @@
           ],
           "descriptor_max": [
             8.0,
+            0.0
+          ],
+          "descriptor_span": [
+            0.0,
+            0.0
+          ],
+          "diameter": 0.0
+        }
+      ]
+    },
+    {
+      "name": "CH2NH2-2o2e-Lowdin-N",
+      "source": "test/ch2nh2/gbci/gbci_2o2e_S0S1_meci_groupN_ccpvtz.py",
+      "note": "Lowdin population on N, default threshold; S0/S1 MECI geometry",
+      "geometry_angstrom": [
+        "N  0.72008165 -0.00836083 -0.00494257",
+        "C -0.74978247 -0.02238020 -0.01127616",
+        "H  1.25805170  0.71973138  0.44255403",
+        "H  1.23941784 -0.74638414 -0.46016712",
+        "H -1.16884282 -0.32366550  0.92068559",
+        "H -1.17157688  0.67354229 -0.69881478"
+      ],
+      "basis": "cc-pVTZ",
+      "charge": 1,
+      "spin": 0,
+      "ncas": 2,
+      "nelecas": [
+        1,
+        1
+      ],
+      "ncore": 7,
+      "act_list": [
+        8,
+        9
+      ],
+      "act_base": 1,
+      "group_a": {
+        "atom": [
+          [
+            0
+          ]
+        ]
+      },
+      "grouping_quantity": "Lowdin population",
+      "threshold": 0.2,
+      "descriptor_labels": [
+        "n(atoms N1)"
+      ],
+      "n_configurations": 3,
+      "n_groups": 3,
+      "grouping_rule": "complete",
+      "max_group_diameter": 0.0,
+      "groups": [
+        {
+          "group": 1,
+          "size": 1,
+          "configurations": [
+            "02"
+          ],
+          "po_indices": [
+            0
+          ],
+          "descriptor": [
+            [
+              0.11631785688001546
+            ]
+          ],
+          "descriptor_min": [
+            0.11631785688001546
+          ],
+          "descriptor_max": [
+            0.11631785688001546
+          ],
+          "descriptor_span": [
+            0.0
+          ],
+          "diameter": 0.0
+        },
+        {
+          "group": 2,
+          "size": 1,
+          "configurations": [
+            "11"
+          ],
+          "po_indices": [
+            1
+          ],
+          "descriptor": [
+            [
+              0.7752787899032255
+            ]
+          ],
+          "descriptor_min": [
+            0.7752787899032255
+          ],
+          "descriptor_max": [
+            0.7752787899032255
+          ],
+          "descriptor_span": [
+            0.0
+          ],
+          "diameter": 0.0
+        },
+        {
+          "group": 3,
+          "size": 1,
+          "configurations": [
+            "20"
+          ],
+          "po_indices": [
+            2
+          ],
+          "descriptor": [
+            [
+              1.4342397229264359
+            ]
+          ],
+          "descriptor_min": [
+            1.4342397229264359
+          ],
+          "descriptor_max": [
+            1.4342397229264359
+          ],
+          "descriptor_span": [
+            0.0
+          ],
+          "diameter": 0.0
+        }
+      ]
+    },
+    {
+      "name": "CH2NH2-2o2e-MO",
+      "source": "test/ch2nh2/gbci/gbci_2o2e_S0S1_meci_groupocc_ccpvtz.py",
+      "note": "occupation-sum grouping, one orbital per group; same MECI geometry",
+      "geometry_angstrom": [
+        "N  0.72008165 -0.00836083 -0.00494257",
+        "C -0.74978247 -0.02238020 -0.01127616",
+        "H  1.25805170  0.71973138  0.44255403",
+        "H  1.23941784 -0.74638414 -0.46016712",
+        "H -1.16884282 -0.32366550  0.92068559",
+        "H -1.17157688  0.67354229 -0.69881478"
+      ],
+      "basis": "cc-pVTZ",
+      "charge": 1,
+      "spin": 0,
+      "ncas": 2,
+      "nelecas": [
+        1,
+        1
+      ],
+      "ncore": 7,
+      "act_list": [
+        8,
+        9
+      ],
+      "act_base": 1,
+      "group_a": {
+        "mo": [
+          [
+            0
+          ],
+          [
+            1
+          ]
+        ]
+      },
+      "grouping_quantity": "occupation sum",
+      "threshold": null,
+      "descriptor_labels": [
+        "n(MO 1)",
+        "n(MO 2)"
+      ],
+      "n_configurations": 3,
+      "n_groups": 3,
+      "grouping_rule": "exact",
+      "max_group_diameter": 0.0,
+      "groups": [
+        {
+          "group": 1,
+          "size": 1,
+          "configurations": [
+            "02"
+          ],
+          "po_indices": [
+            0
+          ],
+          "descriptor": [
+            [
+              0.0,
+              2.0
+            ]
+          ],
+          "descriptor_min": [
+            0.0,
+            2.0
+          ],
+          "descriptor_max": [
+            0.0,
+            2.0
+          ],
+          "descriptor_span": [
+            0.0,
+            0.0
+          ],
+          "diameter": 0.0
+        },
+        {
+          "group": 2,
+          "size": 1,
+          "configurations": [
+            "11"
+          ],
+          "po_indices": [
+            1
+          ],
+          "descriptor": [
+            [
+              1.0,
+              1.0
+            ]
+          ],
+          "descriptor_min": [
+            1.0,
+            1.0
+          ],
+          "descriptor_max": [
+            1.0,
+            1.0
+          ],
+          "descriptor_span": [
+            0.0,
+            0.0
+          ],
+          "diameter": 0.0
+        },
+        {
+          "group": 3,
+          "size": 1,
+          "configurations": [
+            "20"
+          ],
+          "po_indices": [
+            2
+          ],
+          "descriptor": [
+            [
+              2.0,
+              0.0
+            ]
+          ],
+          "descriptor_min": [
+            2.0,
+            0.0
+          ],
+          "descriptor_max": [
+            2.0,
             0.0
           ],
           "descriptor_span": [

@@ -1,0 +1,43 @@
+{
+  "system": "ch2nh2_2e2o",
+  "note": "GBCI(2e,2o)/cc-pVTZ S0/S1 MECI geometry",
+  "basis": "cc-pVTZ",
+  "charge": 1,
+  "spin": 0,
+  "ncas": 2,
+  "nelecas": [
+    1,
+    1
+  ],
+  "act_list": [
+    8,
+    9
+  ],
+  "window": [
+    8,
+    9
+  ],
+  "linear": false,
+  "views": [
+    "front",
+    "side"
+  ],
+  "grid": 80,
+  "margin": 4.0,
+  "orbitals": [
+    {
+      "mo": 8,
+      "energy": -0.6493143673351978,
+      "occ": 2.0,
+      "pi_out_of_plane": 0.00012725772187359354,
+      "cube": "ch2nh2_2e2o_mo08.cube"
+    },
+    {
+      "mo": 9,
+      "energy": -0.26752040561739865,
+      "occ": 0.0,
+      "pi_out_of_plane": 0.8660637129225662,
+      "cube": "ch2nh2_2e2o_mo09.cube"
+    }
+  ]
+}

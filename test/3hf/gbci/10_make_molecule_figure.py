@@ -2,11 +2,12 @@
 
 Projects the B3LYP-optimized geometry onto its own molecular plane (the heavy
 atoms are planar to 0.005 A, so this is the real geometry rather than a redrawn
-sketch), labels the atoms, and marks the five atoms displaced in the finite
-difference together with the intramolecular hydrogen bond.
+sketch) and labels the atoms.
 
 One figure comes out of this: the plain structure that accompanies the
-analytic/numerical comparison.
+analytic/numerical comparison.  It carries no highlighting -- every atom is
+displaced in the finite difference now, so marking five of them would be
+misleading, and with nothing marked the legend goes too.
 
 Drawing is shared with the other structure figures through
 ``utils/molecule_figure.py``; only what is specific to this molecule lives here.
@@ -28,16 +29,11 @@ REPO_ROOT = SCRIPT_PATH.parents[3]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from utils.molecule_figure import (
-    FIG_WIDTH, dashed_handle, draw_molecule, highlight_handle, plane_projection,
-)
+from utils.molecule_figure import FIG_WIDTH, draw_molecule, plane_projection
 
 GEOMETRY = SCRIPT_DIR / ".." / "dft" / "outputs" / "3hf_dft_S0_opt.xyz"
 OUTPUT_PLAIN = SCRIPT_DIR / "outputs" / "10_molecule_figure"
 OUTPUT_LABELS = SCRIPT_DIR / "outputs" / "10_atom_labels.json"
-
-FD_ATOMS = [0, 1, 2, 3, 18]
-HBOND = (18, 0)
 
 # Standard numbering for 2-phenyl-3-hydroxy-4H-chromen-4-one: O1/C2/C3/C4 are
 # the pyranone ring, C4a-C8a the fused benzo ring, primed labels the 2-phenyl
@@ -84,17 +80,11 @@ def main():
     xy, _, rms = plane_projection(symbols, coords)
     print(f"heavy-atom plane: rms out-of-plane deviation {rms:.4f} A")
 
-    handles = [
-        highlight_handle("displaced in the finite difference "
-                         f"({', '.join(labels[i] for i in FD_ATOMS)})"),
-        dashed_handle("intramolecular hydrogen bond"),
-    ]
-
     span = xy.max(axis=0) - xy.min(axis=0)
+    # 1.2 rather than the 2.4 the legend used to need below the structure.
     fig, ax = plt.subplots(
-        figsize=(FIG_WIDTH, FIG_WIDTH * (span[1] + 2.4) / (span[0] + 1.6)))
-    draw_molecule(ax, symbols, coords, labels, highlight=FD_ATOMS,
-                  dashed=HBOND, legend_entries=handles)
+        figsize=(FIG_WIDTH, FIG_WIDTH * (span[1] + 1.2) / (span[0] + 1.6)))
+    draw_molecule(ax, symbols, coords, labels)
 
     fig.tight_layout()
 

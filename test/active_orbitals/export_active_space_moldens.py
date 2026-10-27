@@ -81,6 +81,19 @@ H           1.11847219       -0.21860303       -0.82467092
 H          -1.20415283        0.23914922        0.90215389
 H          -1.20495876       -0.23912870       -0.90217914"""
 
+# CH2NH2+ (2e,2o) S0/S1 MECI, from
+# test/ch2nh2/gbci/outputs/ch2nh2_gbci_S0S1_meci_2o2e_groupN_ccpvtz/
+#   ch2nh2_gbci_S0S1_meci_2o2e_groupN_ccpvtz_optimized.xyz
+# Unlike the (8e,5o) entry above, this one is taken at the intersection rather
+# than at the S0 minimum: MO8 and MO9 are the N- and C-localized p orbitals only
+# near the seam, and that is what the figure has to show.
+CH2NH2_MECI_2O2E_ATOMS = """N  0.72008165 -0.00836083 -0.00494257
+C -0.74978247 -0.02238020 -0.01127616
+H  1.25805170  0.71973138  0.44255403
+H  1.23941784 -0.74638414 -0.46016712
+H -1.16884282 -0.32366550  0.92068559
+H -1.17157688  0.67354229 -0.69881478"""
+
 # 3-hydroxyflavone: B3LYP/6-31G(d) S0 minimum, from
 # test/3HF/dft/outputs/3hf_dft_S0_opt.xyz (no imaginary frequencies).
 HF3_ATOMS = """O -1.66557168 1.28041179 3.09806724
@@ -142,6 +155,9 @@ SYSTEMS = {
     "ch2nh2_8e5o": dict(atom=CH2NH2_ATOMS, basis="cc-pVTZ", charge=1, spin=0,
                         ncas=5, nelecas=(4, 4), act_list=[5, 6, 7, 8, 9],
                         note="CASCI(8e,5o)/cc-pVTZ S0-optimised geometry"),
+    "ch2nh2_2e2o": dict(atom=CH2NH2_MECI_2O2E_ATOMS, basis="cc-pVTZ", charge=1,
+                        spin=0, ncas=2, nelecas=(1, 1), act_list=[8, 9],
+                        note="GBCI(2e,2o)/cc-pVTZ S0/S1 MECI geometry"),
 }
 
 

@@ -1,6 +1,11 @@
 # GBCI-grad
 Analytic energy gradient for Grouped-Bath Configuration Interaction (GBCI)
 
+[MANIFEST.md](MANIFEST.md) maps every figure and table in the manuscript and the
+Supporting Information to the file that holds it, the command that rebuilds it,
+and the data it was built from. Start there to reproduce a particular result;
+this file covers the environment and the layout.
+
 ## Requirements
 
 This repository was developed and tested with the
@@ -44,17 +49,20 @@ GBCI-grad/
 │   │       └── outputs/01_partials*/  # Per-task finite-difference energies behind each step size
 │   ├── active_orbitals/               # Active-space orbital export and figure rendering
 │   │   └── reference/                 # Active-space moldens and rendered orbital panels
-│   ├── ch2nh2/                        # Protonated formaldimine, CAS(8e,5o)/cc-pVTZ
+│   ├── ch2nh2/                        # Protonated formaldimine, cc-pVTZ; the manuscript
+│   │   │                              # uses CAS(2e,2o), the CAS(8e,5o) runs are kept
+│   │   │                              # beside it for the active-space comparison
 │   │   ├── casci/                     # CASCI S0/S1 MECI workflow and saved results
 │   │   ├── gbci/                      # GBCI S0/S1 MECI workflow and saved results
 │   │   ├── casscf/                    # SA-CASSCF S0/S1 MECI workflow and saved results
-│   │   ├── analysis/                  # Geometry descriptors, MECI images and the SI geometry table
-│   │   └── fig/                       # Three-panel MECI geometry comparison figure
+│   │   ├── analysis/                  # Geometry descriptors, MECI images and the SI geometry tables
+│   │   └── fig/                       # MECI geometry comparison figures
 │   └── pp/
 │       ├── casci/                     # 4-(1-pyrrolyl)-pyridine CASCI optimizations and NEB calculations
 │       ├── gbci/                      # 4-(1-pyrrolyl)-pyridine GBCI optimizations and NEB calculations
 │       ├── casscf/                    # SA-CASSCF single points on the CASCI and GBCI paths
 │       ├── figures/                   # Structure figure with the manuscript's atom labeling
+│       ├── analysis/                  # Supporting-information geometry table built from the path endpoints
 │       └── pes/                       # 4-(1-pyrrolyl)-pyridine potential-energy-path construction and export
 ├── .gitignore
 └── README.md
@@ -82,6 +90,11 @@ must be run from the directory they live in and the tree must not be rearranged.
 `test/active_orbitals/reference/active_orbital_figures/` ships the rendered orbital
 panels but not the intermediate `.cube` files, which are large and are regenerated
 from the moldens in `active_space_moldens/` by `render_active_orbitals.py`.
+
+Molden files are committed wherever a published figure or table is built from them
+— the active-space moldens above, and the reference and final orbitals each run
+wrote beside its results. `.gitignore` excludes `*.molden` everywhere else, so a
+molden written outside `test/` stays out of the repository.
 
 Calculation scripts whose names end in `_im1.py` or `_im2.py` are follow-up
 optimizations for an imaginary-frequency mode. They start from geometries

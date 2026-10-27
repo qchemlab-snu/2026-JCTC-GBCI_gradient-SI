@@ -1,0 +1,26 @@
+# Render one xyz geometry as a plain ball-and-stick structure.
+#
+# Template: render_neb_endpoint_images.sh substitutes __INFILE__, __OUTFILE__
+# and __ROTATE__. Used for the endpoint structures attached to the SA-CASSCF
+# NEB figure, so the camera is fixed and the two endpoints stay comparable.
+#
+# Note for anyone editing this file: Jmol ends a comment at a semicolon and
+# parses the rest of the line as a command, so keep semicolons out of comments.
+
+background white
+set frank off
+set antialiasDisplay true
+set zoomLarge false
+
+load "__INFILE__"
+
+select all
+spacefill 20%
+wireframe 0.14
+color atoms cpk
+
+rotate best
+__ROTATE__
+zoom 85
+
+write image 1200 1000 "__OUTFILE__"

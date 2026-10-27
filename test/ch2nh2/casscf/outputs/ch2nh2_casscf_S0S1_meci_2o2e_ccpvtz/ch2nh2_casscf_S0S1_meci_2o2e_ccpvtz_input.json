@@ -1,0 +1,66 @@
+{
+  "active_space": {
+    "active_orbitals_1based": [
+      8,
+      9
+    ],
+    "ncas": 2,
+    "nelecas": [
+      1,
+      1
+    ]
+  },
+  "basis": "cc-pVTZ",
+  "charge": 1,
+  "conv_tol": 1e-10,
+  "created_at": "2026-10-23T04:40:43.966908+00:00",
+  "frequency_check": {
+    "completed": false,
+    "objective": "SA2-CASSCF S0/S1 penalty function"
+  },
+  "geometry_optimization": {
+    "gap_target_ev": 0.001,
+    "maxsteps": 500,
+    "parameters": {
+      "convergence_dmax": 0.0018,
+      "convergence_drms": 0.0012,
+      "convergence_energy": 1e-06,
+      "convergence_gmax": 0.00045,
+      "convergence_grms": 0.0003,
+      "tmax": 0.03,
+      "trust": 0.01
+    }
+  },
+  "max_cycle": 200,
+  "method": "SA2-CASSCF penalty MECI",
+  "molecule": "CH2NH2+",
+  "penalty": {
+    "alpha_hartree_squared": 0.0001,
+    "sigma_hartree": 1.0
+  },
+  "project_previous_orbitals": true,
+  "pyscf_version": "2.10.0",
+  "reuse_ci_guess": true,
+  "root_tracking": false,
+  "script": "ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz.py",
+  "spin": 0,
+  "start_geometry_angstrom": "N        0.64635220      -0.06176284      -0.03811068\nC       -0.62662335      -0.23675105      -0.14376773\nH        1.09152634       0.71376239       0.44016899\nH        1.29393142      -0.72058223      -0.44632176\nH       -1.13777228      -0.10817788       0.84703965\nH       -1.14006531       0.70599461      -0.47096947\n",
+  "start_geometry_source": "../casci/outputs/ch2nh2_casci_S0S1_meci_2o2e_ccpvtz/ch2nh2_casci_S0S1_meci_2o2e_ccpvtz_optimized.xyz",
+  "state_average": {
+    "nroots": 2,
+    "target_roots": [
+      0,
+      1
+    ],
+    "weights": [
+      0.5,
+      0.5
+    ]
+  },
+  "states": [
+    "S0",
+    "S1"
+  ],
+  "strict_convergence": true,
+  "unit": "Angstrom"
+}

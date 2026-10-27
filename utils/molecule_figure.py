@@ -75,13 +75,18 @@ def bond_list(symbols, coords, scale=1.3):
 
 def draw_molecule(ax, symbols, coords, labels, *, anchors=None, highlight=(),
                   dashed=None, dashed_label=None, arrows=None, arrow_scale=1.0,
-                  legend_entries=(), fig_width=FIG_WIDTH):
+                  legend_entries=(), fig_width=FIG_WIDTH,
+                  marker_scale=1.0, font_scale=1.0, margins=0.06):
     """Draw the molecule on ``ax``. Returns the 2D coordinates and plane basis.
 
     ``dashed`` is an ``(i, j)`` pair drawn as a dashed contact, labelled with
     ``dashed_label`` at the centroid of the ring it closes when one is given.
     ``arrows`` maps an atom index to a 3-vector, drawn from that atom at
     ``arrow_scale`` Angstrom per unit.
+
+    ``marker_scale``, ``font_scale`` and ``margins`` enlarge the drawing inside
+    a canvas of unchanged size, for a molecule whose span leaves the figure
+    emptier than the others.  The defaults reproduce the shared style exactly.
     """
     symbols = list(symbols)
     xy, (e1, e2), _ = plane_projection(symbols, coords, anchors)
@@ -109,12 +114,14 @@ def draw_molecule(ax, symbols, coords, labels, *, anchors=None, highlight=(),
 
     for i, symbol in enumerate(symbols):
         marked = i in highlight
-        ax.scatter(*xy[i], s=MARKER_HEAVY if symbol != "H" else MARKER_H,
+        ax.scatter(*xy[i],
+                   s=(MARKER_HEAVY if symbol != "H" else MARKER_H) * marker_scale,
                    facecolor="white",
                    edgecolor=HIGHLIGHT if marked else "#b8b8b8",
                    linewidth=1.5 if marked else 0.7, zorder=2)
         ax.text(*xy[i], labels[i], ha="center", va="center", zorder=3,
-                fontsize=FONT_ATOM_MARKED if marked else FONT_ATOM,
+                fontsize=(FONT_ATOM_MARKED if marked else FONT_ATOM)
+                         * font_scale,
                 color=COLOR.get(symbol, "#303030"),
                 fontweight="bold" if marked else "normal")
 
@@ -126,7 +133,7 @@ def draw_molecule(ax, symbols, coords, labels, *, anchors=None, highlight=(),
 
     ax.set_aspect("equal")
     ax.axis("off")
-    ax.margins(0.06)
+    ax.margins(margins)
     return xy, (e1, e2)
 
 

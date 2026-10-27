@@ -1,7 +1,7 @@
 """Collect C-N bond lengths and pyramidalization angles for the CH2NH2 cc-pVTZ MECIs.
 
 Reads the already-converged S0/S1 MECI geometries under
-``test/ch2nh2/<method>/outputs/<run>/`` and reports, for each method, the two
+``test/CH2NH2/ccpvtz/<method>/outputs/<run>/`` and reports, for each method, the two
 coordinates that characterize this conical intersection: the C-N bond length and the
 pyramidalization angle at carbon.  No quantum chemistry is re-run.
 
@@ -45,12 +45,20 @@ DEFAULT_ALIGNED_DIR = SCRIPT_DIR / "outputs" / "ch2nh2_ccpvtz_meci_images"
 # to disk rather than hidden in the viewer state.
 #
 # 145 degrees reproduces the viewing angle of the existing comparison panels in
-# test/ch2nh2/fig/.  It was fitted, not guessed: the four hydrogen centers were detected in
+# test/CH2NH2/fig/.  It was fitted, not guessed: the four hydrogen centers were detected in
 # fig/casci_s0s1_meci.png and in renders made over a full 360-degree scan, both through the
 # same detector, and compared in the frame where C sits at the origin and N at (1, 0).  The
 # residual summed over the four hydrogens bottoms out sharply at 145 degrees (0.15 in units
 # of the C-N length, against 0.24 at 140 and 150 and >1 away from the minimum).
 DEFAULT_SPIN_ABOUT_CN_DEG = 145.0
+
+# The cc-pVTZ comparison figure's own panels (test/CH2NH2/fig/ch2nh2_geometry_comparison
+# _ccpvtz.png) were rendered by hand, outside this pipeline, and they do NOT use 145
+# degrees.  Fitting them the same way -- rendering this scan over a full 360-degree
+# sweep and scoring each render's silhouette against the published one after matching
+# the C and N centers -- puts them at 215 degrees (IoU 0.865, against 0.726 at 145).
+# Pass --spin-about-cn-deg 215 to reproduce that viewing angle.
+CCPVTZ_FIGURE_SPIN_ABOUT_CN_DEG = 215.0
 
 # One entry per geometry.  ``run_dir`` is relative to SCRIPT_DIR; the optimized geometry
 # and the run summary are both named after the run directory, which is the repository
@@ -79,6 +87,30 @@ GEOMETRY_SPECS = [
         "method": "GBCI",
         "active_space": "5o8e",
         "run_dir": "../gbci/outputs/ch2nh2_gbci_S0S1_meci_5o8e_nogroup_ccpvtz",
+    },
+    # The (2e,2o) counterparts.  Labels must stay distinct from the 5o8e ones: the
+    # figure scripts key the descriptors JSON by label, and a duplicate would silently
+    # overwrite the 5o8e record.
+    {
+        "label": "CASCI 2o2e",
+        "method": "CASCI",
+        "active_space": "2o2e",
+        "run_dir": (
+            "../casci/outputs/"
+            "ch2nh2_casci_S0S1_meci_2o2e_ccpvtz_sigma0.25"
+        ),
+    },
+    {
+        "label": "CASSCF 2o2e",
+        "method": "CASSCF",
+        "active_space": "2o2e",
+        "run_dir": "../casscf/outputs/ch2nh2_casscf_S0S1_meci_2o2e_ccpvtz",
+    },
+    {
+        "label": "GBCI 2o2e (groupocc)",
+        "method": "GBCI",
+        "active_space": "2o2e",
+        "run_dir": "../gbci/outputs/ch2nh2_gbci_S0S1_meci_2o2e_groupocc_ccpvtz",
     },
 ]
 

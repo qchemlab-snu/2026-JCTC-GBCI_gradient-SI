@@ -6,7 +6,7 @@ LiH   CAS(2e,2o)   basis=ccpvdz   ncore=1
   grouped by Lowdin population, threshold 0.4, rule 'complete'
   largest population difference within a group: 0.000
   3 groups from 3 configurations
-  source: test/li_halides/gbci/li_halides_gbci_grad_check.py
+  source: test/lix/li_halides_gbci_grad_check.py
 ==============================================================================
   group config      n(atoms Li1)
       1 02                 1.973
@@ -20,7 +20,7 @@ LiF   CAS(4e,4o)   basis=ccpvdz   ncore=4
   grouped by Lowdin population, threshold 0.4, rule 'complete'
   largest population difference within a group: 0.245
   5 groups from 19 configurations
-  source: test/li_halides/gbci/li_halides_gbci_grad_check.py
+  source: test/lix/li_halides_gbci_grad_check.py
 ==============================================================================
   group config      n(atoms Li1)
       1 0022               3.975
@@ -53,7 +53,7 @@ LiCl   CAS(4e,4o)   basis=ccpvdz   ncore=8
   grouped by Lowdin population, threshold 0.4, rule 'complete'
   largest population difference within a group: 0.399
   6 groups from 19 configurations
-  source: test/li_halides/gbci/li_halides_gbci_grad_check.py
+  source: test/lix/li_halides_gbci_grad_check.py
 ==============================================================================
   group config      n(atoms Li1)
       1 0022               3.930
@@ -80,36 +80,6 @@ LiCl   CAS(4e,4o)   basis=ccpvdz   ncore=8
       6 2200               0.644
 
 ==============================================================================
-SO2   CAS(8e,5o)   basis=ccpvdz   ncore=12
-  default contiguous active window
-  group_a = {'atom': [[0]]}
-  grouped by Lowdin population, threshold 0.2, rule 'complete'
-  largest population difference within a group: 0.181
-  6 groups from 15 configurations
-  source: test/so2/gbci/gbci_so2_grad_fd_sweep.py
-==============================================================================
-  group config      n(atoms S1)
-      1 02222             2.292
-        12122             2.350
-        22022             2.407
-        22211             2.473
-        span              0.181
-      2 11222             2.647
-        12212             2.627
-        21122             2.704
-        22112             2.685
-        span              0.077
-      3 12221             2.138
-        22121             2.196
-        span              0.058
-      4 20222             3.001
-        21212             2.982
-        22202             2.962
-        span              0.039
-      5 21221             2.493
-      6 22220             1.984
-
-==============================================================================
 pp   CAS(2e,2o)   basis=ccpvdz   ncore=37
   act_list [38, 39] (base 1)
   group_a = {'atom': [[0, 1, 2, 3, 4, 5, 6, 7, 8], [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]]}
@@ -129,7 +99,7 @@ CH2NH2   CAS(8e,5o)   basis=cc-pVTZ   ncore=4
   group_a = {'mo': [[0, 1, 2, 3], [4]]}
   grouped by occupation sum (exact)
   3 groups from 15 configurations
-  source: test/CH2NH2/ccpvtz/gbci/ch2nh2_gbci_S0_opt_5o8e_groupocc_ccpvtz.py
+  source: test/ch2nh2/gbci/ch2nh2_gbci_S0_opt_5o8e_groupocc_ccpvtz.py
 ==============================================================================
   group config      n(MO 1+2+3+4)        n(MO 5)
       1 02222               6.000          2.000
@@ -150,6 +120,33 @@ CH2NH2   CAS(8e,5o)   basis=cc-pVTZ   ncore=4
         span                0.000          0.000
       3 22220               8.000          0.000
 
-Saved results to /home/jiseong0626/mygit/grad/pysfnocigrad/test/bath_groups/outputs/bath_groups.json
-Saved table to    /home/jiseong0626/mygit/grad/pysfnocigrad/test/bath_groups/outputs/bath_groups.csv
-Saved LaTeX to    /home/jiseong0626/mygit/grad/pysfnocigrad/test/bath_groups/outputs/bath_groups.tex
+==============================================================================
+CH2NH2-2o2e-Lowdin-N   CAS(2e,2o)   basis=cc-pVTZ   ncore=7
+  act_list [8, 9] (base 1)
+  group_a = {'atom': [[0]]}
+  grouped by Lowdin population, threshold 0.2, rule 'complete'
+  largest population difference within a group: 0.000
+  3 groups from 3 configurations
+  source: test/ch2nh2/gbci/gbci_2o2e_S0S1_meci_groupN_ccpvtz.py
+==============================================================================
+  group config      n(atoms N1)
+      1 02                0.116
+      2 11                0.775
+      3 20                1.434
+
+==============================================================================
+CH2NH2-2o2e-MO   CAS(2e,2o)   basis=cc-pVTZ   ncore=7
+  act_list [8, 9] (base 1)
+  group_a = {'mo': [[0], [1]]}
+  grouped by occupation sum (exact)
+  3 groups from 3 configurations
+  source: test/ch2nh2/gbci/gbci_2o2e_S0S1_meci_groupocc_ccpvtz.py
+==============================================================================
+  group config      n(MO 1)  n(MO 2)
+      1 02            0.000    2.000
+      2 11            1.000    1.000
+      3 20            2.000    0.000
+
+Saved results to /home/jiseong0626/labgit/GBCI-grad/test/bath_groups/outputs/bath_groups.json
+Saved table to    /home/jiseong0626/labgit/GBCI-grad/test/bath_groups/outputs/bath_groups.csv
+Saved LaTeX to    /home/jiseong0626/labgit/GBCI-grad/test/bath_groups/outputs/bath_groups.tex

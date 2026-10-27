@@ -115,6 +115,9 @@ PANEL_DATA = [
 MAX_ALIGNMENT_PASSES = 3
 ALIGNMENT_TOLERANCE_DEG = 0.25
 
+# White border kept around the molecule before the crop is scaled into the panel,
+# in source-render pixels.  Calibrated against this figure's own 500 px renders.
+CROP_MARGIN = 78
 PANEL_SIZE = (430, 360)
 MOLECULE_MAX_SIZE = (360, 275)
 MOLECULE_PASTE_Y = 58
@@ -275,19 +278,33 @@ def align_cn_horizontal(image: Image.Image, rotation_offset_deg: float) -> Image
 
 
 def prepare_panel_image(
-    path: Path, max_size: tuple[int, int], rotation_offset_deg: float
+    path: Path,
+    max_size: tuple[int, int],
+    rotation_offset_deg: float,
+    margin: int = CROP_MARGIN,
 ) -> Image.Image:
+    """Align, crop and scale one render into the panel box.
+
+    ``margin`` is the white border kept around the molecule before the crop is scaled
+    down, in pixels of the *source* render.  It therefore sets how much of the panel the
+    molecule fills, and a render made at a different resolution needs it scaled to match
+    -- this figure's own renders are 500 px wide, so the default is calibrated to those.
+    """
     image = align_cn_horizontal(Image.open(path).convert("RGB"), rotation_offset_deg)
     left, top, right, bottom = nonwhite_bbox(image)
-    margin = 78
-    cropped = image.crop(
-        (
-            max(left - margin, 0),
-            max(top - margin, 0),
-            min(right + margin, image.width),
-            min(bottom + margin, image.height),
-        )
+    # Pad rather than clamp where the requested border runs past the render's own edge,
+    # so the molecule fills the same fraction of the panel whatever the render's
+    # padding happens to be.  Clamping silently gives back a tighter crop, which is how
+    # a 900 px render ends up with a visibly larger molecule than a 500 px one.
+    box = (left - margin, top - margin, right + margin, bottom + margin)
+    cropped = Image.new("RGB", (box[2] - box[0], box[3] - box[1]), "white")
+    inner = (
+        max(box[0], 0),
+        max(box[1], 0),
+        min(box[2], image.width),
+        min(box[3], image.height),
     )
+    cropped.paste(image.crop(inner), (inner[0] - box[0], inner[1] - box[1]))
     cropped.thumbnail(max_size, Image.Resampling.LANCZOS)
     return cropped
 
@@ -299,22 +316,31 @@ def draw_panel(
     panel_index: int,
     fonts: dict[str, object],
     args: argparse.Namespace,
+    origin: tuple[int, int] | None = None,
 ) -> None:
+    """Draw one panel.
+
+    ``origin`` places the panel's top-left corner explicitly, which is what a
+    multi-row figure needs.  Left at None the panel sits in a single row at
+    ``panel_index * PANEL_SIZE[0]``, which is this figure's own layout.
+    """
     panel_width, _ = PANEL_SIZE
-    x0 = panel_index * panel_width
+    x0 = panel_index * panel_width if origin is None else origin[0]
+    y0 = 0 if origin is None else origin[1]
     bond_text, angle_text, angle_value = panel_labels(panel, descriptors)
 
     molecule = prepare_panel_image(
         panel["image"],
         max_size=MOLECULE_MAX_SIZE,
         rotation_offset_deg=args.rotation_offset_deg + panel["rotation_offset_deg"],
+        margin=panel.get("crop_margin", CROP_MARGIN),
     )
     paste_x = x0 + (panel_width - molecule.width) // 2
-    paste_y = MOLECULE_PASTE_Y
+    paste_y = y0 + MOLECULE_PASTE_Y
     canvas.paste(molecule, (paste_x, paste_y))
 
     draw = ImageDraw.Draw(canvas)
-    draw.text((x0 + 18, 16), panel["title"], fill=(0, 0, 0), font=fonts["bold"])
+    draw.text((x0 + 18, y0 + 16), panel["title"], fill=(0, 0, 0), font=fonts["bold"])
 
     centers = atom_centers(molecule)
     if centers is None:

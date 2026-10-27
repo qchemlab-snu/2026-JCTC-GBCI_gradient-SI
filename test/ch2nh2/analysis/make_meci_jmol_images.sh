@@ -9,7 +9,9 @@
 # different Xvfb if yours lives elsewhere.
 set -euo pipefail
 
-IMAGE_DIR="outputs/ch2nh2_ccpvtz_meci_images"
+# Overridable so a second set of renders (a different --spin-about-cn-deg, say)
+# can be produced without disturbing the default one.
+IMAGE_DIR="${IMAGE_DIR:-outputs/ch2nh2_ccpvtz_meci_images}"
 SPT_TEMPLATE="render_meci_jmol.spt"
 JMOL_MODULE="jmol/16.1.47"
 XVFB_BIN="${XVFB_BIN:-$HOME/anaconda3/envs/xvfb/x86_64-conda-linux-gnu/sysroot/usr/bin/Xvfb}"

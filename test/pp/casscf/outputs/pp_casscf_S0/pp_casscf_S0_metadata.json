@@ -1,0 +1,69 @@
+{
+  "created_at": "2026-09-30T08:13:40.116488+00:00",
+  "script": "pp_casscf_S0.py",
+  "driver": "pp_casscf_opt.py",
+  "molecule": "pp",
+  "method": "CASSCF",
+  "state": "S0",
+  "target_root": 0,
+  "initial_geometry_source": "test/pp/casci/pp_casci_S0_im1.out",
+  "initial_geometry_angstrom": "C          -3.73143993        0.65188355       -0.21325648\nC          -2.51817307        1.24685434       -0.32807972\nC          -3.50289652       -0.69490677        0.21335648\nC          -2.16127315       -0.85635017        0.32814287\nH          -4.68168724        1.11637761       -0.41896743\nH          -4.24671897       -1.44686974        0.41907899\nN          -1.54245055        0.33052230       -0.00002689\nH          -1.59175012       -1.70747153        0.65557748\nH          -2.26130062        2.23819524       -0.65554408\nC          -0.16244599        0.56467722       -0.00003783\nC           0.74312415       -0.46184653       -0.25010711\nC           2.09644794       -0.16766994       -0.23075471\nH           0.41102441       -1.46229433       -0.48010942\nN           2.59760033        1.03308530       -0.00002661\nH           2.81355702       -0.95592807       -0.42551776\nC           1.72840944        2.00130767        0.23070888\nC           0.35380603        1.83246734        0.25004055\nH           2.14530813        2.98201506        0.42549135\nH          -0.28975431        2.66733240        0.48006407",
+  "basis": "ccpvdz",
+  "charge": 0,
+  "spin": 0,
+  "unit": "Angstrom",
+  "pyscf_version": "2.10.0",
+  "active_space": {
+    "ncas": 2,
+    "nelecas": [
+      1,
+      1
+    ],
+    "active_orbitals_1based": [
+      38,
+      39
+    ]
+  },
+  "state_average": {
+    "enabled": false,
+    "states": [
+      "S0"
+    ],
+    "nroots": 1,
+    "weights": null
+  },
+  "root_tracking": false,
+  "project_previous_orbitals": true,
+  "reuse_ci_guess": true,
+  "strict_convergence": true,
+  "conv_tol": 1e-06,
+  "max_cycle": 200,
+  "geometry_optimization": {
+    "maxsteps": 500,
+    "parameters": {
+      "trust": 0.02,
+      "tmax": 0.03,
+      "convergence_energy": 1e-05,
+      "convergence_grms": 0.0003,
+      "convergence_gmax": 0.00045,
+      "convergence_drms": 0.0012,
+      "convergence_dmax": 0.0018
+    }
+  },
+  "final_energies_hartree": {
+    "S0": -454.39756372598237,
+    "target": -454.39756372598237
+  },
+  "output_dir": "/home/jiseong0626/mygit/grad/pysfnocigrad/test/pp/casscf/outputs/pp_casscf_S0",
+  "files": {
+    "optimized_xyz": "pp_casscf_S0_optimized.xyz",
+    "history_csv": "pp_casscf_S0_optimization_history.csv",
+    "history_json": "pp_casscf_S0_optimization_history.json",
+    "reference_npz": "pp_casscf_S0_reference.npz",
+    "orbitals_molden": "pp_casscf_S0_orbitals.molden",
+    "natural_orbitals_molden": "pp_casscf_S0_natural_orbitals.molden"
+  },
+  "frequency_check": {
+    "completed": false
+  }
+}

@@ -4,9 +4,11 @@
   \centering
   \caption{
   Comparison of the analytic and numerical gradients of the $S_1$ state of
-  3-hydroxyflavone, for the five atoms of the intramolecular hydrogen bond,
-  computed with GBCI(4e,4o)/6-31G at the B3LYP/6-31G(d) ground-state minimum.
-  Central differences use a step of $0.00025\,a_0$ with the grouped-bath
+  3-hydroxyflavone, computed with GBCI(4e,4o)/6-31G at the
+  B3LYP/6-31G(d) ground-state minimum. The rows list the five atoms of
+  the intramolecular hydrogen bond; the summary is taken over all 28
+  atoms (84 Cartesian components), every one of which was displaced.
+  Central differences use a step of $0.0001\,a_0$ with the grouped-bath
   assignment frozen to that of the reference geometry, and the bath
   orbitals of every point semicanonicalized; atom labels follow
   Figure~\ref{fig:3hf-structure}.
@@ -21,25 +23,25 @@
     \multicolumn{1}{c}{Numerical Gradient} \\
     & & \multicolumn{1}{c}{(hartree/bohr)} & \multicolumn{1}{c}{(hartree/bohr)} \\
     \hline
-    O4 & $x$ & $\phantom{-}0.003\,461\,36$ & $\phantom{-}0.003\,461\,32$ \\
-       & $y$ & $-0.014\,962\,45$ & $-0.014\,962\,44$ \\
-       & $z$ & $-0.038\,611\,80$ & $-0.038\,611\,89$ \\[2pt]
-    C4 & $x$ & $\phantom{-}0.031\,327\,87$ & $\phantom{-}0.031\,327\,76$ \\
-       & $y$ & $\phantom{-}0.016\,404\,42$ & $\phantom{-}0.016\,404\,36$ \\
-       & $z$ & $\phantom{-}0.051\,246\,48$ & $\phantom{-}0.051\,246\,44$ \\[2pt]
-    C3 & $x$ & $-0.009\,701\,41$ & $-0.009\,701\,45$ \\
-       & $y$ & $-0.007\,166\,60$ & $-0.007\,166\,54$ \\
-       & $z$ & $-0.021\,148\,50$ & $-0.021\,148\,52$ \\[2pt]
-    O3 & $x$ & $\phantom{-}0.037\,554\,16$ & $\phantom{-}0.037\,554\,16$ \\
+    O4 & $x$ & $\phantom{-}0.003\,461\,36$ & $\phantom{-}0.003\,461\,20$ \\
+       & $y$ & $-0.014\,962\,45$ & $-0.014\,962\,57$ \\
+       & $z$ & $-0.038\,611\,80$ & $-0.038\,611\,79$ \\[2pt]
+    C4 & $x$ & $\phantom{-}0.031\,327\,87$ & $\phantom{-}0.031\,327\,72$ \\
+       & $y$ & $\phantom{-}0.016\,404\,42$ & $\phantom{-}0.016\,404\,43$ \\
+       & $z$ & $\phantom{-}0.051\,246\,48$ & $\phantom{-}0.051\,246\,38$ \\[2pt]
+    C3 & $x$ & $-0.009\,701\,41$ & $-0.009\,701\,47$ \\
+       & $y$ & $-0.007\,166\,60$ & $-0.007\,166\,58$ \\
+       & $z$ & $-0.021\,148\,50$ & $-0.021\,148\,47$ \\[2pt]
+    O3 & $x$ & $\phantom{-}0.037\,554\,16$ & $\phantom{-}0.037\,554\,20$ \\
        & $y$ & $\phantom{-}0.000\,500\,21$ & $\phantom{-}0.000\,500\,20$ \\
        & $z$ & $\phantom{-}0.010\,530\,61$ & $\phantom{-}0.010\,530\,58$ \\[2pt]
-    H1 & $x$ & $-0.016\,558\,98$ & $-0.016\,558\,97$ \\
-       & $y$ & $\phantom{-}0.001\,179\,16$ & $\phantom{-}0.001\,179\,13$ \\
-       & $z$ & $-0.000\,953\,73$ & $-0.000\,953\,73$ \\
+    H1 & $x$ & $-0.016\,558\,98$ & $-0.016\,558\,82$ \\
+       & $y$ & $\phantom{-}0.001\,179\,16$ & $\phantom{-}0.001\,179\,08$ \\
+       & $z$ & $-0.000\,953\,73$ & $-0.000\,953\,77$ \\
     \hline
-    \multicolumn{3}{l}{Maximum absolute difference} & $1.019 \times 10^{-7}$ \\
-    \multicolumn{3}{l}{Root-mean-square difference} & $4.786 \times 10^{-8}$ \\
-    \multicolumn{3}{l}{Net torque $|\sum_A \mathbf{R}_A \times \mathbf{g}_A|$ (hartree)} & $2.523 \times 10^{-12}$ \\
+    \multicolumn{3}{l}{Maximum absolute difference (all 84 components)} & $2.499 \times 10^{-7}$ \\
+    \multicolumn{3}{l}{Root-mean-square difference (all 84 components)} & $1.025 \times 10^{-7}$ \\
+    \multicolumn{3}{l}{Net torque $|\sum_A \mathbf{R}_A \times \mathbf{g}_A|$ (hartree)} & $4.640 \times 10^{-12}$ \\
     \hline
   \end{tabular}
 \end{table}

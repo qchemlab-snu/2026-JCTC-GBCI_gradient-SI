@@ -27,6 +27,10 @@ var/
 
 # Calculation examples
 *.molden
+# ...except the ones under test/: the active-space moldens behind the Supporting
+# Information orbital figures, and the reference/final orbitals each published run
+# wrote beside its results.  Without this the figures have no input in the archive.
+!test/**/*.molden
 
 # Installer logs
 pip-log.txt
