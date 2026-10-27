@@ -1,11 +1,6 @@
 # GBCI-grad
 Analytic energy gradient for Grouped-Bath Configuration Interaction (GBCI)
 
-[MANIFEST.md](MANIFEST.md) maps every figure and table in the manuscript and the
-Supporting Information to the file that holds it, the command that rebuilds it,
-and the data it was built from. Start there to reproduce a particular result;
-this file covers the environment and the layout.
-
 ## Requirements
 
 This repository was developed and tested with the
@@ -72,13 +67,6 @@ GBCI-grad/
 loaded as the GBCI gradient module in a PySCF/pyscf-forge environment. The
 `utils/` modules are shared by the calculation scripts under `test/`.
 
-Two of the validation scripts — `test/lix/li_halides_gbci_grad_check.py` and
-`test/3hf/gbci/01_gbci_s1_grad_check_631g.py` — refuse to run when
-`pyscf.grad.gbci` resolves to a copy inside this repository, because they were
-written to measure whichever module `PYSCF_EXT_PATH` selects. To run them, place
-`pyscf/grad/gbci.py` on the `pyscf-forge` extension path rather than importing it
-from the repository root.
-
 The `test/` tree contains reproducible research calculations and their archived
 outputs rather than only lightweight unit tests. Output directories may include
 optimized XYZ geometries, JSON/CSV metadata, Excel
@@ -90,11 +78,6 @@ must be run from the directory they live in and the tree must not be rearranged.
 `test/active_orbitals/reference/active_orbital_figures/` ships the rendered orbital
 panels but not the intermediate `.cube` files, which are large and are regenerated
 from the moldens in `active_space_moldens/` by `render_active_orbitals.py`.
-
-Molden files are committed wherever a published figure or table is built from them
-— the active-space moldens above, and the reference and final orbitals each run
-wrote beside its results. `.gitignore` excludes `*.molden` everywhere else, so a
-molden written outside `test/` stays out of the repository.
 
 Calculation scripts whose names end in `_im1.py` or `_im2.py` are follow-up
 optimizations for an imaginary-frequency mode. They start from geometries

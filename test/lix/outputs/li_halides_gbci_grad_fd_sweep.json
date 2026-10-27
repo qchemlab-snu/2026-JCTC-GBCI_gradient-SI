@@ -1,6 +1,6 @@
 {
   "script": "test/li_halides/gbci/li_halides_gbci_grad_fd_sweep.py",
-  "timestamp_utc": "2026-10-05T12:08:45.089981+00:00",
+  "timestamp_utc": "2026-10-27T18:00:26.292174+00:00",
   "pyscf_version": "2.10.0",
   "modules": {
     "gbci": "/home/jiseong0626/labgit/pyscf-forge/pyscf/gbci/gbci.py",
@@ -10,8 +10,10 @@
   "steps_bohr": [
     0.001,
     0.0005,
+    0.0002,
     0.0001,
     5e-05,
+    2e-05,
     1e-05
   ],
   "results": [
@@ -72,173 +74,231 @@
         "steps_bohr": [
           0.001,
           0.0005,
+          0.0002,
           0.0001,
           5e-05,
+          2e-05,
           1e-05
         ],
         "finite_difference": "two-point central difference along z",
         "scf_conv_tol": 1e-12,
-        "scf_conv_tol_grad": 1e-09,
+        "scf_conv_tol_grad": 1e-11,
         "fasscf_conv_tol": 1e-14,
-        "fasscf_conv_tol_grad": 1e-12,
+        "fasscf_conv_tol_grad": 1e-13,
         "gbci_conv_tol": 1e-12,
         "max_cycle": 400
       },
-      "reference_energy_hartree": -7.981843552641519,
+      "reference_energy_hartree": -7.981843552641483,
       "analytic_gradient_hartree_per_bohr": [
         [
-          5.673487896060961e-19,
-          -8.872049459520683e-19,
-          0.018301027973483708
+          -8.808138223449814e-18,
+          -7.595912654547616e-18,
+          0.01830102797345684
         ],
         [
-          -5.67348789606142e-19,
-          8.872049459520545e-19,
-          -0.018301027973483874
+          8.808138223449632e-18,
+          7.59591265454746e-18,
+          -0.01830102797345684
         ]
       ],
       "diagnostics": {
-        "net_force_norm_hartree_per_bohr": 1.6653345369377348e-16,
-        "torque_hartree": 2.985102716948732e-18
+        "net_force_norm_hartree_per_bohr": 2.3931181117239864e-31,
+        "torque_hartree": 3.2969231979295453e-17
       },
       "sweep": [
         {
           "step_bohr": 0.001,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.018301056625258383,
+            0.018301056624370204,
             -0.01830105662081749
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -2.865177467503699e-08,
-            2.8647333616405035e-08
+            -2.8650913364014485e-08,
+            2.8647360650335685e-08
           ],
-          "max_abs_error_hartree_per_bohr": 2.865177467503699e-08,
-          "rms_error_hartree_per_bohr": 2.8649554231773842e-08,
-          "min_active_overlap": 0.9999804052547736,
+          "max_abs_error_hartree_per_bohr": 2.8650913364014485e-08,
+          "rms_error_hartree_per_bohr": 2.8649137062245567e-08,
+          "min_active_overlap": 0.9999804052547727,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -7.981861804615972,
-              "energy_plus_hartree": -7.981825202502722,
-              "min_active_overlap": 0.9999804052547736
+              "energy_minus_hartree": -7.981861804615933,
+              "energy_plus_hartree": -7.981825202502685,
+              "min_active_overlap": 0.9999804052547727
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -7.981825202502726,
-              "energy_plus_hartree": -7.981861804615968,
-              "min_active_overlap": 0.9999804052547736
+              "energy_minus_hartree": -7.981825202502688,
+              "energy_plus_hartree": -7.98186180461593,
+              "min_active_overlap": 0.9999804052547727
             }
           ]
         },
         {
           "step_bohr": 0.0005,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.018301035130896537,
-            -0.01830103512912018
+            0.018301035128232,
+            -0.018301035131784715
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -7.157412829084109e-09,
-            7.155636305711255e-09
+            -7.154775161222204e-09,
+            7.158327874901005e-09
           ],
-          "max_abs_error_hartree_per_bohr": 7.157412829084109e-09,
-          "rms_error_hartree_per_bohr": 7.156524622522821e-09,
-          "min_active_overlap": 0.9999902094054244,
+          "max_abs_error_hartree_per_bohr": 7.158327874901005e-09,
+          "rms_error_hartree_per_bohr": 7.156551738519989e-09,
+          "min_active_overlap": 0.9999902094054227,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -7.9818526908885445,
-              "energy_plus_hartree": -7.981834389853414,
-              "min_active_overlap": 0.9999902094054244
+              "energy_minus_hartree": -7.9818526908885135,
+              "energy_plus_hartree": -7.981834389853385,
+              "min_active_overlap": 0.9999902094054227
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -7.981834389853411,
-              "energy_plus_hartree": -7.98185269088854,
-              "min_active_overlap": 0.9999902094054244
+              "energy_minus_hartree": -7.981834389853378,
+              "energy_plus_hartree": -7.98185269088851,
+              "min_active_overlap": 0.9999902094054227
+            }
+          ]
+        },
+        {
+          "step_bohr": 0.0002,
+          "numerical_z_gradient_hartree_per_bohr": [
+            0.018301029116596368,
+            -0.01830102912103726
+          ],
+          "analytic_z_minus_numerical_hartree_per_bohr": [
+            -1.1431395274819067e-09,
+            1.1475804195804074e-09
+          ],
+          "max_abs_error_hartree_per_bohr": 1.1475804195804074e-09,
+          "rms_error_hartree_per_bohr": 1.145362125857124e-09,
+          "min_active_overlap": 0.9999960853892442,
+          "displaced_calculations": [
+            {
+              "atom_index": 0,
+              "energy_minus_hartree": -7.981847210884021,
+              "energy_plus_hartree": -7.981839890472374,
+              "min_active_overlap": 0.9999960853892442
+            },
+            {
+              "atom_index": 1,
+              "energy_minus_hartree": -7.981839890472371,
+              "energy_plus_hartree": -7.98184721088402,
+              "min_active_overlap": 0.9999960853892442
             }
           ]
         },
         {
           "step_bohr": 0.0001,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.018301028292810884,
-            -0.018301028217315718
+            0.01830102826172464,
+            -0.018301028279488207
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -3.1932717581284464e-10,
-            2.438318436048803e-10
+            -2.882677985205362e-10,
+            3.060313669145387e-10
           ],
-          "max_abs_error_hartree_per_bohr": 3.1932717581284464e-10,
-          "rms_error_hartree_per_bohr": 2.840984100345884e-10,
-          "min_active_overlap": 0.9999980429658295,
+          "max_abs_error_hartree_per_bohr": 3.060313669145387e-10,
+          "rms_error_hartree_per_bohr": 2.9728229109674316e-10,
+          "min_active_overlap": 0.9999980429658305,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -7.981845382253525,
-              "energy_plus_hartree": -7.981841722047866,
-              "min_active_overlap": 0.9999980429658295
+              "energy_minus_hartree": -7.981845382253489,
+              "energy_plus_hartree": -7.981841722047837,
+              "min_active_overlap": 0.9999980429658305
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -7.981841722047878,
-              "energy_plus_hartree": -7.981845382253521,
-              "min_active_overlap": 0.9999980429658295
+              "energy_minus_hartree": -7.981841722047836,
+              "energy_plus_hartree": -7.981845382253492,
+              "min_active_overlap": 0.9999980429658305
             }
           ]
         },
         {
           "step_bohr": 5e-05,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.0183010279464213,
-            -0.018301028017475574
+            0.01830102805300271,
+            -0.018301027973066653
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            2.7062407870204197e-11,
-            4.399169917235213e-11
+            -7.954586989100676e-11,
+            -3.9018788200451127e-13
           ],
-          "max_abs_error_hartree_per_bohr": 4.399169917235213e-11,
-          "rms_error_hartree_per_bohr": 3.652152458348376e-11,
-          "min_active_overlap": 0.9999990215507203,
+          "max_abs_error_hartree_per_bohr": 7.954586989100676e-11,
+          "rms_error_hartree_per_bohr": 5.624810069371338e-11,
+          "min_active_overlap": 0.9999990215507195,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -7.981844467570208,
-              "energy_plus_hartree": -7.981842637467413,
-              "min_active_overlap": 0.9999990215507203
+              "energy_minus_hartree": -7.98184446757018,
+              "energy_plus_hartree": -7.981842637467374,
+              "min_active_overlap": 0.9999990215507195
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -7.981842637467413,
-              "energy_plus_hartree": -7.981844467570215,
-              "min_active_overlap": 0.9999990215507203
+              "energy_minus_hartree": -7.981842637467375,
+              "energy_plus_hartree": -7.9818444675701725,
+              "min_active_overlap": 0.9999990215507195
+            }
+          ]
+        },
+        {
+          "step_bohr": 2e-05,
+          "numerical_z_gradient_hartree_per_bohr": [
+            0.018301027981948437,
+            -0.018301027937539516
+          ],
+          "analytic_z_minus_numerical_hartree_per_bohr": [
+            -8.491596314996741e-12,
+            -3.591732467000952e-11
+          ],
+          "max_abs_error_hartree_per_bohr": 3.591732467000952e-11,
+          "rms_error_hartree_per_bohr": 2.6097523057061763e-11,
+          "min_active_overlap": 0.9999996086365615,
+          "displaced_calculations": [
+            {
+              "atom_index": 0,
+              "energy_minus_hartree": -7.981843918642409,
+              "energy_plus_hartree": -7.9818431866012896,
+              "min_active_overlap": 0.9999996086365615
+            },
+            {
+              "atom_index": 1,
+              "energy_minus_hartree": -7.98184318660129,
+              "energy_plus_hartree": -7.981843918642408,
+              "min_active_overlap": 0.9999996086365615
             }
           ]
         },
         {
           "step_bohr": 1e-05,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.018301028026357358,
+            0.01830102771549491,
             -0.018301027893130595
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -5.2873649902807074e-11,
-            -8.03532795856654e-11
+            2.5796192959504083e-10,
+            -8.032624565501578e-11
           ],
-          "max_abs_error_hartree_per_bohr": 8.03532795856654e-11,
-          "rms_error_hartree_per_bohr": 6.801570551797843e-11,
-          "min_active_overlap": 0.9999998043209934,
+          "max_abs_error_hartree_per_bohr": 2.5796192959504083e-10,
+          "rms_error_hartree_per_bohr": 1.9104536485011452e-10,
+          "min_active_overlap": 0.9999998043209929,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -7.981843735646887,
-              "energy_plus_hartree": -7.9818433696263265,
-              "min_active_overlap": 0.9999998043209934
+              "energy_minus_hartree": -7.981843735646849,
+              "energy_plus_hartree": -7.9818433696262945,
+              "min_active_overlap": 0.9999998043209929
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -7.981843369626327,
-              "energy_plus_hartree": -7.981843735646885,
-              "min_active_overlap": 0.9999998043209934
+              "energy_minus_hartree": -7.981843369626293,
+              "energy_plus_hartree": -7.981843735646851,
+              "min_active_overlap": 0.9999998043209929
             }
           ]
         }
@@ -246,54 +306,66 @@
       "scaling": [
         {
           "step_from_bohr": 1e-05,
+          "step_to_bohr": 2e-05,
+          "log_log_slope": -2.8444063673535194,
+          "regime": "energy noise (1/h), step too small"
+        },
+        {
+          "step_from_bohr": 2e-05,
           "step_to_bohr": 5e-05,
-          "log_log_slope": -0.3743120141505509,
+          "log_log_slope": 0.8677530470919746,
           "regime": "near the optimum"
         },
         {
           "step_from_bohr": 5e-05,
           "step_to_bohr": 0.0001,
-          "log_log_slope": 2.8597321050133777,
+          "log_log_slope": 1.9438205993056894,
           "regime": "truncation (h^2), step too large"
         },
         {
           "step_from_bohr": 0.0001,
+          "step_to_bohr": 0.0002,
+          "log_log_slope": 1.9068438219408046,
+          "regime": "truncation (h^2), step too large"
+        },
+        {
+          "step_from_bohr": 0.0002,
           "step_to_bohr": 0.0005,
-          "log_log_slope": 1.9321575732859968,
+          "log_log_slope": 1.9978600787648697,
           "regime": "truncation (h^2), step too large"
         },
         {
           "step_from_bohr": 0.0005,
           "step_to_bohr": 0.001,
-          "log_log_slope": 2.0011144017775297,
+          "log_log_slope": 2.0008866009221578,
           "regime": "truncation (h^2), step too large"
         }
       ],
       "best_step": {
-        "step_bohr": 5e-05,
+        "step_bohr": 2e-05,
         "numerical_z_gradient_hartree_per_bohr": [
-          0.0183010279464213,
-          -0.018301028017475574
+          0.018301027981948437,
+          -0.018301027937539516
         ],
         "analytic_z_minus_numerical_hartree_per_bohr": [
-          2.7062407870204197e-11,
-          4.399169917235213e-11
+          -8.491596314996741e-12,
+          -3.591732467000952e-11
         ],
-        "max_abs_error_hartree_per_bohr": 4.399169917235213e-11,
-        "rms_error_hartree_per_bohr": 3.652152458348376e-11,
-        "min_active_overlap": 0.9999990215507203,
+        "max_abs_error_hartree_per_bohr": 3.591732467000952e-11,
+        "rms_error_hartree_per_bohr": 2.6097523057061763e-11,
+        "min_active_overlap": 0.9999996086365615,
         "displaced_calculations": [
           {
             "atom_index": 0,
-            "energy_minus_hartree": -7.981844467570208,
-            "energy_plus_hartree": -7.981842637467413,
-            "min_active_overlap": 0.9999990215507203
+            "energy_minus_hartree": -7.981843918642409,
+            "energy_plus_hartree": -7.9818431866012896,
+            "min_active_overlap": 0.9999996086365615
           },
           {
             "atom_index": 1,
-            "energy_minus_hartree": -7.981842637467413,
-            "energy_plus_hartree": -7.981844467570215,
-            "min_active_overlap": 0.9999990215507203
+            "energy_minus_hartree": -7.98184318660129,
+            "energy_plus_hartree": -7.981843918642408,
+            "min_active_overlap": 0.9999996086365615
           }
         ]
       }
@@ -377,173 +449,231 @@
         "steps_bohr": [
           0.001,
           0.0005,
+          0.0002,
           0.0001,
           5e-05,
+          2e-05,
           1e-05
         ],
         "finite_difference": "two-point central difference along z",
         "scf_conv_tol": 1e-12,
-        "scf_conv_tol_grad": 1e-09,
+        "scf_conv_tol_grad": 1e-11,
         "fasscf_conv_tol": 1e-14,
-        "fasscf_conv_tol_grad": 1e-12,
+        "fasscf_conv_tol_grad": 1e-13,
         "gbci_conv_tol": 1e-12,
         "max_cycle": 400
       },
-      "reference_energy_hartree": -106.94300178579867,
+      "reference_energy_hartree": -106.94300178579958,
       "analytic_gradient_hartree_per_bohr": [
         [
-          4.852001820665262e-17,
-          5.2741819661307717e-17,
-          0.035247443215270735
+          -6.833060804631863e-17,
+          -3.524542678177636e-18,
+          0.03524744322518458
         ],
         [
-          -4.852001820667358e-17,
-          -5.2741819661338476e-17,
-          -0.035247443215257857
+          6.833060804629989e-17,
+          3.524542678191206e-18,
+          -0.035247443225173924
         ]
       ],
       "diagnostics": {
-        "net_force_norm_hartree_per_bohr": 1.2878587085651816e-14,
-        "torque_hartree": 2.031412193831128e-16
+        "net_force_norm_hartree_per_bohr": 1.0658141036401503e-14,
+        "torque_hartree": 1.939466935556067e-16
       },
       "sweep": [
         {
           "step_bohr": 0.001,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.03524757630657405,
-            -0.03524757627104691
+            0.035247576313679474,
+            -0.0352475763989446
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -1.3309130331151664e-07,
-            1.3305578905331572e-07
+            -1.3308849489135355e-07,
+            1.331737706777858e-07
           ],
-          "max_abs_error_hartree_per_bohr": 1.3309130331151664e-07,
-          "rms_error_hartree_per_bohr": 1.3307354736715815e-07,
-          "min_active_overlap": 0.9999783088580543,
+          "max_abs_error_hartree_per_bohr": 1.331737706777858e-07,
+          "rms_error_hartree_per_bohr": 1.3313113961238616e-07,
+          "min_active_overlap": 0.9999783088580678,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -106.94303688730825,
-              "energy_plus_hartree": -106.94296639215564,
-              "min_active_overlap": 0.9999783088580543
+              "energy_minus_hartree": -106.94303688730912,
+              "energy_plus_hartree": -106.94296639215649,
+              "min_active_overlap": 0.9999783088580678
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -106.94296639215577,
-              "energy_plus_hartree": -106.94303688730831,
-              "min_active_overlap": 0.9999783088580543
+              "energy_minus_hartree": -106.94296639215644,
+              "energy_plus_hartree": -106.94303688730923,
+              "min_active_overlap": 0.9999783088580678
             }
           ]
         },
         {
           "step_bohr": 0.0005,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.03524747631900027,
-            -0.035247476276367706
+            0.03524747619110258,
+            -0.03524747629057856
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -3.310372953535534e-08,
-            3.306110984979682e-08
+            -3.296591799539783e-08,
+            3.306540463654528e-08
           ],
-          "max_abs_error_hartree_per_bohr": 3.310372953535534e-08,
-          "rms_error_hartree_per_bohr": 3.3082426555879257e-08,
-          "min_active_overlap": 0.9999891630406558,
+          "max_abs_error_hartree_per_bohr": 3.306540463654528e-08,
+          "rms_error_hartree_per_bohr": 3.301569878904401e-08,
+          "min_active_overlap": 0.9999891630406625,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -106.94301937302018,
-              "energy_plus_hartree": -106.94298412554386,
-              "min_active_overlap": 0.9999891630406558
+              "energy_minus_hartree": -106.94301937302102,
+              "energy_plus_hartree": -106.94298412554483,
+              "min_active_overlap": 0.9999891630406625
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -106.94298412554396,
-              "energy_plus_hartree": -106.94301937302023,
-              "min_active_overlap": 0.9999891630406558
+              "energy_minus_hartree": -106.94298412554478,
+              "energy_plus_hartree": -106.94301937302107,
+              "min_active_overlap": 0.9999891630406625
+            }
+          ]
+        },
+        {
+          "step_bohr": 0.0002,
+          "numerical_z_gradient_hartree_per_bohr": [
+            0.035247448124664515,
+            -0.035247448231245926
+          ],
+          "analytic_z_minus_numerical_hartree_per_bohr": [
+            -4.899479932873874e-09,
+            5.006072001378925e-09
+          ],
+          "max_abs_error_hartree_per_bohr": 5.006072001378925e-09,
+          "rms_error_hartree_per_bohr": 4.953062713898532e-09,
+          "min_active_overlap": 0.9999956672822105,
+          "displaced_calculations": [
+            {
+              "atom_index": 0,
+              "energy_minus_hartree": -106.94300882944654,
+              "energy_plus_hartree": -106.94299473046729,
+              "min_active_overlap": 0.9999956672822105
+            },
+            {
+              "atom_index": 1,
+              "energy_minus_hartree": -106.94299473046715,
+              "energy_plus_hartree": -106.94300882944644,
+              "min_active_overlap": 0.9999956672822105
             }
           ]
         },
         {
           "step_bohr": 0.0001,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.03524744450089656,
-            -0.03524744499827648
+            0.0352474452114393,
+            -0.03524744506933075
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -1.2856258280180555e-09,
-            1.7830186216372113e-09
+            -1.986254716257463e-09,
+            1.8441568272464792e-09
           ],
-          "max_abs_error_hartree_per_bohr": 1.7830186216372113e-09,
-          "rms_error_hartree_per_bohr": 1.5543469970975225e-09,
-          "min_active_overlap": 0.9999978339853581,
+          "max_abs_error_hartree_per_bohr": 1.986254716257463e-09,
+          "rms_error_hartree_per_bohr": 1.9165231803104827e-09,
+          "min_active_overlap": 0.9999978339853591,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -106.94300530908252,
-              "energy_plus_hartree": -106.94299825959362,
-              "min_active_overlap": 0.9999978339853581
+              "energy_minus_hartree": -106.94300530908346,
+              "energy_plus_hartree": -106.94299825959442,
+              "min_active_overlap": 0.9999978339853591
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -106.94299825959361,
-              "energy_plus_hartree": -106.94300530908261,
-              "min_active_overlap": 0.9999978339853581
+              "energy_minus_hartree": -106.94299825959442,
+              "energy_plus_hartree": -106.94300530908343,
+              "min_active_overlap": 0.9999978339853591
             }
           ]
         },
         {
           "step_bohr": 5e-05,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.03524744499827648,
-            -0.03524744300875682
+            0.03524744329297391,
+            -0.03524744428773374
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -1.7830057430501256e-09,
-            -2.0650103849106927e-10
+            -6.778932970519236e-11,
+            1.062559817910369e-09
           ],
-          "max_abs_error_hartree_per_bohr": 1.7830057430501256e-09,
-          "rms_error_hartree_per_bohr": 1.269202930710377e-09,
-          "min_active_overlap": 0.999998917078736,
+          "max_abs_error_hartree_per_bohr": 1.062559817910369e-09,
+          "rms_error_hartree_per_bohr": 7.528707591146026e-10,
+          "min_active_overlap": 0.9999989170787364,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -106.94300354780603,
-              "energy_plus_hartree": -106.94300002306153,
-              "min_active_overlap": 0.999998917078736
+              "energy_minus_hartree": -106.94300354780654,
+              "energy_plus_hartree": -106.94300002306221,
+              "min_active_overlap": 0.9999989170787364
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -106.94300002306146,
-              "energy_plus_hartree": -106.94300354780576,
-              "min_active_overlap": 0.999998917078736
+              "energy_minus_hartree": -106.94300002306224,
+              "energy_plus_hartree": -106.94300354780667,
+              "min_active_overlap": 0.9999989170787364
+            }
+          ]
+        },
+        {
+          "step_bohr": 2e-05,
+          "numerical_z_gradient_hartree_per_bohr": [
+            0.0352474376796863,
+            -0.035247436613872196
+          ],
+          "analytic_z_minus_numerical_hartree_per_bohr": [
+            5.545498282799599e-09,
+            -6.611301728298713e-09
+          ],
+          "max_abs_error_hartree_per_bohr": 6.611301728298713e-09,
+          "rms_error_hartree_per_bohr": 6.10171540417688e-09,
+          "min_active_overlap": 0.999999566852147,
+          "displaced_calculations": [
+            {
+              "atom_index": 0,
+              "energy_minus_hartree": -106.94300249068989,
+              "energy_plus_hartree": -106.94300108079238,
+              "min_active_overlap": 0.999999566852147
+            },
+            {
+              "atom_index": 1,
+              "energy_minus_hartree": -106.94300108079234,
+              "energy_plus_hartree": -106.9430024906898,
+              "min_active_overlap": 0.999999566852147
             }
           ]
         },
         {
           "step_bohr": 1e-05,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.0352474465614705,
-            -0.03524744798255597
+            0.035247443719299554,
+            -0.03524744442984229
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -3.346199761722346e-09,
-            4.767298111829632e-09
+            -4.941149711612525e-10,
+            1.204668365062389e-09
           ],
-          "max_abs_error_hartree_per_bohr": 4.767298111829632e-09,
-          "rms_error_hartree_per_bohr": 4.118506047853096e-09,
-          "min_active_overlap": 0.9999997834295158,
+          "max_abs_error_hartree_per_bohr": 1.204668365062389e-09,
+          "rms_error_hartree_per_bohr": 9.206995912097971e-10,
+          "min_active_overlap": 0.9999997834295155,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -106.94300213825856,
-              "energy_plus_hartree": -106.94300143330963,
-              "min_active_overlap": 0.9999997834295158
+              "energy_minus_hartree": -106.94300213825942,
+              "energy_plus_hartree": -106.94300143331054,
+              "min_active_overlap": 0.9999997834295155
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -106.94300143330958,
-              "energy_plus_hartree": -106.94300213825854,
-              "min_active_overlap": 0.9999997834295158
+              "energy_minus_hartree": -106.94300143331047,
+              "energy_plus_hartree": -106.94300213825936,
+              "min_active_overlap": 0.9999997834295155
             }
           ]
         }
@@ -551,54 +681,66 @@
       "scaling": [
         {
           "step_from_bohr": 1e-05,
+          "step_to_bohr": 2e-05,
+          "log_log_slope": 2.4562983188191807,
+          "regime": "truncation (h^2), step too large"
+        },
+        {
+          "step_from_bohr": 2e-05,
           "step_to_bohr": 5e-05,
-          "log_log_slope": -0.6110699539010074,
+          "log_log_slope": -1.9951087407279742,
           "regime": "energy noise (1/h), step too small"
         },
         {
           "step_from_bohr": 5e-05,
           "step_to_bohr": 0.0001,
-          "log_log_slope": 1.0420497350637857e-05,
+          "log_log_slope": 0.9025065836266678,
           "regime": "near the optimum"
         },
         {
           "step_from_bohr": 0.0001,
+          "step_to_bohr": 0.0002,
+          "log_log_slope": 1.333628396001681,
+          "regime": "truncation (h^2), step too large"
+        },
+        {
+          "step_from_bohr": 0.0002,
           "step_to_bohr": 0.0005,
-          "log_log_slope": 1.8151294594418135,
+          "log_log_slope": 2.0603023877336604,
           "regime": "truncation (h^2), step too large"
         },
         {
           "step_from_bohr": 0.0005,
           "step_to_bohr": 0.001,
-          "log_log_slope": 2.0073506348460324,
+          "log_log_slope": 2.009915501778255,
           "regime": "truncation (h^2), step too large"
         }
       ],
       "best_step": {
         "step_bohr": 5e-05,
         "numerical_z_gradient_hartree_per_bohr": [
-          0.03524744499827648,
-          -0.03524744300875682
+          0.03524744329297391,
+          -0.03524744428773374
         ],
         "analytic_z_minus_numerical_hartree_per_bohr": [
-          -1.7830057430501256e-09,
-          -2.0650103849106927e-10
+          -6.778932970519236e-11,
+          1.062559817910369e-09
         ],
-        "max_abs_error_hartree_per_bohr": 1.7830057430501256e-09,
-        "rms_error_hartree_per_bohr": 1.269202930710377e-09,
-        "min_active_overlap": 0.999998917078736,
+        "max_abs_error_hartree_per_bohr": 1.062559817910369e-09,
+        "rms_error_hartree_per_bohr": 7.528707591146026e-10,
+        "min_active_overlap": 0.9999989170787364,
         "displaced_calculations": [
           {
             "atom_index": 0,
-            "energy_minus_hartree": -106.94300354780603,
-            "energy_plus_hartree": -106.94300002306153,
-            "min_active_overlap": 0.999998917078736
+            "energy_minus_hartree": -106.94300354780654,
+            "energy_plus_hartree": -106.94300002306221,
+            "min_active_overlap": 0.9999989170787364
           },
           {
             "atom_index": 1,
-            "energy_minus_hartree": -106.94300002306146,
-            "energy_plus_hartree": -106.94300354780576,
-            "min_active_overlap": 0.999998917078736
+            "energy_minus_hartree": -106.94300002306224,
+            "energy_plus_hartree": -106.94300354780667,
+            "min_active_overlap": 0.9999989170787364
           }
         ]
       }
@@ -684,61 +826,63 @@
         "steps_bohr": [
           0.001,
           0.0005,
+          0.0002,
           0.0001,
           5e-05,
+          2e-05,
           1e-05
         ],
         "finite_difference": "two-point central difference along z",
         "scf_conv_tol": 1e-12,
-        "scf_conv_tol_grad": 1e-09,
+        "scf_conv_tol_grad": 1e-11,
         "fasscf_conv_tol": 1e-14,
-        "fasscf_conv_tol_grad": 1e-12,
+        "fasscf_conv_tol_grad": 1e-13,
         "gbci_conv_tol": 1e-12,
         "max_cycle": 400
       },
       "reference_energy_hartree": -466.9090605907163,
       "analytic_gradient_hartree_per_bohr": [
         [
-          2.408239055582191e-16,
-          -6.736944509220549e-16,
-          0.3397175965658299
+          -2.58739560420258e-16,
+          -1.6692229738153608e-16,
+          0.33971759656826617
         ],
         [
-          -2.4082390555865825e-16,
-          6.736944509220013e-16,
-          -0.3397175965657562
+          2.5873956041989406e-16,
+          1.6692229738158196e-16,
+          -0.3397175965681951
         ]
       ],
       "diagnostics": {
-        "net_force_norm_hartree_per_bohr": 7.37188088351104e-14,
-        "torque_hartree": 2.0279903205646268e-15
+        "net_force_norm_hartree_per_bohr": 7.105427357601002e-14,
+        "torque_hartree": 8.728013272129846e-16
       },
       "sweep": [
         {
           "step_bohr": 0.001,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.33971783017250345,
-            -0.3397178302861903
+            0.3397178302861903,
+            -0.3397178300019732
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -2.3360667356087106e-07,
-            2.337204341174015e-07
+            -2.3371792412518744e-07,
+            2.3343377808515697e-07
           ],
-          "max_abs_error_hartree_per_bohr": 2.337204341174015e-07,
-          "rms_error_hartree_per_bohr": 2.336635607622656e-07,
-          "min_active_overlap": 0.999881670211547,
+          "max_abs_error_hartree_per_bohr": 2.3371792412518744e-07,
+          "rms_error_hartree_per_bohr": 2.335758943132801e-07,
+          "min_active_overlap": 0.9998816702115806,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -466.90939993537,
-              "energy_plus_hartree": -466.90872049970966,
-              "min_active_overlap": 0.999881670211547
+              "energy_minus_hartree": -466.90939993536983,
+              "energy_plus_hartree": -466.90872049970926,
+              "min_active_overlap": 0.9998816702115806
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -466.90872049970926,
-              "energy_plus_hartree": -466.90939993536983,
-              "min_active_overlap": 0.999881670211547
+              "energy_minus_hartree": -466.9087204997096,
+              "energy_plus_hartree": -466.9093999353696,
+              "min_active_overlap": 0.9998816702115806
             }
           ]
         },
@@ -746,111 +890,167 @@
           "step_bohr": 0.0005,
           "numerical_z_gradient_hartree_per_bohr": [
             0.3397176548673997,
-            -0.33971765481055627
+            -0.3397176552653036
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -5.830156979413914e-08,
-            5.824480009408717e-08
+            -5.8299133520733903e-08,
+            5.8697108507033136e-08
           ],
-          "max_abs_error_hartree_per_bohr": 5.830156979413914e-08,
-          "rms_error_hartree_per_bohr": 5.8273191857238496e-08,
-          "min_active_overlap": 0.9999408486791898,
+          "max_abs_error_hartree_per_bohr": 5.8697108507033136e-08,
+          "rms_error_hartree_per_bohr": 5.84984594513171e-08,
+          "min_active_overlap": 0.9999408486792066,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -466.90923035624985,
-              "energy_plus_hartree": -466.908890638595,
-              "min_active_overlap": 0.9999408486791898
+              "energy_minus_hartree": -466.90923035624945,
+              "energy_plus_hartree": -466.9088906385946,
+              "min_active_overlap": 0.9999408486792066
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -466.908890638595,
-              "energy_plus_hartree": -466.9092303562498,
-              "min_active_overlap": 0.9999408486791898
+              "energy_minus_hartree": -466.90889063859447,
+              "energy_plus_hartree": -466.90923035624974,
+              "min_active_overlap": 0.9999408486792066
+            }
+          ]
+        },
+        {
+          "step_bohr": 0.0002,
+          "numerical_z_gradient_hartree_per_bohr": [
+            0.33971760558415554,
+            -0.33971760501572135
+          ],
+          "analytic_z_minus_numerical_hartree_per_bohr": [
+            -9.015889368413355e-09,
+            8.44752623407885e-09
+          ],
+          "max_abs_error_hartree_per_bohr": 9.015889368413355e-09,
+          "rms_error_hartree_per_bohr": 8.736331054250387e-09,
+          "min_active_overlap": 0.9999763427284053,
+          "displaced_calculations": [
+            {
+              "atom_index": 0,
+              "energy_minus_hartree": -466.9091285193103,
+              "energy_plus_hartree": -466.90899263226805,
+              "min_active_overlap": 0.9999763427284053
+            },
+            {
+              "atom_index": 1,
+              "energy_minus_hartree": -466.908992632268,
+              "energy_plus_hartree": -466.90912851931,
+              "min_active_overlap": 0.9999763427284053
             }
           ]
         },
         {
           "step_bohr": 0.0001,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.33971759876294527,
-            -0.33971759989981365
+            0.3397175981945111,
+            -0.339717597910294
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -2.19711537852163e-09,
-            3.3340574745466256e-09
+            -1.6262449165083126e-09,
+            1.3420988764778485e-09
           ],
-          "max_abs_error_hartree_per_bohr": 3.3340574745466256e-09,
-          "rms_error_hartree_per_bohr": 2.823407093399433e-09,
-          "min_active_overlap": 0.9999881719069121,
+          "max_abs_error_hartree_per_bohr": 1.6262449165083126e-09,
+          "rms_error_hartree_per_bohr": 1.4909563915004744e-09,
+          "min_active_overlap": 0.9999881719069152,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -466.9090945587446,
-              "energy_plus_hartree": -466.90902661522483,
-              "min_active_overlap": 0.9999881719069121
+              "energy_minus_hartree": -466.9090945587444,
+              "energy_plus_hartree": -466.9090266152248,
+              "min_active_overlap": 0.9999881719069152
             },
             {
               "atom_index": 1,
               "energy_minus_hartree": -466.90902661522483,
-              "energy_plus_hartree": -466.9090945587448,
-              "min_active_overlap": 0.9999881719069121
+              "energy_plus_hartree": -466.9090945587444,
+              "min_active_overlap": 0.9999881719069152
             }
           ]
         },
         {
           "step_bohr": 5e-05,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.33971759592077433,
-            -0.33971760046824784
+            0.33971759478390595,
+            -0.33971759876294527
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            6.450555645187706e-10,
-            3.902491663154706e-09
+            1.7843602151401683e-09,
+            2.1947501593899688e-09
           ],
-          "max_abs_error_hartree_per_bohr": 3.902491663154706e-09,
-          "rms_error_hartree_per_bohr": 2.7969213308840677e-09,
-          "min_active_overlap": 0.9999940860891267,
+          "max_abs_error_hartree_per_bohr": 2.1947501593899688e-09,
+          "rms_error_hartree_per_bohr": 2.0001087019856396e-09,
+          "min_active_overlap": 0.9999940860891284,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -466.909077575663,
-              "energy_plus_hartree": -466.9090436039034,
-              "min_active_overlap": 0.9999940860891267
+              "energy_minus_hartree": -466.90907757566293,
+              "energy_plus_hartree": -466.90904360390346,
+              "min_active_overlap": 0.9999940860891284
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -466.90904360390346,
-              "energy_plus_hartree": -466.9090775756635,
-              "min_active_overlap": 0.9999940860891267
+              "energy_minus_hartree": -466.9090436039032,
+              "energy_plus_hartree": -466.9090775756631,
+              "min_active_overlap": 0.9999940860891284
+            }
+          ]
+        },
+        {
+          "step_bohr": 2e-05,
+          "numerical_z_gradient_hartree_per_bohr": [
+            0.3397176001840307,
+            -0.3397175944996888
+          ],
+          "analytic_z_minus_numerical_hartree_per_bohr": [
+            -3.615764521125442e-09,
+            -2.0685063106817836e-09
+          ],
+          "max_abs_error_hartree_per_bohr": 3.615764521125442e-09,
+          "rms_error_hartree_per_bohr": 2.9455450624256165e-09,
+          "min_active_overlap": 0.9999976344682114,
+          "displaced_calculations": [
+            {
+              "atom_index": 0,
+              "energy_minus_hartree": -466.90906738491867,
+              "energy_plus_hartree": -466.90905379621466,
+              "min_active_overlap": 0.9999976344682114
+            },
+            {
+              "atom_index": 1,
+              "energy_minus_hartree": -466.9090537962148,
+              "energy_plus_hartree": -466.90906738491856,
+              "min_active_overlap": 0.9999976344682114
             }
           ]
         },
         {
           "step_bohr": 1e-05,
           "numerical_z_gradient_hartree_per_bohr": [
-            0.3397176243424837,
-            -0.33971760728945805
+            0.33971758739426144,
+            -0.3397175902364324
           ],
           "analytic_z_minus_numerical_hartree_per_bohr": [
-            -2.7776653810374086e-08,
-            1.0723701870940516e-08
+            9.174004722556361e-09,
+            -6.331762725242385e-09
           ],
-          "max_abs_error_hartree_per_bohr": 2.7776653810374086e-08,
-          "rms_error_hartree_per_bohr": 2.1053981555969198e-08,
-          "min_active_overlap": 0.9999988172395315,
+          "max_abs_error_hartree_per_bohr": 9.174004722556361e-09,
+          "rms_error_hartree_per_bohr": 7.8820549940436e-09,
+          "min_active_overlap": 0.9999988172395318,
           "displaced_calculations": [
             {
               "atom_index": 0,
-              "energy_minus_hartree": -466.9090639878553,
-              "energy_plus_hartree": -466.9090571935028,
-              "min_active_overlap": 0.9999988172395315
+              "energy_minus_hartree": -466.9090639878546,
+              "energy_plus_hartree": -466.90905719350286,
+              "min_active_overlap": 0.9999988172395318
             },
             {
               "atom_index": 1,
-              "energy_minus_hartree": -466.9090571935031,
-              "energy_plus_hartree": -466.90906398785523,
-              "min_active_overlap": 0.9999988172395315
+              "energy_minus_hartree": -466.90905719350275,
+              "energy_plus_hartree": -466.90906398785455,
+              "min_active_overlap": 0.9999988172395318
             }
           ]
         }
@@ -858,54 +1058,66 @@
       "scaling": [
         {
           "step_from_bohr": 1e-05,
+          "step_to_bohr": 2e-05,
+          "log_log_slope": -1.3432509256686025,
+          "regime": "energy noise (1/h), step too small"
+        },
+        {
+          "step_from_bohr": 2e-05,
           "step_to_bohr": 5e-05,
-          "log_log_slope": -1.219419913372564,
+          "log_log_slope": -0.5448435569905569,
           "regime": "energy noise (1/h), step too small"
         },
         {
           "step_from_bohr": 5e-05,
           "step_to_bohr": 0.0001,
-          "log_log_slope": -0.22711657558579385,
+          "log_log_slope": -0.4325121718934703,
           "regime": "near the optimum"
         },
         {
           "step_from_bohr": 0.0001,
+          "step_to_bohr": 0.0002,
+          "log_log_slope": 2.4709252654722063,
+          "regime": "truncation (h^2), step too large"
+        },
+        {
+          "step_from_bohr": 0.0002,
           "step_to_bohr": 0.0005,
-          "log_log_slope": 1.77791201135131,
+          "log_log_slope": 2.044549721557238,
           "regime": "truncation (h^2), step too large"
         },
         {
           "step_from_bohr": 0.0005,
           "step_to_bohr": 0.001,
-          "log_log_slope": 2.003177239862664,
+          "log_log_slope": 1.9934070392466758,
           "regime": "truncation (h^2), step too large"
         }
       ],
       "best_step": {
         "step_bohr": 0.0001,
         "numerical_z_gradient_hartree_per_bohr": [
-          0.33971759876294527,
-          -0.33971759989981365
+          0.3397175981945111,
+          -0.339717597910294
         ],
         "analytic_z_minus_numerical_hartree_per_bohr": [
-          -2.19711537852163e-09,
-          3.3340574745466256e-09
+          -1.6262449165083126e-09,
+          1.3420988764778485e-09
         ],
-        "max_abs_error_hartree_per_bohr": 3.3340574745466256e-09,
-        "rms_error_hartree_per_bohr": 2.823407093399433e-09,
-        "min_active_overlap": 0.9999881719069121,
+        "max_abs_error_hartree_per_bohr": 1.6262449165083126e-09,
+        "rms_error_hartree_per_bohr": 1.4909563915004744e-09,
+        "min_active_overlap": 0.9999881719069152,
         "displaced_calculations": [
           {
             "atom_index": 0,
-            "energy_minus_hartree": -466.9090945587446,
-            "energy_plus_hartree": -466.90902661522483,
-            "min_active_overlap": 0.9999881719069121
+            "energy_minus_hartree": -466.9090945587444,
+            "energy_plus_hartree": -466.9090266152248,
+            "min_active_overlap": 0.9999881719069152
           },
           {
             "atom_index": 1,
             "energy_minus_hartree": -466.90902661522483,
-            "energy_plus_hartree": -466.9090945587448,
-            "min_active_overlap": 0.9999881719069121
+            "energy_plus_hartree": -466.9090945587444,
+            "min_active_overlap": 0.9999881719069152
           }
         ]
       }

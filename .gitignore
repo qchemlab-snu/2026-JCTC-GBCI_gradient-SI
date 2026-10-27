@@ -57,6 +57,9 @@ coverage.xml
 
 # Django stuff:
 *.log
+# ...except the ASE optimizer logs the NEB bands wrote under test/: they are the
+# record of how each band converged, and the manuscript quotes it.
+!test/**/*_ase.log
 *.pot
 
 CMakeCache.txt
@@ -77,3 +80,4 @@ tmp/
 # GBCI bath/SCF caches: pickles, regenerated on demand, and large.
 # A run without --no-gbci-cache recreates these next to the results.
 **/outputs/01_gbci_cache*/
+MANIFEST.md

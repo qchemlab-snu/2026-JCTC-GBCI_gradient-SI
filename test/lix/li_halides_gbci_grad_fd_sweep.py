@@ -63,7 +63,10 @@ TILT_DEGREES = _check.TILT_DEGREES
 # User settings
 # ============================================================
 
-STEPS_BOHR = (1.0e-3, 5.0e-4, 1.0e-4, 5.0e-5, 1.0e-5)
+# 2e-4 and 2e-5 are in the grid because the minimum sits between the decades:
+# with the tightened gradient criteria below, LiH bottoms out at 2e-5 and LiF at
+# 5e-5, which a pure decade grid would step over.
+STEPS_BOHR = (1.0e-3, 5.0e-4, 2.0e-4, 1.0e-4, 5.0e-5, 2.0e-5, 1.0e-5)
 
 DEFAULT_OUTPUT = SCRIPT_DIR / "outputs" / "li_halides_gbci_grad_fd_sweep.json"
 DEFAULT_CSV_OUTPUT = SCRIPT_DIR / "outputs" / "li_halides_gbci_grad_fd_sweep.csv"
@@ -491,10 +494,19 @@ def parse_args() -> argparse.Namespace:
     # 2e-13 -> 3.6e-12) and the finite-difference floor with it.  The orbital
     # gradient is stated rather than left to pyscf's sqrt(conv_tol) = 1e-6,
     # because that is the criterion that actually decides when the SCF stops.
+    # Measured 2026-10-28: tightening only the two gradient criteria (SCF 1e-9
+    # -> 1e-11, FASSCF 1e-12 -> 1e-13) roughly halved the finite-difference
+    # floor -- LiCl 3.3e-09 -> 1.6e-09, LiF 1.8e-09 -> 1.1e-09, LiH 4.4e-11 ->
+    # 3.6e-11 Eh/bohr -- while the analytic gradient moved by ~1e-11, so what
+    # improved is the numerical side.  LiF and LiCl stop there because 1e-09 is
+    # their double-precision floor, not a convergence limit: LiCl sits at
+    # -467 Eh, so a relative 1e-16 is 5e-14 Eh absolute, and 2h = 1e-4 turns
+    # that into 1e-09 Eh/bohr.  Tightening further cannot move it; a
+    # higher-order stencil would.
     parser.add_argument("--scf-conv-tol", type=positive_float, default=1.0e-12)
-    parser.add_argument("--scf-conv-tol-grad", type=positive_float, default=1.0e-9)
+    parser.add_argument("--scf-conv-tol-grad", type=positive_float, default=1.0e-11)
     parser.add_argument("--fasscf-conv-tol", type=positive_float, default=1.0e-14)
-    parser.add_argument("--fasscf-conv-tol-grad", type=positive_float, default=1.0e-12)
+    parser.add_argument("--fasscf-conv-tol-grad", type=positive_float, default=1.0e-13)
     parser.add_argument("--gbci-conv-tol", type=positive_float, default=1.0e-12)
     parser.add_argument("--max-cycle", type=int, default=400)
     parser.add_argument("--verbose", type=int, default=0)
