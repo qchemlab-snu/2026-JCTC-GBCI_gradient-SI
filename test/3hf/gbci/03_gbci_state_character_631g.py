@@ -9,10 +9,13 @@ they include the grouped-bath relaxation.
 
 The active space is the frontier pi/pi* window from ``00_rhf_631g_active.py``,
 determined directly in this basis, so no cross-basis orbital matching is needed.
-The grouped bath uses threshold 0.5, which ``02_group_threshold_check_631g.py``
-shows gives 4 groups while still keeping the S0 and HOMO -> LUMO configurations
-in separate groups (they merge only at 1.0).  The gradient cost carries a
-ngroup**2 factor, so 4 groups instead of the default 7 is roughly 3x cheaper.
+The grouped bath uses threshold 0.2, the same as
+``01_gbci_s1_grad_check_631g.py``, so the state characterization reported here
+and the gradient benchmarked there describe one and the same wavefunction.
+``02_group_threshold_check_631g.py`` shows it gives 7 groups, the partition the
+populations themselves define: clusters span at most 0.156 while neighbouring
+clusters are 0.199 apart, and the S0 and HOMO -> LUMO configurations sit in
+groups of their own.
 """
 
 import json
@@ -49,8 +52,10 @@ DONOR_ATOMS = [5, 6, 7, 8, 9, 10, 19, 20, 21, 22, 23]
 HYDROXY_ATOMS = [3, 18]
 
 # Grouped bath keyed on the chromone population, the coordinate a charge-transfer
-# state moves along. threshold 0.5 -> 4 groups (see 02_group_threshold_check).
-GROUP_THRESHOLD = 0.5
+# state moves along. threshold 0.2 -> 7 groups (see 02_group_threshold_check);
+# it matches 01_gbci_s1_grad_check_631g.py, so the state characterization and
+# the gradient describe the same wavefunction.
+GROUP_THRESHOLD = 0.2
 GROUP_A = {"atom": [ACCEPTOR_ATOMS], "threshold": GROUP_THRESHOLD}
 
 SCF_CONV_TOL = 1e-10

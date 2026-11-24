@@ -1,0 +1,41 @@
+3HF / 6-31G / GBCI(4e,4o) act_list=[61, 62, 63, 64] state=S1  mode=fd
+finite-difference step = 0.001 bohr, atoms = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
+bath CPHF: max_cycle = 200, tol = 1e-12, level_shift = 1e-05, lindep = 1e-20
+bath grouping: Lowdin population on 15 acceptor atoms, threshold = 0.2
+FASSCF: conv_tol = 1e-14, conv_tol_grad = 1e-11, bath semicanonicalization = on
+bath grouping frozen to the reference: [1, 2, 5, 3, 5, 2, 1] patterns per group
+task 68/84 handles components [(22, 'z')]
+
+--- displacement: atom 22 axis z minus1 0.001 bohr ---
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+converged SCF energy = -798.120786714642
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+
+WARN: HOMO 0.043429872345702426 > LUMO -0.3247200748708031 was found in the canonicalized orbitals.
+
+Traceback (most recent call last):
+  File "/home/jiseong0626/labgit/GBCI-grad/test/3hf/gbci/01_gbci_s1_grad_check_631g.py", line 783, in <module>
+    main()
+  File "/home/jiseong0626/labgit/GBCI-grad/test/3hf/gbci/01_gbci_s1_grad_check_631g.py", line 762, in main
+    records = numerical_components(symbols, coords_bohr, reference, comps, args)
+  File "/home/jiseong0626/labgit/GBCI-grad/test/3hf/gbci/01_gbci_s1_grad_check_631g.py", line 412, in numerical_components
+    gbci = run_gbci(mol, args)
+  File "/home/jiseong0626/labgit/GBCI-grad/test/3hf/gbci/01_gbci_s1_grad_check_631g.py", line 344, in run_gbci
+    gbci.kernel()
+  File "/home/jiseong0626/labgit/pyscf-forge/pyscf/gbci/gbci.py", line 1286, in kernel
+    kernel(self, mo_coeff, ci0=ci0, verbose=log)
+  File "/home/jiseong0626/labgit/pyscf-forge/pyscf/gbci/gbci.py", line 102, in kernel
+    dmet_core_list, ov_list = gbci.get_svd_matrices(mo_list, svd_basis)
+  File "/home/jiseong0626/labgit/pyscf-forge/pyscf/gbci/gbci.py", line 1232, in get_svd_matrices
+    S, xc_bimo_coeff, wc_bimo_coeff, U, Vt = biorthogonalize(xc_mo_coeff, wc_mo_coeff, s1e)
+  File "/home/jiseong0626/labgit/pyscf-forge/pyscf/gbci/gbci.py", line 177, in biorthogonalize
+    u, s, vt = numpy.linalg.svd(mo_overlap(mo1, mo2, s1e))
+  File "/home/jiseong0626/anaconda3/envs/pyscf310/lib/python3.10/site-packages/numpy/linalg/_linalg.py", line 1812, in svd
+    u, s, vh = gufunc(a, signature=signature)
+  File "/home/jiseong0626/anaconda3/envs/pyscf310/lib/python3.10/site-packages/numpy/linalg/_linalg.py", line 113, in _raise_linalgerror_svd_nonconvergence
+    raise LinAlgError("SVD did not converge")
+numpy.linalg.LinAlgError: SVD did not converge

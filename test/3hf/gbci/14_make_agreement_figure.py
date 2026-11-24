@@ -1,24 +1,28 @@
 """One-panel figure of the analytic vs numerical agreement over the whole gradient.
 
 The point is not to let the reader recover numbers -- Table S for that -- but
-to show at a glance that the agreement holds for every atom, not only the five
-the main-text table lists.
+to show at a glance that the agreement holds for every atom of the molecule.
 
 Plotting the difference against the analytic component, rather than numerical
 against analytic, is what makes that visible: on an x = y plot all 84 points
-would sit on the line and a 1e-7 disagreement would be invisible, so the plot
+would sit on the line and a 1e-8 disagreement would be invisible, so the plot
 would say nothing.  Here the ordinate is the difference alone.
 
 Both axes are absolute values and the ordinate is logarithmic, which is what
-lets a difference of 1e-9 and one of 2.5e-7 appear in the same panel; on a
+lets a difference of 5e-11 and one of 9e-8 appear in the same panel; on a
 linear axis the small ones pile up on zero.  The cost is that the sign is
-gone, but the signs carry no message -- they split 42 to 42.
+gone, but the signs carry no message -- they split 48 to 36.
 
 "MAX ABS" rather than "MAX": the largest difference in absolute value happens
-to be the largest positive one as well (+2.499e-7, against -1.856e-7 the other
+to be the largest positive one as well (+9.205e-8, against -9.116e-8 the other
 way), so a bare "MAX" would be indistinguishable from the positive extreme and
-would read as if the negative half had been left out.  It also matches the
-wording of the tables, which say "maximum absolute difference".
+would read as if the negative half had been left out -- which here would be
+badly wrong, the two extremes differing by less than one part in a hundred.
+It also matches the wording of the tables, which say "maximum absolute
+difference".
+
+The campaign is the one run at a Loewdin-population threshold of 0.2, which
+puts the acceptor atoms into seven groups.
 """
 
 from pathlib import Path
@@ -40,13 +44,24 @@ if str(REPO_ROOT) not in sys.path:
 from utils.molecule_figure import FIG_WIDTH
 
 RESULT_JSON = (SCRIPT_DIR / "outputs"
-               / "01_gbci_s1_grad_check_631g_all_h1e4.json")
+               / "01_gbci_s1_grad_check_631g_thr02_h1e4.json")
 OUTPUT_STEM = SCRIPT_DIR / "outputs" / "14_agreement_figure"
 # Written by 10_make_molecule_figure.py; its labels start with the element
 # symbol (O4, C8a, H1), which is all the colouring needs.
 LABELS_JSON = SCRIPT_DIR / "outputs" / "10_atom_labels.json"
 
 COLOR = {"H": "#7a7a7a", "C": "#303030", "O": "#c0392b"}
+
+
+def sci(value, digits=3):
+    """Normalized scientific notation, as the tables write it.
+
+    The exponent is taken from the value rather than fixed: with a hard-coded
+    1e-7 a difference of 9.2e-8 prints as "0.920 x 10^-7", a mantissa below
+    one, which reads as an error and disagrees with the tables.
+    """
+    mantissa, exponent = f"{value:.{digits}e}".split("e")
+    return rf"{mantissa} \times 10^{{{int(exponent)}}}"
 # The floor is the smallest difference itself, so the lowest point sits on the
 # frame and is drawn half outside it.  A round 1e-10 would leave an empty
 # half-decade below it; a round 1e-9 would drop two points off the figure
@@ -99,8 +114,7 @@ def main():
     for value, style, name, offset in ((bound, (0, (5, 3)), "MAX ABS", GAP),
                                        (rms, (0, (1, 2)), "RMS", 1 / GAP)):
         ax.axhline(value, color="#303030", lw=0.8, ls=style, zorder=2)
-        ax.text(0.98, value * offset,
-                rf"{name} $= {value / 1e-7:.3f} \times 10^{{-7}}$",
+        ax.text(0.98, value * offset, rf"{name} $= {sci(value)}$",
                 transform=ax.get_yaxis_transform(), fontsize=8.5,
                 ha="right", va="bottom" if offset > 1 else "top",
                 color="black", zorder=4,

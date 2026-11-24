@@ -5,13 +5,13 @@ LiH  CAS(2e,2o)  act_list=[2, 3] (1-based)  basis=ccpvdz
   E(GBCI) = -7.9818435526 Eh
 ==============================================================================
  atom       analytic z          numerical z          difference
- Li   +1.830102797348e-02   +1.830102829281e-02   -3.193272e-10
-  H   -1.830102797348e-02   -1.830102821732e-02   +2.438318e-10
- max |analytic z - numerical z| : 3.193272e-10 Eh/Bohr
- max |analytic transverse|      : 8.872049e-19 Eh/Bohr
- net force (on axis / tilted)   : 1.665335e-16 / 4.518280e-16 Eh/Bohr
- torque    (on axis / tilted)   : 2.985103e-18 / 4.746849e-16 Eh
- |E(tilted) - E(on axis)|       : 2.664535e-15 Eh
+ Li   +1.830102797348e-02   +1.830102827061e-02   -2.971225e-10
+  H   -1.830102797348e-02   -1.830102825284e-02   +2.793585e-10
+ max |analytic z - numerical z| : 2.971225e-10 Eh/Bohr
+ max |analytic transverse|      : 8.871818e-19 Eh/Bohr
+ net force (on axis / tilted)   : 3.885781e-16 / 3.433175e-16 Eh/Bohr
+ torque    (on axis / tilted)   : 2.985047e-18 / 3.337159e-16 Eh
+ |E(tilted) - E(on axis)|       : 1.154632e-14 Eh
  min active-orbital overlap     : 0.999998
  Result: PASS
 
@@ -21,29 +21,29 @@ LiF  CAS(4e,4o)  act_list=[3, 4, 7, 10] (1-based)  basis=ccpvdz
   E(GBCI) = -106.9430017858 Eh
 ==============================================================================
  atom       analytic z          numerical z          difference
- Li   +3.524744321527e-02   +3.524744450090e-02   -1.285626e-09
-  F   -3.524744321526e-02   -3.524744499828e-02   +1.783019e-09
- max |analytic z - numerical z| : 1.783019e-09 Eh/Bohr
- max |analytic transverse|      : 5.274182e-17 Eh/Bohr
- net force (on axis / tilted)   : 1.287859e-14 / 1.831027e-15 Eh/Bohr
- torque    (on axis / tilted)   : 2.031412e-16 / 8.405513e-15 Eh
- |E(tilted) - E(on axis)|       : 2.415845e-13 Eh
+ Li   +3.524744310991e-02   +3.524744407457e-02   -9.646648e-10
+  F   -3.524744310990e-02   -3.524744379035e-02   +6.804579e-10
+ max |analytic z - numerical z| : 9.646648e-10 Eh/Bohr
+ max |analytic transverse|      : 3.127131e-17 Eh/Bohr
+ net force (on axis / tilted)   : 1.021405e-14 / 2.220446e-15 Eh/Bohr
+ torque    (on axis / tilted)   : 9.126096e-17 / 7.979964e-15 Eh
+ |E(tilted) - E(on axis)|       : 5.684342e-14 Eh
  min active-orbital overlap     : 0.999998
  Result: PASS
 
 ==============================================================================
 LiCl  CAS(4e,4o)  act_list=[7, 8, 11, 14] (1-based)  basis=ccpvdz
   7: sigma(Cl3s); 8: sigma(Cl3pz-Li); 11: sigma*(Li3s); 14: sigma*(Li3pz).  Default window would be [9,10,11,12], whose MOs 9 and 10 are the Cl 3p pi lone pairs.
-  E(GBCI) = -466.9090605907 Eh
+  E(GBCI) = -466.9090606070 Eh
 ==============================================================================
  atom       analytic z          numerical z          difference
- Li   +3.397175965658e-01   +3.397175987629e-01   -2.197115e-09
- Cl   -3.397175965658e-01   -3.397175998998e-01   +3.334057e-09
- max |analytic z - numerical z| : 3.334057e-09 Eh/Bohr
- max |analytic transverse|      : 6.736945e-16 Eh/Bohr
- net force (on axis / tilted)   : 7.371881e-14 / 1.787425e-14 Eh/Bohr
- torque    (on axis / tilted)   : 2.027990e-15 / 6.407035e-15 Eh
- |E(tilted) - E(on axis)|       : 4.547474e-13 Eh
+ Li   +3.397175915379e-01   +3.397175939313e-01   -2.393362e-09
+ Cl   -3.397175915378e-01   -3.397175942155e-01   +2.677661e-09
+ max |analytic z - numerical z| : 2.677661e-09 Eh/Bohr
+ max |analytic transverse|      : 7.798265e-17 Eh/Bohr
+ net force (on axis / tilted)   : 8.171241e-14 / 2.283500e-14 Eh/Bohr
+ torque    (on axis / tilted)   : 2.918445e-16 / 9.719364e-15 Eh
+ |E(tilted) - E(on axis)|       : 1.705303e-13 Eh
  min active-orbital overlap     : 0.999988
  Result: PASS
 

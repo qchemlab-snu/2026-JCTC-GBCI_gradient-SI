@@ -68,12 +68,18 @@ is_contiguous_window = _gbci_setup.is_contiguous_window
 BASIS = "ccpvdz"
 ACT_BASE = 1
 
-# Li-centred grouped bath.  "threshold" is the largest Lowdin population
-# difference (in active electrons on Li) allowed between two configurations in
-# the same group; GBCI's own default is 0.2, so this has to be stated to get 0.4.
-# It is not cosmetic: at 0.4 LiF and LiCl merge two groups into one (6 -> 5) and
-# their energies move by 1.2e-08 and 1.9e-07 Eh.
-LOWDIN_THRESHOLD = 0.4
+# Li-centred grouped bath.  "threshold" is how far a configuration's Lowdin
+# population (in active electrons on Li) may sit from the configuration that
+# seeds its group -- group_by_atom measures against the seed, not the group
+# diameter -- and GBCI's own default is 0.2, so this has to be stated.
+# 0.5 rather than 0.4: at 0.4 LiCl's 2020 (n(Li) = 2.4982) misses the group
+# seeded by 0202 (2.0759) by 0.0223 and forms a group of its own, leaving LiCl
+# with 6 groups where LiF has 5 on the same 19-configuration list.  That merge
+# happens at 0.4223 and holds until 0.551, where 0112 (3.0031) starts pulling
+# 2002 (2.4521) across the Li-population gap and the grouping degrades; 0.5
+# sits in the middle of that plateau.  LiH (which breaks at 0.5589) and LiF
+# (0.741) are unchanged by the move from 0.4.
+LOWDIN_THRESHOLD = 0.5
 GROUP_A = {"atom": [0], "threshold": LOWDIN_THRESHOLD}
 
 

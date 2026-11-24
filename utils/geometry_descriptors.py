@@ -96,3 +96,28 @@ def assign_hydrogens(symbols, coords, heavy_indices):
         nearest = min(heavy_indices, key=lambda idx: np.linalg.norm(coords[h] - coords[idx]))
         groups[nearest].append(h)
     return groups
+
+
+def kabsch_align(ref_coords, coords):
+    """Rigidly superpose ``coords`` on ``ref_coords`` (Kabsch, equal weights).
+
+    Both arrays are ``(natm, 3)`` in Angstrom with matching atom order.  Returns
+    ``(aligned_coords, rmsd)``.  A reflection is never returned: the determinant
+    of the rotation is forced to +1, so a mirror image stays a mirror image
+    instead of being silently superposed on its enantiomer.
+    """
+    ref_coords = np.asarray(ref_coords, dtype=float)
+    coords = np.asarray(coords, dtype=float)
+    if ref_coords.shape != coords.shape:
+        raise ValueError("kabsch_align needs two (natm, 3) arrays of equal shape.")
+
+    ref_c = ref_coords - ref_coords.mean(axis=0)
+    mob_c = coords - coords.mean(axis=0)
+
+    u, _, vt = np.linalg.svd(mob_c.T.dot(ref_c))
+    d = np.sign(np.linalg.det(u.dot(vt)))
+    rot = u.dot(np.diag([1.0, 1.0, d])).dot(vt)
+
+    aligned = mob_c.dot(rot) + ref_coords.mean(axis=0)
+    rmsd = float(np.sqrt(np.mean(np.sum((aligned - ref_coords) ** 2, axis=1))))
+    return aligned, rmsd

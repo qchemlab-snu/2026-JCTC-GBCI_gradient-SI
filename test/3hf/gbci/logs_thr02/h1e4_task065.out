@@ -1,0 +1,35 @@
+3HF / 6-31G / GBCI(4e,4o) act_list=[61, 62, 63, 64] state=S1  mode=fd
+finite-difference step = 0.0001 bohr, atoms = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
+bath CPHF: max_cycle = 200, tol = 1e-12, level_shift = 1e-05, lindep = 1e-20
+bath grouping: Lowdin population on 15 acceptor atoms, threshold = 0.2
+FASSCF: conv_tol = 1e-14, conv_tol_grad = 1e-11, bath semicanonicalization = on
+bath grouping frozen to the reference: [1, 2, 5, 3, 5, 2, 1] patterns per group
+task 65/84 handles components [(21, 'z')]
+
+--- displacement: atom 21 axis z minus1 0.0001 bohr ---
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+converged SCF energy = -798.120780147326
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+
+WARN: HOMO 0.04341550555894117 > LUMO -0.32468449317511455 was found in the canonicalized orbitals.
+
+Overwritten attributes  contract_h  of <class 'pyscf.gbci.direct_gbci.GBCISolver'>
+
+--- displacement: atom 21 axis z plus1 0.0001 bohr ---
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+converged SCF energy = -798.120780781957
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+
+WARN: HOMO 0.0434170129016651 > LUMO -0.32468835992684925 was found in the canonicalized orbitals.
+
+  atom 21 axis z: numerical = -0.0032461855 (2-point, CI overlap >= 1.000)
+
+Saved outputs/01_partials_thr02_h1e4/task_065.json
