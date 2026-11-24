@@ -1,0 +1,58 @@
+3HF / 6-31G / GBCI(4e,4o) act_list=[61, 62, 63, 64] state=S1  mode=fd
+finite-difference step = 0.00025 bohr, atoms = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
+bath CPHF: max_cycle = 200, tol = 1e-12, level_shift = 1e-05, lindep = 1e-20
+FASSCF: conv_tol = 1e-14, conv_tol_grad = 1e-11, bath semicanonicalization = on
+bath grouping frozen to the reference: [3, 8, 7, 1] patterns per group
+task 31/84 handles components [(10, 'y')]
+
+--- displacement: atom 10 axis y minus1 0.00025 bohr ---
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+converged SCF energy = -798.12078037266
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+
+WARN: HOMO 0.06150288615876608 > LUMO -0.29929907704427583 was found in the canonicalized orbitals.
+
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+
+WARN: HOMO 0.06581750445779594 > LUMO 0.02481442104956586 was found in the canonicalized orbitals.
+
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+Overwritten attributes  contract_h  of <class 'pyscf.gbci.direct_gbci.GBCISolver'>
+
+--- displacement: atom 10 axis y plus1 0.00025 bohr ---
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+converged SCF energy = -798.120780539539
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+
+WARN: HOMO 0.06154493643013878 > LUMO -0.299386633294705 was found in the canonicalized orbitals.
+
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+
+WARN: HOMO 0.06584279521373965 > LUMO 0.0247662920839484 was found in the canonicalized orbitals.
+
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+
+WARN: Singularity detected in overlap matrix (condition number = 1.11e+04). SCF may be inaccurate and hard to converge.
+
+  atom 10 axis y: numerical =  0.0021069939 (2-point, CI overlap >= 1.000)
+
+Saved outputs/01_partials_all_h25e4/task_031.json

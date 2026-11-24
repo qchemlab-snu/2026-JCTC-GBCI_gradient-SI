@@ -10,7 +10,7 @@ needed.
 The four systems do not share one grouping mechanism, which is the main thing
 the SI has to state:
 
-    Li halides  {"atom": [0], "threshold": 0.5}        Lowdin population on Li
+    Li halides  {"atom": [0], "threshold": 0.4}        Lowdin population on Li
     pp          {"atom": [[0..8], [9..18]]}, 0.2       Lowdin on two fragments
     CH2NH2      {"mo": [[0,1,2,3], [4]]}               occupation sums, exact
 
@@ -176,10 +176,7 @@ def li_halide_geometry(partner: str, bond_length: float) -> str:
 
 
 LI_BOND_LENGTH = 1.50
-# 0.5, not GBCI's 0.2: see test/lix/li_halides_gbci_grad_check.py.  At 0.4
-# LiCl's 2020 falls outside every group and forms one of its own, leaving
-# LiCl with 6 groups where LiF has 5 on the same configuration list.
-LI_GROUP_A = {"atom": [0], "threshold": 0.5}
+LI_GROUP_A = {"atom": [0], "threshold": 0.4}
 
 SYSTEMS = [
     SystemSpec(
@@ -210,9 +207,9 @@ SYSTEMS = [
     SystemSpec(
         name="3-hydroxyflavone", atoms=HF3_ATOMS, basis="6-31G",
         ncas=4, nelecas=(2, 2), act_list=(61, 62, 63, 64),
-        group_a={"atom": [HF3_ACCEPTOR], "threshold": 0.2},
+        group_a={"atom": [HF3_ACCEPTOR], "threshold": 0.5},
         source="test/3hf/gbci/01_gbci_s1_grad_check_631g.py",
-        note="frontier pi/pi* window; chromone acceptor fragment, threshold 0.2",
+        note="frontier pi/pi* window; chromone acceptor fragment, threshold 0.5",
     ),
     SystemSpec(
         name="CH2NH2", atoms=CH2NH2_ATOMS, basis="cc-pVTZ",

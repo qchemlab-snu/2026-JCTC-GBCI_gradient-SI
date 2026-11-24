@@ -110,25 +110,12 @@ STATE = 1  # S1, the HOMO -> LUMO pi -> pi* state
 # phenyl -> chromone charge transfer that S1 carries.
 ACCEPTOR_ATOMS = [0, 1, 2, 4, 11, 12, 13, 14, 15, 16, 17, 24, 25, 26, 27]
 
-# The 19 acceptor populations fall into seven clusters that span at most 0.1559
-# within a cluster while neighbouring clusters are at least 0.1986 apart, so
-# the partition is the data's and not the cutoff's: under complete linkage it
-# is unchanged for every threshold in [0.1559, 0.2705), 0.16 and 0.2 alike,
-# and both edges were located by bisection rather than argued from the gaps.
-# 0.5 lies past that window and merges the seven into four; it was the
-# earlier default, chosen for the ngroup**2 saving, and it costs a factor of
-# 2.7 in the agreement between the analytic and the numerical gradient.
-GROUP_THRESHOLD = 0.2
-
-
-def group_a(threshold):
-    """The grouped-bath specification at ``threshold``.
-
-    Built per run rather than once at import: the threshold decides how many
-    groups the bath has, and the gradient carries an ngroup**2 factor, so it is
-    the one setting worth varying from the command line.
-    """
-    return {"atom": [ACCEPTOR_ATOMS], "threshold": threshold}
+# threshold 0.5 gives 4 groups instead of the 7 of the 0.2 default, and
+# 02_group_threshold_check_631g.py shows the S0 and HOMO -> LUMO configurations
+# stay in separate groups all the way to 0.8. The gradient cost carries a
+# ngroup**2 factor, so this is roughly 3x cheaper.
+GROUP_THRESHOLD = 0.5
+GROUP_A = {"atom": [ACCEPTOR_ATOMS], "threshold": GROUP_THRESHOLD}
 
 # Atoms displaced in the finite difference. All 28 atoms would be 168 single
 # points and the reference energies have to run single-threaded, so the default
@@ -169,14 +156,6 @@ def parse_args() -> argparse.Namespace:
     # irreproducibility a finite difference amplifies by 1/(2h).
     parser.add_argument("--fasscf-conv-tol-grad", type=float, default=1e-6)
     parser.add_argument("--gbci-conv-tol", type=float, default=1e-14)
-    # 0.2 gives the seven groups the populations themselves define; 0.3 gives
-    # six and 0.5 gives four, both by merging across the gaps.  All three leave
-    # the S0 closed shell in a group of its own, and at 0.2 the complete-
-    # linkage and the leader rule agree on the partition.
-    parser.add_argument("--group-threshold", type=float,
-                        default=GROUP_THRESHOLD,
-                        help="largest Lowdin population difference allowed "
-                             "within one bath group (default %(default)s)")
     # FASSCF routes a group through Newton SOSCF when its damped stage does not
     # converge, and that call leaves pyscf's canonicalization off, so the group
     # comes back with canonical energies on non-canonical orbitals.  The bath
@@ -318,13 +297,12 @@ def run_gbci(mol: gto.Mole, args: argparse.Namespace) -> Any:
     if not mf.converged:
         raise RuntimeError("RHF did not converge")
 
-    spec = group_a(args.group_threshold)
-    probe = GBCI(mf, ncas=NCAS, nelecas=NELECAS, group_a=spec)
+    probe = GBCI(mf, ncas=NCAS, nelecas=NELECAS, group_a=GROUP_A)
     reordered = not is_contiguous_window(probe, ACT_LIST, base=ACT_BASE)
     if reordered:
         apply_act_list(mf, probe, ACT_LIST, base=ACT_BASE)
 
-    gbci = GBCI(mf, ncas=NCAS, nelecas=NELECAS, group_a=spec)
+    gbci = GBCI(mf, ncas=NCAS, nelecas=NELECAS, group_a=GROUP_A)
     check_active_window(gbci)
     gbci.fix_spin_(ss=0)
 
@@ -521,10 +499,7 @@ def build_reference(args, symbols, coords_bohr) -> dict[str, Any]:
             "implementation": gbci_grad.__file__,
             "geometry": str(GEOMETRY), "basis": BASIS,
             "ncas": NCAS, "nelecas": list(NELECAS), "act_list": ACT_LIST,
-            "reordered_mo": bool(gbci._reordered_mo),
-            "group_a": group_a(args.group_threshold),
-            "group_threshold": args.group_threshold,
-            "n_groups": len(gbci._gbci_intermediates["group"]),
+            "reordered_mo": bool(gbci._reordered_mo), "group_a": GROUP_A,
             "state": args.state, "nroots": args.nroots,
             "step_bohr": args.step_bohr,
             "stencil": args.stencil,
@@ -709,8 +684,6 @@ def main() -> None:
           f"level_shift = {shift_scan if shift_scan else args.cphf_level_shift}, "
           f"lindep = {lindep_scan if lindep_scan else args.cphf_lindep}",
           flush=True)
-    print(f"bath grouping: Lowdin population on {len(ACCEPTOR_ATOMS)} acceptor "
-          f"atoms, threshold = {args.group_threshold:g}", flush=True)
     print(f"FASSCF: conv_tol = {args.fasscf_conv_tol:g}, conv_tol_grad = "
           f"{args.fasscf_conv_tol_grad:g}, bath semicanonicalization = "
           f"{'on' if args.semicanonical_bath else 'OFF'}", flush=True)

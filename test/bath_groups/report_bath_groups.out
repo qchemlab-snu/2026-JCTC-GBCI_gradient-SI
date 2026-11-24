@@ -2,8 +2,8 @@
 ==============================================================================
 LiH   CAS(2e,2o)   basis=ccpvdz   ncore=1
   act_list [2, 3] (base 1)
-  group_a = {'atom': [0], 'threshold': 0.5}
-  grouped by Lowdin population, threshold 0.5, rule 'complete'
+  group_a = {'atom': [0], 'threshold': 0.4}
+  grouped by Lowdin population, threshold 0.4, rule 'complete'
   largest population difference within a group: 0.000
   3 groups from 3 configurations
   source: test/lix/li_halides_gbci_grad_check.py
@@ -16,8 +16,8 @@ LiH   CAS(2e,2o)   basis=ccpvdz   ncore=1
 ==============================================================================
 LiF   CAS(4e,4o)   basis=ccpvdz   ncore=4
   act_list [3, 4, 7, 10] (base 1)
-  group_a = {'atom': [0], 'threshold': 0.5}
-  grouped by Lowdin population, threshold 0.5, rule 'complete'
+  group_a = {'atom': [0], 'threshold': 0.4}
+  grouped by Lowdin population, threshold 0.4, rule 'complete'
   largest population difference within a group: 0.245
   5 groups from 19 configurations
   source: test/lix/li_halides_gbci_grad_check.py
@@ -49,10 +49,10 @@ LiF   CAS(4e,4o)   basis=ccpvdz   ncore=4
 ==============================================================================
 LiCl   CAS(4e,4o)   basis=ccpvdz   ncore=8
   act_list [7, 8, 11, 14] (base 1)
-  group_a = {'atom': [0], 'threshold': 0.5}
-  grouped by Lowdin population, threshold 0.5, rule 'complete'
-  largest population difference within a group: 0.422
-  5 groups from 19 configurations
+  group_a = {'atom': [0], 'threshold': 0.4}
+  grouped by Lowdin population, threshold 0.4, rule 'complete'
+  largest population difference within a group: 0.399
+  6 groups from 19 configurations
   source: test/lix/li_halides_gbci_grad_check.py
 ==============================================================================
   group config      n(atoms Li1)
@@ -70,14 +70,14 @@ LiCl   CAS(4e,4o)   basis=ccpvdz   ncore=8
         1120               2.310
         2002               2.452
         2011               2.475
-        2020               2.498
-        span               0.422
+        span               0.399
       4 1201               1.360
         1210               1.383
         2101               1.548
         2110               1.571
         span               0.211
-      5 2200               0.644
+      5 2020               2.498
+      6 2200               0.644
 
 ==============================================================================
 pp   CAS(2e,2o)   basis=ccpvdz   ncore=37
